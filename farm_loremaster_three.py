@@ -16,7 +16,7 @@ if (hitter.get_window_rect()[0] > feinter.get_window_rect()[0]):
     # Switch them, if not
     hitter, feinter = feinter, hitter
 
-if(hitter.get_window_rect()[0] > blader.register_window()[0]):
+if(hitter.get_window_rect()[0] > blader.get_window_rect()[0]):
     hitter, blader = blader, hitter
 
 if(blader.get_window_rect()[0] > feinter.get_window_rect()[0]):
@@ -66,9 +66,6 @@ while True:
     hitter.teleport_to_friend('friend_match.png').wait(4)
     blader.teleport_to_friend('friend_match.png').wait(4)
 
-    while not hitter.enter_dungeon_dialog():
-        time.sleep(1)
-
     while not blader.enter_dungeon_dialog():
         time.sleep(1)
 
@@ -90,7 +87,7 @@ while True:
 
     """ Run into battle """
     feinter.hold_key('w', 1.5)
-    blader.hold_key('w', 3)
+    blader.hold_key('w', 1.5)
     hitter.hold_key('w', 3)
 
     feinter.wait_for_next_turn()
@@ -115,24 +112,14 @@ while True:
             feinter.discard_unusable_spells(cn)
 
         # Play
-        if battle_round % 2 == 1:
-            if feinter.enchant('feint', 'potent'):
-                feinter.cast_spell('feint-potent').at_target(boss_pos)
+        if feinter.enchant('feint', 'potent'):
+            feinter.cast_spell('feint-potent').at_target(boss_pos)
 
-            elif feinter.find_spell('feint'):
-                feinter.cast_spell('feint').at_target(boss_pos)
+        elif feinter.find_spell('feint'):
+            feinter.cast_spell('feint').at_target(boss_pos)
 
-            else:
-                feinter.pass_turn()
         else:
-            if feinter.find_spell('feint'):
-                feinter.cast_spell('feint').at_target(boss_pos)
-
-            elif feinter.find_spell('feint-potent'):
-                feinter.cast_spell('feint-potent').at_target(boss_pos)
-
-            else:
-                feinter.pass_turn()
+            feinter.pass_turn()
 
         """ Blader plays """
         # Check to see if deck is crowded with unusable spells
@@ -141,24 +128,14 @@ while True:
             blader.discard_unusable_spells(cn)
 
         # Play
-        if battle_round % 2 == 1:
-            if feinter.enchant('feint', 'potent'):
-                blader.cast_spell('feint-potent').at_target(boss_pos)
+        if feinter.enchant('feint', 'potent'):
+            blader.cast_spell('feint-potent').at_target(boss_pos)
 
-            elif blader.find_spell('feint'):
-                blader.cast_spell('feint').at_target(boss_pos)
+        elif blader.find_spell('feint'):
+            blader.cast_spell('feint').at_target(boss_pos)
 
-            else:
-                blader.pass_turn()
         else:
-            if blader.find_spell('feint'):
-                blader.cast_spell('feint').at_target(boss_pos)
-
-            elif blader.find_spell('feint-potent'):
-                blader.cast_spell('feint-potent').at_target(boss_pos)
-
-            else:
-                blader.pass_turn()
+            blader.pass_turn()
 
         """ Hitter plays """
         # Check to see if deck is crowded with unusable spells
