@@ -11,6 +11,7 @@ class wizAPI:
         self._friends_area = (625, 65, 20, 240)
         self._spell_area = (245, 290, 370, 70)
         self._enemy_area = (68, 26, 650, 35)
+        self._friendly_area = (136, 536, 650, 70)
 
     def wait(self, s):
         """ Alias for time.sleep() that return self for function chaining """
@@ -435,7 +436,21 @@ class wizAPI:
             return enemy_pos
         else:
             return False
+    def get_friendly_pos(self, friendly_img):
+        """ 
+        Checks if player is in position - posisble use case includes checking if there are 3 or two wizards in battle
+        """
 
+        self.screenshot('friendly_area.png', region=self._friendly_area)
+
+        found = self.match_image('friendly_area.png', friendly_img, threshold=.2)
+
+        if found is not False:
+            found_x, _ = found
+            friend_pos = round((found_x - 60) / 170) + 1
+            return friend_pos
+        else:
+            return False
     def at_target(self, target_pos):
         """ Clicks the target, based on position 1, 2, 3, or 4 """
         x = (174 * (target_pos - 1)) + 130
