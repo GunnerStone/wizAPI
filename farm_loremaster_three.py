@@ -54,6 +54,11 @@ while True:
     ROUND_COUNT += 1
     print_separator('ROUND', str(ROUND_COUNT))
 
+    if(ROUND_COUNT % 10 == 0):
+        hitter.quick_sell(False, False)
+        blader.quick_sell(False, False)
+        feinter.quick_sell(False, False)
+
     """ Attempt to enter the dungeon """
     time.sleep(1)
     feinter.hold_key('s', .8).wait(1)
