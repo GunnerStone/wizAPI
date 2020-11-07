@@ -502,3 +502,41 @@ class wizAPI:
         else:
             print(num_enemies, 'enemies in battle')
         return num_enemies
+
+    def quick_sell(self, sell_crown_items, sell_jewels):
+        """ 
+        Quick sells everything unlocked
+        """
+
+        """ Opens user's bag """
+        self.press_key('b')
+        """ Clicks on the quick sell icon in the bag """
+        self.click(158, 535, delay=1)
+        """ Clicks the "All" tab on the top of the quick sell interface """
+        self.click(183, 178, delay=.3)
+        """ Clicks the "All" Button within the all tab """
+        self.click(417, 223, delay=.3)
+        """ Clicks yes or no for selling crowns """
+        if(sell_crown_items is True):
+            self.click(406, 399, delay=.3)
+        else:    
+            self.click(513, 399, delay=.3)
+
+        """ Clicks next twice to get to jewels page """
+        if(sell_jewels is False):
+            self.click(675, 173, delay=.3)
+            self.click(675, 173, delay=.3)
+            self.click(417, 223, delay=.3)
+                
+        """ Clicks sell X for X """
+        self.click(263, 495, delay=.3)
+
+        """ Clicks sell on sell screen """
+        self.click(400, 488, delay=.3)
+
+        """ Closes user's bag """
+        self.press_key('b')
+
+        
+
+
