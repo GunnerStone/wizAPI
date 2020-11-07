@@ -1,12 +1,13 @@
 from wizAPI import *
 import time
 import math
+import random
 
 """ Register windows """
 try:
-    blader = wizAPI().register_window(nth=2)
-    hitter = wizAPI().register_window(nth=1)
-    feinter = wizAPI().register_window(nth=0)
+    blader = wizAPI().register_window(nth=2) # Middle
+    hitter = wizAPI().register_window(nth=1) # Furthest Left
+    feinter = wizAPI().register_window(nth=0) # Furthest Right 
 except IndexError:
     print('You need 3 wizard101 accounts to run this particular bot. 2 or less accounts detected')
     exit()
@@ -48,28 +49,27 @@ def print_time(timer):
 
 
 ROUND_COUNT = 0
+driver = feinter
+user_order = [[feinter, 'friend_feinter.png'], [hitter, 'friend_hitter.png'], [blader, 'friend_blader.png']]
 
 while True:
     START_TIME = time.time()
     ROUND_COUNT += 1
     print_separator('ROUND', str(ROUND_COUNT))
 
+    """ Quick sell every 10 rounds"""
     if(ROUND_COUNT % 10 == 0):
+        feinter.quick_sell(False, False)
         hitter.quick_sell(False, False)
         blader.quick_sell(False, False)
-        feinter.quick_sell(False, False)
 
     """ Attempt to enter the dungeon """
     time.sleep(1)
-    feinter.hold_key('s', .8).wait(1)
 
-    while not feinter.enter_dungeon_dialog():
-        (feinter.hold_key('w', 1.5)
-         .hold_key('s', 2)
-         .wait(1.5))
-
-    hitter.teleport_to_friend('friend_match.png').wait(4)
-    blader.teleport_to_friend('friend_match.png').wait(4)
+    while not driver.enter_dungeon_dialog():
+        (driver.hold_key('w', random.uniform(1.45, 1.55))
+         .hold_key('s', random.uniform(1.85, 2.15))
+         .wait(random.uniform(1.45, 1.55)))
 
     while not blader.enter_dungeon_dialog():
         time.sleep(1)
@@ -77,9 +77,11 @@ while True:
     """ Allows for health regen """
     time.sleep(1)
 
-    feinter.press_key('x')
-    hitter.press_key('x')
-    blader.press_key('x')
+    random.shuffle(user_order)
+
+    user_order[0][0].press_key('x').wait(random.uniform(0.5, 1.5))
+    user_order[1][0].press_key('x').wait(random.uniform(0.2, 1.7))
+    user_order[2][0].press_key('x').wait(random.uniform(0.3, 1.3))
 
     await_finished_loading([feinter, hitter, blader])
 
@@ -91,9 +93,9 @@ while True:
     blader.use_potion_if_needed()
 
     """ Run into battle """
-    feinter.hold_key('w', 1.5)
-    blader.hold_key('w', 1.5)
-    hitter.hold_key('w', 3)
+    feinter.hold_key('w', random.uniform(1.4, 1.55))
+    blader.hold_key('w', random.uniform(1.4, 1.55))
+    hitter.hold_key('w', random.uniform(2, 3))
 
     feinter.wait_for_next_turn()
 
@@ -109,67 +111,12 @@ while True:
     while inFight:
         battle_round += 1
         print('-------- Battle round', battle_round, '--------')
+        
+        random.shuffle(user_order)
 
-        """ Feinter plays """
-        # Check to see if deck is crowded with unusable spells
-        cn = len(feinter.find_unusable_spells())
-        if cn > 2:
-            feinter.discard_unusable_spells(cn)
-
-        # Play
-        if feinter.enchant('feint', 'potent'):
-            feinter.cast_spell('feint-potent').at_target(boss_pos)
-
-        elif feinter.find_spell('feint'):
-            feinter.cast_spell('feint').at_target(boss_pos)
-
-        else:
-            feinter.pass_turn()
-
-        """ Blader plays """
-        # Check to see if deck is crowded with unusable spells
-        cn = len(blader.find_unusable_spells())
-        if cn > 2:
-            blader.discard_unusable_spells(cn)
-
-        # Play
-        if feinter.enchant('feint', 'potent'):
-            blader.cast_spell('feint-potent').at_target(boss_pos)
-
-        elif blader.find_spell('feint'):
-            blader.cast_spell('feint').at_target(boss_pos)
-
-        else:
-            blader.pass_turn()
-
-        """ Hitter plays """
-        # Check to see if deck is crowded with unusable spells
-        cn = len(hitter.find_unusable_spells())
-        # Discard the spells
-        if cn > 2:
-            hitter.discard_unusable_spells(cn)
-
-        # Play
-        if (hitter.find_spell('glowbug-squall', threshold=0.05, max_tries=3) and
-                hitter.enchant('glowbug-squall', 'epic')):
-            hitter.find_spell('glowbug-squall-enchanted', max_tries=4)
-            hitter.cast_spell('glowbug-squall-enchanted')
-
-        elif hitter.find_spell('tempest-enchanted', max_tries=1):
-            hitter.cast_spell('tempest-enchanted')
-
-        elif hitter.enchant('tempest', 'epic'):
-            hitter.find_spell('tempest-enchanted', max_tries=4)
-            hitter.cast_spell('tempest-enchanted')
-
-        elif hitter.find_spell('glowbug-squall-enchanted', threshold=.05):
-            hitter.cast_spell('glowbug-squall-enchanted')
-
-        elif hitter.find_spell('glowbug-squall', threshold=.05):
-            hitter.cast_spell('glowbug-squall')
-
-        else:
-            hitter.pass_turn()
+        user_order[0][0].lm_attack(wizard_type = user_order[0][1], boss_pos = boss_pos)
+        user_order[1][0].lm_attack(wizard_type = user_order[1][1], boss_pos = boss_pos)
+        user_order[2][0].lm_attack(wizard_type = user_order[2][1], boss_pos = boss_pos)
 
         feinter.wait_for_end_of_round()
         if feinter.is_idle():
@@ -177,20 +124,32 @@ while True:
     print("Battle has ended")
 
     print("Exiting...")
-    feinter.wait(2).face_arrow().hold_key('w', 3).wait(1)
+    
+    random.shuffle(user_order)
+    
+    driver_random = user_order
+    driver = driver_random[0][0]
 
-    if not feinter.is_DS_loading():
+    driver.wait(2).face_arrow().hold_key('w', 3).wait(1)
+
+    if not driver.is_DS_loading():
         """ Retry exiting """
         time.sleep(2)
-        while not feinter.is_DS_loading():
-            feinter.hold_key('s', 3)
-            if feinter.is_DS_loading():
+        while not driver.is_DS_loading():
+            driver.hold_key('s', 3)
+            if driver.is_DS_loading():
                 break
-            feinter.face_arrow()
-            if feinter.is_DS_loading():
+            driver.face_arrow()
+            if driver.is_DS_loading():
                 break
-            feinter.hold_key('w', 3.5).wait(2)
+            driver.hold_key('w', 3.5).wait(2)
 
-    await_finished_loading([feinter])
+    await_finished_loading([driver])
     print('Successfully exited the dungeon')
+
+    driver.hold_key('s', random.uniform(0.6, 0.9)).wait(random.uniform(0.8, 2))
+
+    driver_random[1][0].teleport_to_friend(driver_random[0][1])
+    driver_random[2][0].teleport_to_friend(driver_random[0][1]).wait(random.uniform(4, 6))
+
     print_time(time.time() - START_TIME)
