@@ -132,6 +132,7 @@ while True:
     driver_random = user_order
     driver = driver_random[0][0]
 
+    """ Wait should be between 0.2 - 1.0 based on individual load speeds """
     driver.wait(2).face_arrow().hold_key('w', 3).wait(.2)
 
     if not driver.is_DS_loading():
