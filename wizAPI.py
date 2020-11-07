@@ -536,6 +536,76 @@ class wizAPI:
 
         """ Closes user's bag """
         self.press_key('b')
+    
+    def lm_attack(self, wizard_type, boss_pos):
+        wizard_type = wizard_type.split('.')[0].split('_')[1]
+
+        print(wizard_type)
+
+        if(wizard_type == "feinter"):
+            """ Feinter plays """
+            # Check to see if deck is crowded with unusable spells
+            cn = len(self.find_unusable_spells())
+            if cn > 2:
+                self.discard_unusable_spells(cn)
+
+            # Play
+            if self.enchant('feint', 'potent'):
+                self.cast_spell('feint-potent').at_target(boss_pos)
+
+            elif self.find_spell('feint'):
+                self.cast_spell('feint').at_target(boss_pos)
+
+            else:
+                self.pass_turn()
+        
+        if(wizard_type == "hitter"):
+            """ Hitter plays """
+            # Check to see if deck is crowded with unusable spells
+            cn = len(self.find_unusable_spells())
+            # Discard the spells
+            if cn > 2:
+                self.discard_unusable_spells(cn)
+
+            # Play
+            if (self.find_spell('glowbug-squall', threshold=0.05, max_tries=3) and
+                    self.enchant('glowbug-squall', 'epic')):
+                self.find_spell('glowbug-squall-enchanted', max_tries=4)
+                self.cast_spell('glowbug-squall-enchanted')
+
+            elif self.find_spell('tempest-enchanted', max_tries=1):
+                self.cast_spell('tempest-enchanted')
+
+            elif self.enchant('tempest', 'epic'):
+                self.find_spell('tempest-enchanted', max_tries=4)
+                self.cast_spell('tempest-enchanted')
+
+            elif self.find_spell('glowbug-squall-enchanted', threshold=.05):
+                self.cast_spell('glowbug-squall-enchanted')
+
+            elif self.find_spell('glowbug-squall', threshold=.05):
+                self.cast_spell('glowbug-squall')
+
+            else:
+                self.pass_turn()
+        
+        if(wizard_type == "blader"):
+            """ Blader plays """
+            # Check to see if deck is crowded with unusable spells
+            cn = len(self.find_unusable_spells())
+            if cn > 2:
+                self.discard_unusable_spells(cn)
+
+            # Play
+            if self.enchant('feint', 'potent'):
+                self.cast_spell('feint-potent').at_target(boss_pos)
+
+            elif self.find_spell('feint'):
+                self.cast_spell('feint').at_target(boss_pos)
+
+            else:
+                self.pass_turn()
+
 
         
 
