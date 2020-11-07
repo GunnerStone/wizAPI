@@ -49,7 +49,6 @@ def print_time(timer):
 
 
 ROUND_COUNT = 0
-driver = feinter
 user_order = [[feinter, 'friend_feinter.png'], [hitter, 'friend_hitter.png'], [blader, 'friend_blader.png']]
 
 while True:
@@ -66,12 +65,15 @@ while True:
     """ Attempt to enter the dungeon """
     time.sleep(1)
 
-    while not driver.enter_dungeon_dialog():
-        (driver.hold_key('w', random.uniform(1.45, 1.55))
-         .hold_key('s', random.uniform(1.85, 2.15))
-         .wait(random.uniform(1.45, 1.55)))
+    while not feinter.enter_dungeon_dialog():
+        (feinter.hold_key('w', 1.5)
+         .hold_key('s', 2)
+         .wait(1.5))
 
     while not blader.enter_dungeon_dialog():
+        time.sleep(1)
+
+    while not hitter.enter_dungeon_dialog():
         time.sleep(1)
 
     """ Allows for health regen """
@@ -130,7 +132,7 @@ while True:
     driver_random = user_order
     driver = driver_random[0][0]
 
-    driver.wait(2).face_arrow().hold_key('w', 3).wait(1)
+    driver.wait(2).face_arrow().hold_key('w', 3).wait(.2)
 
     if not driver.is_DS_loading():
         """ Retry exiting """
