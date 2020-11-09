@@ -537,6 +537,8 @@ class wizAPI:
         """ Closes user's bag """
         self.press_key('b')
     
+        (self.set_active()
+            .move_mouse(669, 189, speed=0.5))
     def lm_attack(self, wizard_type, boss_pos):
         wizard_type = wizard_type.split('.')[0].split('_')[1]
 
