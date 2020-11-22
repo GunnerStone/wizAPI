@@ -49,7 +49,7 @@ def print_time(timer):
 
 
 ROUND_COUNT = 0
-user_order = [[feinter, 'friend_feinter.png'], [hitter, 'friend_hitter.png'], [blader, 'friend_blader.png']]
+user_order = [[feinter, 'feinter.png'], [hitter, 'hitter.png'], [blader, 'blader.png']]
 
 while True:
     START_TIME = time.time()

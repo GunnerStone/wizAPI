@@ -627,7 +627,7 @@ class wizAPI:
 
     #Loremaster Random attack sequence
     def lm_attack(self, wizard_type, boss_pos):
-        wizard_type = wizard_type.split('.')[0].split('_')[1]
+        wizard_type = wizard_type.split('.')[0]
 
         print(wizard_type)
 
@@ -697,7 +697,7 @@ class wizAPI:
 
     #Catacombs Random attack sequence
     def catacombs_attack(self, wizard_type, boss_pos):
-        wizard_type = wizard_type.split('.')[0].split('_')[1]
+        wizard_type = wizard_type.split('.')[0]
 
         print(wizard_type)
 
