@@ -56,8 +56,8 @@ while True:
     ROUND_COUNT += 1
     print_separator('ROUND', str(ROUND_COUNT))
 
-    """ Quick sell every 10 rounds"""
-    if(ROUND_COUNT % 10 == 0):
+    """ Quick sell every 50 rounds"""
+    if(ROUND_COUNT % 50 == 0):
         feinter.quick_sell(False, False)
         hitter.quick_sell(False, False)
         blader.quick_sell(False, False)
@@ -66,18 +66,13 @@ while True:
     time.sleep(1)
 
     while not feinter.enter_dungeon_dialog():
-        (feinter.hold_key('w', 1.5)
-         .hold_key('s', 2)
-         .wait(1.5))
+        time.sleep(1)
 
     while not blader.enter_dungeon_dialog():
         time.sleep(1)
 
     while not hitter.enter_dungeon_dialog():
         time.sleep(1)
-
-    """ Allows for health regen """
-    time.sleep(1)
 
     random.shuffle(user_order)
 
@@ -90,9 +85,9 @@ while True:
     print('All players have entered the dungeon')
 
     """ Check health and use potion if necessary """
-    feinter.use_potion_if_needed()
-    hitter.use_potion_if_needed()
-    blader.use_potion_if_needed()
+    user_order[0][0].use_potion_if_needed()
+    user_order[1][0].use_potion_if_needed()
+    user_order[2][0].use_potion_if_needed()
 
     """ Run into battle """
     feinter.hold_key('w', random.uniform(4.5, 5))
