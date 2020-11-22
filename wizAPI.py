@@ -227,12 +227,12 @@ class wizAPI:
         #wait until loading is done
         play_btn = self.screenshotRAM(region=self._login_area)
 
-        found = self.match_image(play_btn, 'play.png' , threshold=.2)
+        found = self.match_image(play_btn, 'buttons/play.png' , threshold=.2)
 
         while (found == False):
             self.wait(1)
             play_btn = self.screenshotRAM(region=self._login_area)
-            found = self.match_image(play_btn, 'play.png' , threshold=.2)
+            found = self.match_image(play_btn, 'buttons/play.png' , threshold=.2)
             
         #press play button
         self.click(405,573+36,delay=.2)
@@ -493,7 +493,7 @@ class wizAPI:
 
         enemy_area = self.screenshotRAM(region=self._enemy_area)
 
-        found = self.match_image(enemy_area, enemy_img, threshold=.2)
+        found = self.match_image(enemy_area, 'icons/enemy/' + enemy_img, threshold=.2)
 
         if found is not False:
             found_x, _ = found
@@ -508,7 +508,7 @@ class wizAPI:
 
         friendly_area = self.screenshotRAM(region=self._friendly_area)
 
-        found = self.match_image(friendly_area, friendly_img, threshold=.2)
+        found = self.match_image(friendly_area, 'icons/friends' + friendly_img, threshold=.2)
 
         if found is not False:
             found_x, _ = found
