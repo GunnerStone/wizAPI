@@ -186,7 +186,7 @@ class wizAPI:
         friend_area = self.screenshotRAM(region=self._friends_area)
 
         found = self.match_image(
-            friend_area, match_img)
+            friend_area, 'icons/friends/' + match_img)
 
         if found is not False:
             x, y = found
@@ -508,7 +508,7 @@ class wizAPI:
 
         friendly_area = self.screenshotRAM(region=self._friendly_area)
 
-        found = self.match_image(friendly_area, 'icons/friends' + friendly_img, threshold=.2)
+        found = self.match_image(friendly_area, 'icons/teammate/' + friendly_img, threshold=.2)
 
         if found is not False:
             found_x, _ = found
