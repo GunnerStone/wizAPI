@@ -2,6 +2,7 @@ import win32gui
 import pyautogui
 import cv2
 import time
+import numpy
 
 
 class wizAPI:
@@ -12,6 +13,7 @@ class wizAPI:
         self._spell_area = (245, 290, 370, 70)
         self._enemy_area = (68, 26, 650, 35)
         self._friendly_area = (136, 536, 650, 70)
+        self._login_area = (307,553+36,187,44)
 
     def wait(self, s):
         """ Alias for time.sleep() that return self for function chaining """
@@ -57,8 +59,17 @@ class wizAPI:
         method = cv2.TM_SQDIFF_NORMED
 
         # Read the images from the file
-        small_image = cv2.imread(smallImg)
-        large_image = cv2.imread(largeImg)
+        print(type(smallImg))
+        print(type(largeImg))
+        if(type(smallImg) is str):
+            small_image = cv2.imread(smallImg)
+        else:
+            small_image = cv2.cvtColor(numpy.array(smallImg), cv2.COLOR_RGB2BGR)
+        if(type(largeImg) is str):
+            large_image = cv2.imread(largeImg)
+        else:
+            large_image = cv2.cvtColor(numpy.array(largeImg), cv2.COLOR_RGB2BGR)
+        
         w, h = small_image.shape[:-1]
 
         result = cv2.matchTemplate(small_image, large_image, method)
@@ -133,6 +144,28 @@ class wizAPI:
             region[1] += wy
 
         pyautogui.screenshot(name, region=region)
+    
+    def screenshotRAM(self, region=False):
+        """ 
+        - Captures a screenshot of the window and saves it to 'name' 
+        - Can also be used the capture specific parts of the window by passing in the region arg. (x, y, width, height) (Relative to the window position) 
+
+        """
+        self.set_active()
+        # region should be a tuple
+        # Example: (x, y, width, height)
+        window = self.get_window_rect()
+        if not region:
+            # Set the default region to the area of the window
+            region = window
+        else:
+            # Adjust the region so that it is relative to the window
+            wx, wy = window[:2]
+            region = list(region)
+            region[0] += wx
+            region[1] += wy
+
+        return pyautogui.screenshot(region=region)
 
     def teleport_to_friend(self, match_img):
         """
@@ -150,10 +183,10 @@ class wizAPI:
         self.click(780, 50)
 
         # Find friend that matches friend match_img
-        self.screenshot('friend_area.png', region=self._friends_area)
+        friend_area = self.screenshotRAM(region=self._friends_area)
 
         found = self.match_image(
-            'friend_area.png', match_img)
+            friend_area, match_img)
 
         if found is not False:
             x, y = found
@@ -177,6 +210,32 @@ class wizAPI:
         """ Matches an orange pixel in the Dragonspyre loading screen """
         self.set_active()
         return self.pixel_matches_color((108, 551), (252, 127, 5), 20)
+
+    def is_CAT_loading(self):
+        """ Matches an orange pixel in the Dragonspyre loading screen """
+        self.set_active()
+        return self.pixel_matches_color((623, 490+36), (255, 130, 16), 20)
+
+    def logout(self,isDungeon=False):
+        self.set_active()
+        self.press_key('esc')
+        #move mouse to quit button & click
+        self.click(265,482+36,delay=.2)
+        #if in dungeon, acknowledge the prompt
+        if(isDungeon==True):
+            self.click(411,386+36,delay=.2)
+        #wait until loading is done
+        play_btn = self.screenshotRAM(region=self._login_area)
+
+        found = self.match_image(play_btn, 'play.png' , threshold=.2)
+
+        while (found == False):
+            self.wait(1)
+            play_btn = self.screenshotRAM(region=self._login_area)
+            found = self.match_image(play_btn, 'play.png' , threshold=.2)
+            
+        #press play button
+        self.click(405,573+36,delay=.2)
 
     def hold_key(self, key, holdtime):
         """ 
@@ -275,6 +334,9 @@ class wizAPI:
         self.set_active()
         tries = 0
         res = False
+
+        spell_area = self.screenshotRAM(region=self._spell_area)
+
         while not res and tries < max_tries:
             tries += 1
 
@@ -283,12 +345,14 @@ class wizAPI:
                 self.wait(1)
                 recapture = True
 
+            
+
             if recapture:
                 self.mouse_out_of_area(self._spell_area)
-                self.screenshot('spell_area.png', region=self._spell_area)
+                spell_area = self.screenshotRAM(region=self._spell_area)
 
             res = self.match_image(
-                'spell_area.png', ('spells/' + spell_name + '.png'), threshold)
+                spell_area, ('spells/' + spell_name + '.png'), threshold)
 
         if res is not False:
             x, y = res
@@ -305,9 +369,10 @@ class wizAPI:
         """ Useful for farming Loremaster, it prevents getting a crowded deck if you learn a new spell """
         self.set_active()
         self.mouse_out_of_area(self._spell_area)
-        self.screenshot('spell_area.png', region=self._spell_area)
+        spell_area = self.screenshotRAM(region=self._spell_area)
         w, h = (28, 38)  # The size of the gray area we're looking for
-        img = cv2.imread('spell_area.png')
+        #img = cv2.imread('spell_area.png')
+        img = cv2.cvtColor(numpy.array(spell_area), cv2.COLOR_RGB2BGR)
         rows, cols = img.shape[:2]
         pts = []
 
@@ -426,9 +491,9 @@ class wizAPI:
         (In my example, the image to match is the balance symbol, as only the Loremaster has it in this fight. It could also be a screenshot of the name of the enemy in question)
         """
 
-        self.screenshot('enemy_area.png', region=self._enemy_area)
+        enemy_area = self.screenshotRAM(region=self._enemy_area)
 
-        found = self.match_image('enemy_area.png', enemy_img, threshold=.2)
+        found = self.match_image(enemy_area, enemy_img, threshold=.2)
 
         if found is not False:
             found_x, _ = found
@@ -441,9 +506,9 @@ class wizAPI:
         Checks if player is in position - posisble use case includes checking if there are 3 or two wizards in battle
         """
 
-        self.screenshot('friendly_area.png', region=self._friendly_area)
+        friendly_area = self.screenshotRAM(region=self._friendly_area)
 
-        found = self.match_image('friendly_area.png', friendly_img, threshold=.2)
+        found = self.match_image(friendly_area, friendly_img, threshold=.2)
 
         if found is not False:
             found_x, _ = found
@@ -539,6 +604,28 @@ class wizAPI:
     
         (self.set_active()
             .move_mouse(669, 189, speed=0.5))
+
+    def set_active_quest(self,quest_index=1):
+        #Opens users quest log
+        self.press_key('q')
+        #clicks on quest at given index
+        if(quest_index==1):
+            self.click(267,202,delay=.2)
+        elif(quest_index==2):
+            self.click(517,202,delay=.2)
+        elif(quest_index==3):
+            self.click(267,430,delay=.2)
+        elif(quest_index==4):
+            self.click(267,430,delay=.2)
+        else:
+            print("Give a valid quest position")
+        #close quest menu
+        self.press_key('q')
+        #get mouse out of the way of other things
+        (self.set_active()
+            .move_mouse(669, 189, speed=0.5))
+
+    #Loremaster Random attack sequence
     def lm_attack(self, wizard_type, boss_pos):
         wizard_type = wizard_type.split('.')[0].split('_')[1]
 
@@ -604,6 +691,73 @@ class wizAPI:
 
             elif self.find_spell('feint'):
                 self.cast_spell('feint').at_target(boss_pos)
+
+            else:
+                self.pass_turn()
+
+    #Catacombs Random attack sequence
+    def catacombs_attack(self, wizard_type, boss_pos):
+        wizard_type = wizard_type.split('.')[0].split('_')[1]
+
+        print(wizard_type)
+
+        if(wizard_type == "feinter"):
+            """ Feinter plays """
+            # Check to see if deck is crowded with unusable spells
+            cn = len(self.find_unusable_spells())
+            if cn > 2:
+                self.discard_unusable_spells(cn)
+
+            # Play
+            if self.enchant('feint', 'potent'):
+                self.cast_spell('feint-potent').at_target(boss_pos)
+
+            elif self.find_spell('feint'):
+                self.cast_spell('feint').at_target(boss_pos)
+
+            else:
+                self.pass_turn()
+        
+        if(wizard_type == "hitter"):
+            """ Hitter plays """
+            # Check to see if deck is crowded with unusable spells
+            cn = len(self.find_unusable_spells())
+            # Discard the spells
+            if cn > 2:
+                self.discard_unusable_spells(cn)
+
+            # Play
+            if (self.find_spell('glowbug-squall', threshold=0.05, max_tries=3) and
+                    self.enchant('glowbug-squall', 'epic')):
+                self.find_spell('glowbug-squall-enchanted', max_tries=4)
+                self.cast_spell('glowbug-squall-enchanted')
+
+            elif self.find_spell('tempest-enchanted', max_tries=1):
+                self.cast_spell('tempest-enchanted')
+
+            elif self.enchant('tempest', 'epic'):
+                self.find_spell('tempest-enchanted', max_tries=4)
+                self.cast_spell('tempest-enchanted')
+
+            elif self.find_spell('glowbug-squall-enchanted', threshold=.05):
+                self.cast_spell('glowbug-squall-enchanted')
+
+            elif self.find_spell('glowbug-squall', threshold=.05):
+                self.cast_spell('glowbug-squall')
+
+            else:
+                self.pass_turn()
+        
+        if(wizard_type == "blader"):
+            """ Blader plays """
+            # Check to see if deck is crowded with unusable spells
+            cn = len(self.find_unusable_spells())
+            if cn > 2:
+                self.discard_unusable_spells(cn)
+
+            # Play
+            if self.find_spell('mass_feint'):
+                self.cast_spell('mass_feint')
 
             else:
                 self.pass_turn()
