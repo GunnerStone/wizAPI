@@ -56,8 +56,8 @@ while True:
     ROUND_COUNT += 1
     print_separator('ROUND', str(ROUND_COUNT))
 
-    """ Quick sell every 50 rounds"""
-    if(ROUND_COUNT % 50 == 0):
+    """ Quick sell every 25 rounds"""
+    if(ROUND_COUNT % 25 == 0):
         feinter.quick_sell(False, False)
         hitter.quick_sell(False, False)
         blader.quick_sell(False, False)
