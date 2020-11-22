@@ -59,8 +59,8 @@ class wizAPI:
         method = cv2.TM_SQDIFF_NORMED
 
         # Read the images from the file
-        print(type(smallImg))
-        print(type(largeImg))
+        # print(type(smallImg))
+        # print(type(largeImg))
         if(type(smallImg) is str):
             small_image = cv2.imread(smallImg)
         else:
