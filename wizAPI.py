@@ -758,7 +758,8 @@ class wizAPI:
             # Play
             if self.find_spell('mass_feint'):
                 self.cast_spell('mass_feint')
-
+            elif self.find_spell('unicorn'):
+                self.cast_spell('unicorn')
             else:
                 self.pass_turn()
 
