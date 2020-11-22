@@ -82,7 +82,7 @@ while True:
 
     feinter.wait_for_next_turn()
 
-    boss_pos = feinter.get_enemy_pos('bossmatch.png')
+    boss_pos = feinter.get_enemy_pos('balance.png')
     print('Boss at pos', boss_pos)
 
     inFight = True

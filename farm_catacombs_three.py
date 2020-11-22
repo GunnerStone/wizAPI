@@ -101,7 +101,7 @@ while True:
     feinter.wait_for_next_turn()
 
     #ELITE MINION IS FIRE SCHOOL
-    boss_pos = feinter.get_enemy_pos('firematch.jpg')
+    boss_pos = feinter.get_enemy_pos('fire.jpg')
     print('Boss at pos', boss_pos)
 
     inFight = True
