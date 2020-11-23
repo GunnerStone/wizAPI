@@ -291,7 +291,7 @@ class wizAPI:
         return self.pixel_matches_color((238, 398), (255, 255, 0), 20)
     
     def is_turn_to_play_pass(self):
-        pic = self.screenshot(region=(190, 385, 440, 40))
+        pic = self.screenshotRAM(region=(190, 385, 440, 40))
 
         found = self.match_image(pic, 'buttons/pass.png', threshold=.2)
 
