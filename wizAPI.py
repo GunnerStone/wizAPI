@@ -326,7 +326,7 @@ class wizAPI:
 
         """ Start detecting if it's our turn to play again """
         """ Or if it's the end of the battle """
-        while not (self.find_button('done')):
+        while not (self.is_turn_to_play_pass() or self.is_idle() or self.find_button('done')):
             self.wait(1)
         return self
 

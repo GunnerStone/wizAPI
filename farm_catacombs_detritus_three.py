@@ -239,7 +239,8 @@ while True:
     
     print("Exiting...")
     
-    feinter.recall_location()
+    # feinter.recall_location()
+    feinter.logout()
 
     await_finished_loading([feinter])
     print('Successfully exited the dungeon')
