@@ -61,8 +61,8 @@ while True:
         feinter.quick_sell(False, False)
         hitter.quick_sell(False, False)
         blader.quick_sell(False, False)
-
     """ Attempt to enter the dungeon """
+    
     time.sleep(1)
 
     while not feinter.enter_dungeon_dialog():
@@ -79,7 +79,7 @@ while True:
     user_order[0][0].press_key('x').wait(random.uniform(0.5, 1.5))
     user_order[1][0].press_key('x').wait(random.uniform(0.2, 1.7))
     user_order[2][0].press_key('x').wait(random.uniform(0.3, 1.3))
-
+    
     await_finished_loading([feinter, hitter, blader])
 
     print('All players have entered the dungeon')
@@ -120,6 +120,7 @@ while True:
         feinter.wait_for_end_of_round()
         if feinter.is_idle():
             inFight = False
+            
     print("Battle has ended")
 
     print("Exiting...")

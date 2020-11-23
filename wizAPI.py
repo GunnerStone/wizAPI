@@ -289,6 +289,16 @@ class wizAPI:
     def is_turn_to_play(self):
         """ matches a yellow pixel in the 'pass' button """
         return self.pixel_matches_color((238, 398), (255, 255, 0), 20)
+    
+    def is_turn_to_play_pass(self):
+        pic = self.screenshot(region=(190, 385, 440, 40))
+
+        found = self.match_image(pic, 'buttons/pass.png', threshold=.2)
+
+        if found is not False:
+            return True
+        else:
+            return False
 
     def wait_for_next_turn(self):
         """ Wait for spell round to begin """
@@ -316,19 +326,19 @@ class wizAPI:
 
         """ Start detecting if it's our turn to play again """
         """ Or if it's the end of the battle """
-        while not (self.is_turn_to_play() or self.is_idle() or self.find_button('done')):
+        while not (self.find_button('done')):
             self.wait(1)
         return self
 
     def wait_for_end_of_round(self):
         """ Similar to wait_for_next_turn, but also detects if its the end of the battle """
         """ Wait for spell round to begin """
-        while self.is_turn_to_play():
+        while self.is_turn_to_play_pass():
             self.wait(1)
 
         """ Start detecting if it's our turn to play again """
         """ Or if it's the end of the battle """
-        while not (self.is_turn_to_play() or self.is_idle()):
+        while not (self.is_turn_to_play_pass() or self.is_idle()):
             self.wait(1)
         return self
 
@@ -357,7 +367,6 @@ class wizAPI:
                 self.wait(1)
                 recapture = True
 
-            
 
             if recapture:
                 self.mouse_out_of_area(self._spell_area)
