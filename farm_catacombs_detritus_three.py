@@ -93,7 +93,7 @@ while True:
     user_order[2][0].use_potion_if_needed()
 
     """ Run into first battle """
-    feinter.hold_key('w', random.uniform(2, 3)).wait(1)
+    feinter.hold_key('w', random.uniform(2.2, 3)).wait(1)
     feinter.clear_dialog(1)
     blader.clear_dialog(1)
     hitter.clear_dialog(1)
