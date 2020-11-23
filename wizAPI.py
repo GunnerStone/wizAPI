@@ -670,7 +670,7 @@ class wizAPI:
 
         screenshot = self.screenshotRAM(region=(136, 536, 650, 87))
 
-        found = self.match_image(screenshot, 'buttons/' + button_img + '.png', threshold=.2)
+        found = self.match_image(screenshot, 'buttons/' + button_img + '.png', threshold=.1)
 
         if found is not False:
             return True
