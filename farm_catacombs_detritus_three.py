@@ -119,7 +119,7 @@ while True:
         user_order[1][0].catacombs_detritus_attack(wizard_type = user_order[1][1], boss_pos = boss_pos, boss_battle=False)
         user_order[2][0].catacombs_detritus_attack(wizard_type = user_order[2][1], boss_pos = boss_pos, boss_battle=False)
 
-        feinter.wait_for_end_of_round()
+        feinter.wait_for_end_of_round_dialog()
         
         if feinter.is_idle():
             inFight = False
@@ -171,7 +171,7 @@ while True:
         user_order[1][0].catacombs_detritus_attack(wizard_type = user_order[1][1], boss_pos = boss_pos, boss_battle=False)
         user_order[2][0].catacombs_detritus_attack(wizard_type = user_order[2][1], boss_pos = boss_pos, boss_battle=False)
 
-        feinter.wait_for_end_of_round()
+        feinter.wait_for_end_of_round_dialog()
         if feinter.is_idle():
             inFight = False
         if feinter.find_button('done'):
@@ -230,7 +230,7 @@ while True:
         user_order[1][0].catacombs_detritus_attack(wizard_type = user_order[1][1], boss_pos = boss_pos, boss_battle=True)
         user_order[2][0].catacombs_detritus_attack(wizard_type = user_order[2][1], boss_pos = boss_pos, boss_battle=True)
 
-        feinter.wait_for_end_of_round()
+        feinter.wait_for_end_of_round_dialog()
         if feinter.is_idle():
             inFight = False
         if feinter.find_button('done'):
