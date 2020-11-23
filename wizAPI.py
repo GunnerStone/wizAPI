@@ -316,7 +316,7 @@ class wizAPI:
 
         """ Start detecting if it's our turn to play again """
         """ Or if it's the end of the battle """
-        while not (self.is_turn_to_play() or self.is_idle()):
+        while not (self.is_turn_to_play() or self.is_idle() or self.find_button('done')):
             self.wait(1)
         return self
 
@@ -523,6 +523,13 @@ class wizAPI:
         self.click(x, y, delay=.2)
         return self
 
+    def at_friendly(self, target_pos):
+        """ Clicks the target, based on position 1, 2, 3, or 4 """
+        x = (174 * (target_pos - 1)) + 150
+        y = 600
+        self.click(x, y, delay=.2)
+        return self
+
     def mouse_out_of_area(self, area):
         """ Move the mouse outside of an area, to make sure the mouse doesn't interfere with image matching """
         # Adjust the region so that it is relative to the window
@@ -625,6 +632,30 @@ class wizAPI:
         (self.set_active()
             .move_mouse(669, 189, speed=0.5))
 
+    def mark_location(self):
+        self.press_key('pagedown')
+
+    def recall_location(self):
+        self.press_key('pageup')
+
+    def clear_dialog(self, total_dialog):
+        for x in range(total_dialog):
+            self.press_key('space').wait(.2)
+
+    def find_button(self, button_img):
+        """ 
+        Checks if player is in position - posisble use case includes checking if there are 3 or two wizards in battle
+        """
+
+        friendly_area = self.screenshotRAM(region=self._friendly_area)
+
+        found = self.match_image(friendly_area, 'buttons/' + button_img + '.png', threshold=.2)
+
+        if found is not False:
+            return True
+        else:
+            return False
+
     #Loremaster Random attack sequence
     def lm_attack(self, wizard_type, boss_pos):
         wizard_type = wizard_type.split('.')[0]
@@ -695,7 +726,7 @@ class wizAPI:
             else:
                 self.pass_turn()
 
-    #Catacombs Random attack sequence
+    #Catacombs Extract Random attack sequence
     def catacombs_attack(self, wizard_type, boss_pos):
         wizard_type = wizard_type.split('.')[0]
 
@@ -758,6 +789,89 @@ class wizAPI:
             # Play
             if self.find_spell('Death', 'mass_feint'):
                 self.cast_spell('Death', 'mass_feint')
+            elif self.find_spell('Life', 'pigsie'):
+                self.cast_spell('Life', 'pigsie')
+            elif self.find_spell('Life', 'unicorn'):
+                self.cast_spell('Life', 'unicorn')
+            else:
+                self.pass_turn()
+        
+        #Catacombs Detritus Extract attack sequence
+    def catacombs_detritus_attack(self, wizard_type, boss_pos, boss_battle=False):
+        wizard_type = wizard_type.split('.')[0]
+
+        print(wizard_type)
+
+        if(wizard_type == "feinter"):
+            """ Feinter plays """
+            # Check to see if deck is crowded with unusable spells
+            cn = len(self.find_unusable_spells())
+            if cn > 2:
+                self.discard_unusable_spells(cn)
+
+            if(boss_battle):
+                # Play
+                if self.enchant('Death', 'feint', 'Sun', 'potent'):
+                    self.cast_spell('Death', 'feint-potent').at_target(boss_pos)
+                
+                elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen'):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
+                
+                else:
+                    self.pass_turn()
+            else:
+                # Play
+                if self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen'):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
+                
+                else:
+                    self.pass_turn()
+        
+        if(wizard_type == "hitter"):
+            """ Hitter plays """
+            # Check to see if deck is crowded with unusable spells
+            cn = len(self.find_unusable_spells())
+            # Discard the spells
+            if cn > 2:
+                self.discard_unusable_spells(cn)
+            if(boss_battle):
+                # Play
+                if self.find_spell('Death', 'feint'):
+                    self.cast_spell('Death', 'feint').at_target(boss_pos)
+                
+                elif self.enchant('Storm', 'storm_blade', 'Sun', 'aegis'):
+                    self.cast_spell('Balance', 'enchanted_storm_blade').at_friendly(2) #Casts at third wizard
+                
+                elif self.find_spell('Storm', 'tempest-enchanted', max_tries=1):
+                    self.cast_spell('Storm', 'tempest-enchanted')
+                
+                elif self.enchant('Storm', 'tempest', 'Sun', 'epic'):
+                    self.find_spell('Storm', 'tempest-enchanted', max_tries=4)
+                    self.cast_spell('Storm', 'tempest-enchanted')
+                else:
+                    self.pass_turn()
+            else:
+                if self.find_spell('Storm', 'tempest-enchanted', max_tries=1):
+                    self.cast_spell('Storm', 'tempest-enchanted')
+
+                elif self.enchant('Storm', 'tempest', 'Sun', 'epic'):
+                    self.find_spell('Storm', 'tempest-enchanted', max_tries=4)
+                    self.cast_spell('Storm', 'tempest-enchanted')
+
+                else:
+                    self.pass_turn()
+        if(wizard_type == "blader"):
+            """ Blader plays """
+            # Check to see if deck is crowded with unusable spells
+            cn = len(self.find_unusable_spells())
+            if cn > 2:
+                self.discard_unusable_spells(cn)
+
+            # Play
+            if self.find_spell('Death', 'mass_feint'):
+                self.cast_spell('Death', 'mass_feint')
+            elif self.enchant('Balance', 'elemental_blade', 'Sun', 'aegis'):
+                self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
             elif self.find_spell('Life', 'pigsie'):
                 self.cast_spell('Life', 'pigsie')
             elif self.find_spell('Life', 'unicorn'):

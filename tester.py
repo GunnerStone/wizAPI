@@ -1,6 +1,8 @@
 from wizAPI import *
 import time
+import keyboard
 
 tester = wizAPI().register_window(nth=0)
 
-tester.logout(isDungeon=True)
+print(tester.find_button('done'))
+# tester.logout(isDungeon=True)
