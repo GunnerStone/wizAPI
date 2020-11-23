@@ -50,7 +50,7 @@ def print_time(timer):
 
 ROUND_COUNT = 0
 user_order = [[feinter, 'feinter.png'], [hitter, 'hitter.png'], [blader, 'blader.png']]
-boss_pos = 0
+boss_pos = feinter.get_enemy_pos('sun.png')
 
 while True:
     START_TIME = time.time()
