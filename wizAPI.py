@@ -308,7 +308,7 @@ class wizAPI:
         while not self.is_turn_to_play():
             self.wait(.5)
 
-    def wait_for_end_of_round(self):
+    def wait_for_end_of_round_dialog(self):
         """ Similar to wait_for_next_turn, but also detects if its the end of the battle """
         """ Wait for spell round to begin """
         while self.is_turn_to_play():
@@ -317,6 +317,18 @@ class wizAPI:
         """ Start detecting if it's our turn to play again """
         """ Or if it's the end of the battle """
         while not (self.is_turn_to_play() or self.is_idle() or self.find_button('done')):
+            self.wait(1)
+        return self
+
+    def wait_for_end_of_round(self):
+        """ Similar to wait_for_next_turn, but also detects if its the end of the battle """
+        """ Wait for spell round to begin """
+        while self.is_turn_to_play():
+            self.wait(1)
+
+        """ Start detecting if it's our turn to play again """
+        """ Or if it's the end of the battle """
+        while not (self.is_turn_to_play() or self.is_idle()):
             self.wait(1)
         return self
 
