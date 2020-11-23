@@ -840,7 +840,7 @@ class wizAPI:
                     self.cast_spell('Death', 'feint').at_target(boss_pos)
                 
                 elif self.enchant('Storm', 'storm_blade', 'Sun', 'aegis'):
-                    self.cast_spell('Balance', 'enchanted_storm_blade').at_friendly(2) #Casts at third wizard
+                    self.cast_spell('Storm', 'enchanted_storm_blade').at_friendly(2) #Casts at third wizard
                 
                 elif self.find_spell('Storm', 'tempest-enchanted', max_tries=1):
                     self.cast_spell('Storm', 'tempest-enchanted')
