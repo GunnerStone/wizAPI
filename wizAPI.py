@@ -668,9 +668,9 @@ class wizAPI:
         Checks if player is in position - posisble use case includes checking if there are 3 or two wizards in battle
         """
 
-        friendly_area = self.screenshotRAM(region=self._friendly_area)
+        screenshot = self.screenshotRAM('test.png', region=(136, 536, 650, 87))
 
-        found = self.match_image(friendly_area, 'buttons/' + button_img + '.png', threshold=.2)
+        found = self.match_image(screenshot, 'buttons/' + button_img + '.png', threshold=.2)
 
         if found is not False:
             return True

@@ -126,6 +126,7 @@ while True:
         if feinter.find_button('done'):
             inFight = False
     print("Battle 1 has ended")
+    feinter.wait(.5)
 
     feinter.clear_dialog(1)
     blader.clear_dialog(1)

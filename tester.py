@@ -2,7 +2,7 @@ from wizAPI import *
 import time
 import keyboard
 
-tester = wizAPI().register_window(nth=0)
+tester = wizAPI().register_window(nth=1)
 
-print(tester.is_turn_to_play_pass())
+print(tester.find_button('done'))
 # tester.logout(isDungeon=True)
