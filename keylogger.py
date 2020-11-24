@@ -22,7 +22,7 @@ def key_recording(e):
     if e.name == "o" and e.event_type == keyboard.KEY_DOWN:
         print("[", end='')
         for i in range(len(keys)):
-            print(keys[i], end='')
+            print('\'' + keys[i] + '\'', end='')
             if(i < len(keys) - 1):
                 print(",", end='')
         print("],", end='')
@@ -38,16 +38,17 @@ def key_recording(e):
             if(i < len(wait_times) - 1):
                 print(",", end='')
         print("]")
-    if e.name not in HISTORY and e.event_type == keyboard.KEY_DOWN:
-        HISTORY[e.name] = time.time()
-    elif e.name in HISTORY and e.event_type == keyboard.KEY_UP:
-        # print(f"The key {e.name} is pressed for {round(e.time - HISTORY.pop(e.name), 3)} seconds")
-        if (e.name != 'w'):
-            hold_times.append(round(time.time() - HISTORY.pop(e.name), 3))
-            keys.append(e.name)
-            wait_times.append(round(time.time() - HISTORY['w'], 3))
-        else:
-            print(f"t = Thread(target=tester.hold_key, args=('{e.name}', {round(time.time() - HISTORY.pop(e.name), 3)}, 0))\nthreads.append(t)\n")
+    else: 
+        if e.name not in HISTORY and e.event_type == keyboard.KEY_DOWN:
+            HISTORY[e.name] = time.time()
+        elif e.name in HISTORY and e.event_type == keyboard.KEY_UP:
+            # print(f"The key {e.name} is pressed for {round(e.time - HISTORY.pop(e.name), 3)} seconds")
+            if (e.name != 'w'):
+                hold_times.append(round(time.time() - HISTORY.pop(e.name), 3))
+                keys.append(e.name)
+                wait_times.append(round(time.time() - HISTORY['w'], 3))
+            else:
+                print(f"t = Thread(target=tester.hold_key, args=('{e.name}', {round(time.time() - HISTORY.pop(e.name), 3)}, 0))\nthreads.append(t)\n")
 
 keyboard.hook(key_recording)
 
