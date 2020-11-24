@@ -2,6 +2,7 @@ from wizAPI import *
 import time
 import math
 import random
+from threading import Thread
 
 """ Register windows """
 try:
@@ -32,6 +33,9 @@ def await_finished_loading(windows):
         while not w.is_idle():
             time.sleep(.5)
 
+def clear_dialog(windows, total_dialog):
+    for w in windows:
+        w.clear_dialog(total_dialog)
 
 def print_separator(*args):
     sides = '+'*16
@@ -47,10 +51,107 @@ def print_time(timer):
     seconds = math.floor(timer % 60)
     print('Round lasted {} minutes and {} seconds.'.format(minutes, seconds))
 
+# All code for battle approaches
+def walk_to_next_battle(wiz, battle):
+    threads = []
+
+    if(battle == 1):
+        if(wiz == "all"):
+            feinter.hold_key('w', random.uniform(2.2, 3)).wait(1)
+            clear_dialog([feinter, hitter, blader], 1)
+            blader.hold_key('w', random.uniform(2.3, 2.5))
+            hitter.hold_key('w', random.uniform(2, 2.5))
+
+            feinter.hold_key('w', random.uniform(1.3, 1.4))
+            blader.hold_key('w', random.uniform(1.2, 1.3))
+            hitter.hold_key('w', random.uniform(1.3, 3))
+
+    if(battle == 2):
+        if(wiz == "feinter"):
+            t = Thread(target=feinter.hold_key, args=('w', 4.114, 0))
+            threads.append(t)
+
+            t = Thread(target=feinter.hold_key, args=('a', 0.119, 0.806))
+            threads.append(t)
+
+            t = Thread(target=feinter.hold_key, args=('a', 0.146, 1.388))
+            threads.append(t)
+
+            t = Thread(target=feinter.hold_key, args=('d', 0.035, 2.48))
+            threads.append(t)
+            
+            for x in threads:
+                x.start()
+
+            # Wait for all of them to finish
+            for x in threads:
+                x.join()
+
+            feinter.wait(.5)
+
+            clear_dialog([feinter, hitter, blader], 1)
+
+            threads = []
+
+            t = Thread(target=feinter.hold_key, args=('w', 5.462, 0))
+            threads.append(t)
+
+            t = Thread(target=feinter.hold_key, args=('a', 0.693, 0.668))
+            threads.append(t)
+
+            t = Thread(target=feinter.hold_key, args=('d', 0.508, 2.848))
+            threads.append(t)
+
+            t = Thread(target=feinter.hold_key, args=('d', 0.118, 3.518))
+            threads.append(t)
+
+        if(wiz == "hitter"):
+            # # Move one user to next fight
+            # hitter.wait(2).face_arrow()
+            # while hitter.find_button('done') is not True:
+            #     hitter.hold_key('w', 1)
+
+            # # Walking Sequence from Battle 1 to Battle 2
+            # hitter.wait(2).hold_key('a', 0.7).wait(.2)
+            # hitter.wait(2).hold_key('w', 2.8)
+            # hitter.wait(2).hold_key('d', .6)
+            # hitter.wait(2).hold_key('w', 2.8)
+            # hitter.wait(2).hold_key('d', .6)
+            t = Thread(target=hitter.hold_key, args=('w', 3.4, 0))
+            threads.append(t)
+
+            t = Thread(target=hitter.hold_key, args=('a', 0.7, 0.9))
+            threads.append(t)
+
+            t = Thread(target=hitter.hold_key, args=('d', 0.1, 2.0))
+            threads.append(t)
+
+            for x in threads:
+                x.start()
+
+            # Wait for all of them to finish
+            for x in threads:
+                x.join()
+
+            hitter.wait(.5)
+
+            clear_dialog([feinter, hitter, blader], 1)
+
+
+    # Start all threads
+    for x in threads:
+        x.start()
+
+    # Wait for all of them to finish
+    for x in threads:
+        x.join()
 
 ROUND_COUNT = 0
 user_order = [[feinter, 'feinter.png'], [hitter, 'hitter.png'], [blader, 'blader.png']]
 boss_pos = feinter.get_enemy_pos('sun.png')
+
+# Thread Init - Used for movement sequences
+threads = []
 
 while True:
     START_TIME = time.time()
@@ -93,16 +194,7 @@ while True:
     user_order[2][0].use_potion_if_needed()
 
     """ Run into first battle """
-    feinter.hold_key('w', random.uniform(2.2, 3)).wait(1)
-    feinter.clear_dialog(1)
-    blader.clear_dialog(1)
-    hitter.clear_dialog(1)
-    blader.hold_key('w', random.uniform(2.3, 2.5))
-    hitter.hold_key('w', random.uniform(2, 2.5))
-
-    feinter.hold_key('w', random.uniform(1.3, 1.4))
-    blader.hold_key('w', random.uniform(1.2, 1.3))
-    hitter.hold_key('w', random.uniform(1.3, 3))
+    walk_to_next_battle("all", 1)
 
     feinter.wait_for_next_turn()
 
@@ -128,25 +220,9 @@ while True:
     print("Battle 1 has ended")
     feinter.wait(.5)
 
-    feinter.clear_dialog(1)
-    blader.clear_dialog(1)
-    hitter.clear_dialog(1)
+    clear_dialog([feinter, hitter, blader], 1)
 
-    # Move one user to next fight
-    hitter.wait(2).face_arrow()
-    while hitter.find_button('done') is not True:
-        hitter.hold_key('w', 1)
-
-    #Clears Belgrim Dialogue
-    feinter.clear_dialog(1)
-    blader.clear_dialog(1)
-    hitter.clear_dialog(1)
-
-    hitter.wait(2).hold_key('a', 0.7).wait(.2)
-    hitter.wait(2).hold_key('w', 2.8).wait(.2)
-    hitter.wait(2).hold_key('d', .6).wait(.2)
-    hitter.wait(2).hold_key('w', 2.8).wait(.2)
-    hitter.wait(2).hold_key('d', .6).wait(.2)
+    walk_to_next_battle("feinter", 2)
 
     #TP Other users
     feinter.teleport_to_friend('hitter.png')
@@ -180,9 +256,7 @@ while True:
     print("Battle 2 has ended")
     feinter.wait(.5)
 
-    feinter.clear_dialog(1)
-    blader.clear_dialog(1)
-    hitter.clear_dialog(1)
+    clear_dialog([feinter, hitter, blader], 1)
 
     # Move one user to next fight
     hitter.wait(2).face_arrow().wait(.3)
@@ -200,9 +274,7 @@ while True:
     # Move forward just a tad
     hitter.hold_key('w', .7).wait(.2)
 
-    feinter.clear_dialog(6)
-    blader.clear_dialog(6)
-    hitter.clear_dialog(6)
+    clear_dialog([feinter, hitter, blader], 5)
 
     feinter.teleport_to_friend('hitter.png')
     blader.teleport_to_friend('hitter.png').wait(.3)
