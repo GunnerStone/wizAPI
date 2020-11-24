@@ -3,6 +3,7 @@ import pyautogui
 import cv2
 import time
 import numpy
+import ctypes
 
 
 class wizAPI:
@@ -237,16 +238,33 @@ class wizAPI:
         #press play button
         self.click(405,573+36,delay=.2)
 
-    def hold_key(self, key, holdtime):
+    def accurate_delay(self, delay):
+        ''' Function to provide accurate time delay in millisecond
+        '''
+        _ = time.perf_counter() + delay
+        while time.perf_counter() < _:
+            pass
+
+    def hold_key(self, key, holdtime, waittime=0):
         """ 
         Holds a key for a specific amount of time, usefull for moving with the W A S D keys 
         """
         self.set_active()
+        start = time.time()
+        while time.time() - start < waittime:
+            pass
+        start = time.time()
         pyautogui.keyDown(key)
-        time.sleep(holdtime)
+        while time.time() - start < holdtime:
+            pass
         pyautogui.keyUp(key)
-        return self
+        # if(waittime > 0):
+        #     self.accurate_delay(waittime)
+        # pyautogui.keyDown(key)
+        # self.accurate_delay(holdtime)
+        # pyautogui.keyUp(key)
 
+        return self
     def press_key(self, key):
         """
         Presses a key, useful for pressing 'x' to enter a dungeon
