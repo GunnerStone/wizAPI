@@ -791,7 +791,7 @@ class wizAPI:
                 self.pass_turn()
 
     #One round strat for most mobs
-    def mass_feint_strategy(self, wizard_type, boss_pos):
+    def mass_feint_attack(self, wizard_type, boss_pos):
         wizard_type = wizard_type.split('.')[0]
 
         print(wizard_type)
