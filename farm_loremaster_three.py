@@ -104,9 +104,6 @@ while True:
     boss_pos = feinter.get_enemy_pos('balance.png')
     print('Boss at pos', boss_pos)
 
-    friend_pos = feinter.get_friendly_pos('star.png')
-    print('Boss at pos', boss_pos)
-
     inFight = True
     battle_round = 0
 
