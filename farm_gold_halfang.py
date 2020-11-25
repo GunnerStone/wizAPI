@@ -66,9 +66,7 @@ while True:
     time.sleep(1)
 
     while not feinter.enter_dungeon_dialog():
-        (feinter.hold_key('w', 1.5)
-         .hold_key('s', 2)
-         .wait(1.5))
+        time.sleep(1)
 
     while not blader.enter_dungeon_dialog():
         time.sleep(1)
