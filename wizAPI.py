@@ -284,7 +284,7 @@ class wizAPI:
             start = time.time()
             while time.time() - start < holdtimes[i]:
                 pass
-            pyautogui.keyUp(key)
+            pyautogui.keyUp(keys[i])
 
             curr_time += waittimes[i]+holdtimes[i]
             
