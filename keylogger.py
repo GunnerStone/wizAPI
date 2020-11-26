@@ -41,12 +41,13 @@ def key_recording(e):
     else: 
         if e.name not in HISTORY and e.event_type == keyboard.KEY_DOWN:
             HISTORY[e.name] = time.time()
+            if (e.name != 'w'):
+                wait_times.append(round(time.time() - HISTORY['w'], 3))
         elif e.name in HISTORY and e.event_type == keyboard.KEY_UP:
             # print(f"The key {e.name} is pressed for {round(e.time - HISTORY.pop(e.name), 3)} seconds")
             if (e.name != 'w'):
                 hold_times.append(round(time.time() - HISTORY.pop(e.name), 3))
                 keys.append(e.name)
-                wait_times.append(round(time.time() - HISTORY['w'], 3))
             else:
                 print(f"t = Thread(target=tester.hold_key, args=('{e.name}', {round(time.time() - HISTORY.pop(e.name), 3)}, 0))\nthreads.append(t)\n")
 

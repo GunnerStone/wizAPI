@@ -245,18 +245,18 @@ class wizAPI:
         while time.perf_counter() < _:
             pass
 
-    def hold_key(self, key, holdtime=0.0, waittime=0.0):
+    def hold_key(self, key, holdtime=0.0):
         """ 
         Holds a key for a specific amount of time, usefull for moving with the W A S D keys 
         """
         self.set_active()
         start = time.time()
-        while time.time() - start < waittime:
-            pass
-        start = time.time()
         pyautogui.keyDown(key)
+        """
         while time.time() - start < holdtime:
             pass
+        """
+        time.sleep(holdtime)
         pyautogui.keyUp(key)
         # if(waittime > 0):
         #     self.accurate_delay(waittime)
@@ -275,18 +275,23 @@ class wizAPI:
             #wait until key needs to be pressed
             delay_time = waittimes[i]-curr_time
 
-            start = time.time()
+            """start = time.time()
             while time.time() - start < delay_time:
                 pass
+            """
+            time.sleep(delay_time)
 
             #hold key down for specified time
             pyautogui.keyDown(keys[i])
             start = time.time()
+            """
             while time.time() - start < holdtimes[i]:
                 pass
+            """
+            time.sleep(holdtimes[i]-.15)
             pyautogui.keyUp(keys[i])
 
-            curr_time += waittimes[i]+holdtimes[i]
+            curr_time = waittimes[i]+holdtimes[i]
             
 
         return self

@@ -8,10 +8,12 @@ while True:
 
     threads = []
 
-    t = Thread(target=tester.hold_key, args=('w', 13.752, 0))
+    t = Thread(target=tester.hold_key, args=('w', 8.109-.3))
     threads.append(t)
 
-    t = Thread(target=tester.navigate_keys, args=(['a','a','a','d','a','a','a','a','a','a','a','d'],[0.273,0.454,0.26,0.164,0.304,0.319,0.185,0.374,0.292,0.184,0.1,0.094],[1.195,2.013,2.931,4.18,5.501,6.723,7.494,9.511,10.747,11.707,12.259,12.689]))
+    arr1 , arr2, arr3 = ['a','d'],[0.651,0.471],[2.41,5.698]
+
+    t = Thread(target=tester.navigate_keys, args=(arr1,arr2,arr3))
     threads.append(t)
 
     
