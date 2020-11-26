@@ -134,6 +134,8 @@ while True:
     print('Successfully exited the dungeon')
 
     driver_random[1][0].teleport_to_friend(driver_random[0][1])
-    driver_random[2][0].teleport_to_friend(driver_random[0][1]).wait(random.uniform(4, 6))
+    driver_random[2][0].teleport_to_friend(driver_random[0][1]).wait(random.uniform(.5, 1))
+
+    await_finished_loading([driver_random[2][0]])
 
     print_time(time.time() - START_TIME)
