@@ -130,18 +130,6 @@ while True:
     """ Wait should be between 0.2 - 1.0 based on individual load speeds """
     driver.logout()
 
-    if not driver.is_DS_loading():
-        """ Retry exiting """
-        time.sleep(2)
-        while not driver.is_DS_loading():
-            driver.hold_key('s', 3)
-            if driver.is_DS_loading():
-                break
-            driver.face_arrow()
-            if driver.is_DS_loading():
-                break
-            driver.hold_key('w', 3.5).wait(2)
-
     await_finished_loading([driver])
     print('Successfully exited the dungeon')
 
