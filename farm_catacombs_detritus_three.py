@@ -160,11 +160,7 @@ while True:
 
     # feinter.mark_location()
 
-    """ Quick sell every 25 rounds"""
-    if(ROUND_COUNT % 3 == 0):
-        feinter.quick_sell(False, False)
-        hitter.quick_sell(False, False)
-        blader.quick_sell(False, False)
+    
 
     """ Attempt to enter the dungeon """
     time.sleep(1)
@@ -194,7 +190,16 @@ while True:
     user_order[2][0].use_potion_if_needed()
 
     """ Run into first battle """
-    walk_to_next_battle("all", 1)
+    #walk_to_next_battle("all", 1)
+    feinter.hold_key('w', random.uniform(2.2, 3)).wait(1.5)
+    clear_dialog([feinter, hitter, blader], 1)
+    blader.hold_key('w', random.uniform(2.3, 2.5))
+    hitter.hold_key('w', random.uniform(2, 2.5))
+
+    feinter.hold_key('w', random.uniform(1.3, 1.4))
+    blader.hold_key('w', random.uniform(1.2, 1.3))
+    hitter.hold_key('w', random.uniform(1.3, 3))
+
 
     feinter.wait_for_next_turn()
 
@@ -222,14 +227,70 @@ while True:
 
     clear_dialog([feinter, hitter, blader], 1)
 
-    walk_to_next_battle("feinter", 2)
+    feinter.hold_key('w', random.uniform(.1, .2))
+    blader.hold_key('w', random.uniform(.1, .2))
+
+    time.sleep(1)
+
+    threads = []
+
+    t = Thread(target=hitter.hold_key, kwargs=dict(key='w', holdtime=3.604))
+    threads.append(t)
+
+    arr1 , arr2, arr3 = ['a','d','a'],[0.767,0.175,0.17],[0.189,1.609,2.481]
+
+    t = Thread(target=hitter.navigate_keys, args=(arr1,arr2,arr3))
+    threads.append(t)
+
+    
+
+    # Start all threads
+    for x in threads:
+        x.start()
+
+    # Wait for all of them to finish
+    for x in threads:
+        x.join()
+
+    threads = []
+
+    clear_dialog([feinter, hitter, blader], 1)
+
+    #walk_to_next_battle("feinter", 2)
+
+    
+
+    threads = []
+
+    t = Thread(target=hitter.hold_key, kwargs=dict(key='w', holdtime=5.6))
+    threads.append(t)
+
+    arr1 , arr2, arr3 = ['a','d','d'],[0.742,0.742,0.832],[0.14,2.361,5.427]
+
+    t = Thread(target=hitter.navigate_keys, args=(arr1,arr2,arr3))
+    threads.append(t)
+
+    
+
+
+    
+
+    # Start all threads
+    for x in threads:
+        x.start()
+
+    # Wait for all of them to finish
+    for x in threads:
+        x.join()
+
+    threads = []
 
     #TP Other users
     feinter.teleport_to_friend('hitter.png')
-    blader.teleport_to_friend('hitter.png').wait(random.uniform(1, 3))
+    blader.teleport_to_friend('hitter.png').wait(random.uniform(2, 3))
 
     #Enter Next Fight
-    feinter.hold_key('w', random.uniform(.2, .3))
+    feinter.hold_key('w', random.uniform(.7, .9))
     blader.hold_key('w', random.uniform(1.3, 1.4))
     hitter.hold_key('w', random.uniform(1.3, 1.4))
 
@@ -258,26 +319,53 @@ while True:
 
     clear_dialog([feinter, hitter, blader], 1)
 
+    """
     # Move one user to next fight
     hitter.wait(2).face_arrow().wait(.3)
     hitter.hold_key('a', .01)
     hitter.hold_key('w', 3).wait(.2)
     hitter.press_key('x').wait(.2)
-    # Goes through 5 dialog boxes
-    hitter.clear_dialog(5)
-    hitter.wait(.5).face_arrow().wait(.2)
-    hitter.hold_key('a', .01)
-    hitter.hold_key('w', 2.1)
+    """
+
+    threads = []
+
+    t = Thread(target=feinter.hold_key, kwargs=dict(key='w', holdtime=3.367))
+    threads.append(t)
+
+    arr1 , arr2, arr3 = ['d'],[0.336],[2.721]
+
+    t = Thread(target=feinter.navigate_keys, args=(arr1,arr2,arr3))
+    threads.append(t)
+
+    # Start all threads
+    for x in threads:
+        x.start()
+
+    # Wait for all of them to finish
+    for x in threads:
+        x.join()
+    
+    time.sleep(.5)
+
+    feinter.press_key('x').wait(.2)
+    clear_dialog([feinter],5)
+
+
+    feinter.hold_key('d',0.7)
+
+    feinter.hold_key('w',1.5)
+
+    
     # Wait for loading
-    await_finished_loading([hitter])
+    await_finished_loading([feinter])
     
     # Move forward just a tad
-    hitter.hold_key('w', .7).wait(.2)
+    feinter.hold_key('w', .7).wait(.2)
 
-    clear_dialog([feinter, hitter, blader], 5)
+    clear_dialog([feinter, hitter, blader], 6)
 
-    feinter.teleport_to_friend('hitter.png')
-    blader.teleport_to_friend('hitter.png').wait(.3)
+    hitter.teleport_to_friend('feinter.png')
+    blader.teleport_to_friend('feinter.png').wait(.3)
 
     await_finished_loading([blader])
 

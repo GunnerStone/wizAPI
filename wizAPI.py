@@ -258,6 +258,8 @@ class wizAPI:
         """
         time.sleep(holdtime)
         pyautogui.keyUp(key)
+
+        return self
         # if(waittime > 0):
         #     self.accurate_delay(waittime)
         # pyautogui.keyDown(key)
@@ -886,6 +888,12 @@ class wizAPI:
                 elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen'):
                     self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
                 
+                elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen_b'):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
+                
+                # elif self.find_spell('Storm', 'cleanse_charm_b'):
+                #     self.cast_spell('Storm', 'cleanse_charm_b').at_friendly(2) #Casts at third wizard
+                
                 else:
                     self.pass_turn()
             else:
@@ -940,6 +948,8 @@ class wizAPI:
             if self.find_spell('Death', 'mass_feint'):
                 self.cast_spell('Death', 'mass_feint')
             elif self.enchant('Balance', 'elemental_blade', 'Sun', 'aegis'):
+                self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
+            elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen_b'):
                 self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
             elif self.find_spell('Life', 'pigsie'):
                 self.cast_spell('Life', 'pigsie')
