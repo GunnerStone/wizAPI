@@ -343,7 +343,7 @@ class wizAPI:
     def is_turn_to_play_pass(self):
         pic = self.screenshotRAM(region=(190, 385, 440, 40))
 
-        found = self.match_image(pic, 'buttons/pass.png', threshold=.2)
+        found = self.match_image(pic, 'buttons/pass.png', threshold=.1)
 
         if found is not False:
             return True
