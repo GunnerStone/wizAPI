@@ -369,6 +369,11 @@ while True:
 
     await_finished_loading([blader])
 
+    """ Check health and use potion if necessary """
+    user_order[0][0].use_potion_if_needed()
+    user_order[1][0].use_potion_if_needed()
+    user_order[2][0].use_potion_if_needed()
+
     feinter.hold_key('w', random.uniform(1.3, 1.4))
     blader.hold_key('w', random.uniform(1.2, 1.3))
     hitter.hold_key('w', random.uniform(1.3, 3))
