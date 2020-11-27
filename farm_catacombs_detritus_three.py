@@ -262,7 +262,7 @@ while True:
 
     threads = []
 
-    t = Thread(target=hitter.hold_key, kwargs=dict(key='w', holdtime=5.6))
+    t = Thread(target=hitter.hold_key, kwargs=dict(key='w', holdtime=5.5))
     threads.append(t)
 
     arr1 , arr2, arr3 = ['a','d','d'],[0.742,0.742,0.832],[0.14,2.361,5.427]
