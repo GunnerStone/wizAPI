@@ -18,7 +18,7 @@ if (hitter.get_window_rect()[0] > feinter.get_window_rect()[0]):
 
 def await_finished_loading(windows):
     for w in windows:
-        while not w.is_DS_loading():
+        while not w.is_logo_bottom_left_loading():
             time.sleep(.2)
 
     for w in windows:
@@ -155,15 +155,15 @@ while True:
     print("Exiting...")
     feinter.wait(2).face_arrow().hold_key('w', 3).wait(1)
 
-    if not feinter.is_DS_loading():
+    if not feinter.is_logo_bottom_left_loading():
         """ Retry exiting """
         time.sleep(2)
-        while not feinter.is_DS_loading():
+        while not feinter.is_logo_bottom_left_loading():
             feinter.hold_key('s', 3)
-            if feinter.is_DS_loading():
+            if feinter.is_logo_bottom_left_loading():
                 break
             feinter.face_arrow()
-            if feinter.is_DS_loading():
+            if feinter.is_logo_bottom_left_loading():
                 break
             feinter.hold_key('w', 3.5).wait(2)
 

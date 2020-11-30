@@ -25,7 +25,7 @@ if(blader.get_window_rect()[0] > feinter.get_window_rect()[0]):
 
 def await_finished_loading(windows):
     for w in windows:
-        while not w.is_CAT_loading():
+        while not w.is_logo_bottom_right_loading():
             time.sleep(.2)
 
     for w in windows:

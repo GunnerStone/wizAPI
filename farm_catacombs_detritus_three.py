@@ -26,7 +26,7 @@ if(blader.get_window_rect()[0] > feinter.get_window_rect()[0]):
 
 def await_finished_loading(windows):
     for w in windows:
-        while not w.is_DS_loading():
+        while not w.is_logo_bottom_left_loading():
             time.sleep(.2)
 
     for w in windows:
@@ -370,9 +370,9 @@ while True:
     await_finished_loading([blader])
 
     """ Check health and use potion if necessary """
-    user_order[0][0].use_potion_if_needed()
-    user_order[1][0].use_potion_if_needed()
-    user_order[2][0].use_potion_if_needed()
+    user_order[0][0].use_potion_if_needed(refill=True)
+    user_order[1][0].use_potion_if_needed(refill=True)
+    user_order[2][0].use_potion_if_needed(refill=True)
 
     feinter.hold_key('w', random.uniform(1.3, 1.4))
     blader.hold_key('w', random.uniform(1.2, 1.3))
