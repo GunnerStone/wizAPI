@@ -952,6 +952,8 @@ class wizAPI:
                     self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
                 elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen_b'):
                     self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
+                elif self.find_spell('Balance', 'enchanted_elemental_blade'): #Checks if left over enchanted blade is not cast
+                    self.cast_spell('Balance', 'enchanted_elemental_blade')
                 elif self.find_spell('Life', 'pigsie'):
                     self.cast_spell('Life', 'pigsie')
                 elif self.find_spell('Life', 'unicorn'):
