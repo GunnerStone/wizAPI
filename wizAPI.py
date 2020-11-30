@@ -207,12 +207,12 @@ class wizAPI:
         return (self.pixel_matches_color((253, 550), (4, 195, 4), 5) and
                 self.pixel_matches_color((284, 550), (20, 218, 11), 5))
 
-    def is_DS_loading(self):
+    def is_logo_bottom_left_loading(self):
         """ Matches an orange pixel in the Dragonspyre loading screen """
         self.set_active()
         return self.pixel_matches_color((108, 551), (252, 127, 5), 20)
 
-    def is_CAT_loading(self):
+    def is_logo_bottom_right_loading(self):
         """ Matches an orange pixel in the Dragonspyre loading screen """
         self.set_active()
         return self.pixel_matches_color((623, 490+36), (255, 130, 16), 20)
@@ -321,7 +321,7 @@ class wizAPI:
         THRESHOLD = 10
         return not self.pixel_matches_color(POSITION, COLOR, threshold=THRESHOLD)
 
-    def use_potion_if_needed(self):
+    def use_potion_if_needed(self, refill=False, teleport_to_wizard=""):
         mana_low = self.is_mana_low()
         health_low = self.is_health_low()
 
@@ -330,7 +330,71 @@ class wizAPI:
         if health_low:
             print('Health is low, using potion')
         if mana_low or health_low:
-            self.click(160, 590, delay=.2)
+            self.click(160, 590, delay=.2) 
+            if(self.is_mana_low() or self.is_health_low() and refill): #IF Refill == true, all wiz must have HILDA marked in commons
+                self.recall_location()
+                #Waits for user to finish loading
+                while not self.is_logo_bottom_left_loading():
+                    time.sleep(.2)
+
+                while not self.is_idle():
+                    time.sleep(.5)
+
+                #Waits for hilda confirmation to pop
+                time.sleep(1)
+                #Begin Potion Buy
+                if(self.is_mana_low): # Buys potion before marking location
+                    # Opens Dialog
+                    self.press_key('x')
+                    self.wait(.5)
+
+                    #Potion Clicks
+                    self.click(555, 300)
+                    self.click(261, 491)
+                    self.click(515, 470)
+                    self.click(410, 390)
+                    self.click(555, 300)
+                    self.click(261, 491)
+                    self.click(685, 540)
+                    self.wait(.5)
+                    
+                    # Get back to Dungeon
+                    self.mark_location()
+                    self.wait(.5)
+                    self.teleport_to_friend(teleport_to_wizard)
+
+                    #Waits for user to finish loading
+                    while not self.is_logo_bottom_left_loading():
+                        time.sleep(.2)
+
+                    while not self.is_idle():
+                        time.sleep(.5)
+                else: # Marks location to waste mana before buying potions
+                    self.mark_location()
+                    self.wait(.5)
+                    self.press_key('x')
+                    self.wait(.5)
+
+                    #Potion Clicks
+                    self.click(555, 300)
+                    self.click(261, 491)
+                    self.click(515, 470)
+                    self.click(410, 390)
+                    self.click(555, 300)
+                    self.click(261, 491)
+                    self.click(685, 540)
+                    self.wait(.5)
+
+                    #Gets back to dungeon
+                    self.teleport_to_friend(teleport_to_wizard)
+
+                    #Waits for user to finish loading
+                    while not self.is_logo_bottom_left_loading():
+                        time.sleep(.2)
+
+                    while not self.is_idle():
+                        time.sleep(.5)
+
 
     def pass_turn(self):
         self.click(254, 398, delay=.5).move_mouse(200, 400)
