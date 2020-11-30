@@ -3,12 +3,8 @@ import time
 from threading import Thread
 
 tester = wizAPI().register_window(nth=0)
+wx, wy = tester.get_window_rect()[:2]
 
+tester.use_potion_if_needed(health_percent=80)
 
-tester.click(555, 300)
-tester.click(261, 491)
-tester.click(515, 470)
-tester.click(410, 390)
-tester.click(555, 300)
-tester.click(261, 491)
-tester.click(685, 540)
+# print(pyautogui.pixel(26 + wx,531 + wy))

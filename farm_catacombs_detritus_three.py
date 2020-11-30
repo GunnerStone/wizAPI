@@ -176,6 +176,11 @@ while True:
 
     random.shuffle(user_order)
 
+    """ Check health and use potion if necessary """
+    user_order[0][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1], health_percent=80)
+    user_order[1][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[0][1], health_percent=80)
+    user_order[2][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1], health_percent=80)
+
     user_order[0][0].press_key('x').wait(random.uniform(0.5, 1.5))
     user_order[1][0].press_key('x').wait(random.uniform(0.2, 1.7))
     user_order[2][0].press_key('x').wait(random.uniform(0.3, 1.3))
@@ -183,11 +188,6 @@ while True:
     await_finished_loading([feinter, hitter, blader])
 
     print('All players have entered the dungeon')
-
-    """ Check health and use potion if necessary """
-    user_order[0][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1])
-    user_order[1][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[0][1])
-    user_order[2][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1])
 
     """ Run into first battle """
     #walk_to_next_battle("all", 1)
@@ -368,11 +368,6 @@ while True:
     blader.teleport_to_friend('feinter.png').wait(.3)
 
     await_finished_loading([blader])
-
-    """ Check health and use potion if necessary """
-    user_order[0][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1])
-    user_order[1][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[0][1])
-    user_order[2][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1])
 
     feinter.hold_key('w', random.uniform(1.3, 1.4))
     blader.hold_key('w', random.uniform(1.2, 1.3))

@@ -305,11 +305,17 @@ class wizAPI:
         pyautogui.press(key)
         return self
 
-    def is_health_low(self):
+    def is_health_low(self, health_percent):
         self.set_active()
         # Matches a pixel in the lower third of the health globe
-        POSITION = (23, 563)
-        COLOR = (126, 41, 3)
+        if(health_percent==33):
+            POSITION = (23, 563)
+            COLOR = (126, 41, 3)
+        elif(health_percent==80):
+            POSITION = (26,531)
+            COLOR = (242, 52, 81)
+            
+        
         THRESHOLD = 10
         return not self.pixel_matches_color(POSITION, COLOR, threshold=THRESHOLD)
 
@@ -321,9 +327,9 @@ class wizAPI:
         THRESHOLD = 10
         return not self.pixel_matches_color(POSITION, COLOR, threshold=THRESHOLD)
 
-    def use_potion_if_needed(self, refill=False, teleport_to_wizard=""):
+    def use_potion_if_needed(self, refill=False, teleport_to_wizard="", health_percent=33): #Health Position defaults to 1/3
         mana_low = self.is_mana_low()
-        health_low = self.is_health_low()
+        health_low = self.is_health_low(health_percent)
 
         if mana_low:
             print('Mana is low, using potion')
@@ -331,7 +337,8 @@ class wizAPI:
             print('Health is low, using potion')
         if mana_low or health_low:
             self.click(160, 590, delay=.2) 
-            if(self.is_mana_low() or self.is_health_low() and refill): #IF Refill == true, all wiz must have HILDA marked in commons
+            self.wait(1)
+            if(self.is_mana_low() or self.is_health_low(health_percent) and refill): #IF Refill == true, all wiz must have HILDA marked in commons
                 self.recall_location()
                 #Waits for user to finish loading
                 while not self.is_logo_bottom_left_loading():
