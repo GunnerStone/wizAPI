@@ -291,7 +291,7 @@ while True:
 
     #Enter Next Fight
     feinter.hold_key('w', random.uniform(.7, .9))
-    blader.hold_key('w', random.uniform(1.3, 1.4))
+    blader.hold_key('w', random.uniform(1.3, 1.0))
     hitter.hold_key('w', random.uniform(1.3, 1.4))
 
     feinter.wait_for_next_turn()
@@ -405,14 +405,14 @@ while True:
     print("Boss Battle")
     
     print("Exiting...")
-    
-    # feinter.recall_location()
-    feinter.logout()
 
-    await_finished_loading([feinter])
+    # Random User logout
+    user_order[0][0].logout()
+
+    await_finished_loading([user_order[0][0]])
     print('Successfully exited the dungeon')
 
-    hitter.teleport_to_friend('feinter.png')
-    blader.teleport_to_friend('feinter.png').wait(random.uniform(1, 3))
+    user_order[1][0].teleport_to_friend(user_order[0][1])
+    user_order[2][0].teleport_to_friend(user_order[0][1]).wait(random.uniform(1, 3))
 
     print_time(time.time() - START_TIME)
