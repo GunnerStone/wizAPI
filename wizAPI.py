@@ -945,20 +945,27 @@ class wizAPI:
                 self.discard_unusable_spells(cn)
 
             # Play
-            if self.find_spell('Death', 'mass_feint'):
-                self.cast_spell('Death', 'mass_feint')
-            elif self.enchant('Balance', 'elemental_blade', 'Sun', 'aegis'):
-                self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
-            elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen_b'):
-                self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
-            elif self.find_spell('Life', 'pigsie'):
-                self.cast_spell('Life', 'pigsie')
-            elif self.find_spell('Life', 'unicorn'):
-                self.cast_spell('Life', 'unicorn')
+            if(boss_battle):
+                if self.find_spell('Death', 'mass_feint'):
+                    self.cast_spell('Death', 'mass_feint')
+                elif self.enchant('Balance', 'elemental_blade', 'Sun', 'aegis'):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
+                elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen_b'):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
+                elif self.find_spell('Life', 'pigsie'):
+                    self.cast_spell('Life', 'pigsie')
+                elif self.find_spell('Life', 'unicorn'):
+                    self.cast_spell('Life', 'unicorn')
+                else:
+                    self.pass_turn()
             else:
-                self.pass_turn()
-
-
-        
+                if self.find_spell('Death', 'mass_feint'):
+                    self.cast_spell('Death', 'mass_feint')
+                elif self.find_spell('Life', 'pigsie'):
+                    self.cast_spell('Life', 'pigsie')
+                elif self.find_spell('Life', 'unicorn'):
+                    self.cast_spell('Life', 'unicorn')
+                else:
+                    self.pass_turn()      
 
 
