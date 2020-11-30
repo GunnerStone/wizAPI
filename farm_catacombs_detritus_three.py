@@ -176,6 +176,12 @@ while True:
 
     random.shuffle(user_order)
 
+    """ Quick sell every 10 rounds"""
+    if(ROUND_COUNT % 10 == 0):
+        feinter.quick_sell(False, False)
+        hitter.quick_sell(False, False)
+        blader.quick_sell(False, False)
+
     """ Check health and use potion if necessary """
     user_order[0][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1], health_percent=80)
     user_order[1][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[0][1], health_percent=80)
