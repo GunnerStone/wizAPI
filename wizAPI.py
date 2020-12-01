@@ -970,7 +970,10 @@ class wizAPI:
                 # Play
                 if self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen',threshold=.10):
                     self.cast_spell('Balance', 'enchanted_elemental_blade',threshold=.9).at_friendly(2) #Casts at third wizard
-                
+                    
+                elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen_b',threshold=.10):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade',threshold=.9).at_friendly(2) #Casts at third wizard
+
                 else:
                     self.pass_turn()
         
