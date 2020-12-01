@@ -28,6 +28,7 @@ def await_finished_loading(windows):
     for w in windows:
         while not w.is_logo_bottom_right_loading() or is_logo_bottom_left_loading(): # Looks at either side for logo - update for wiz loading screen update
             time.sleep(.2)
+            print("Waiting on Load")
 
     for w in windows:
         while not w.is_idle():
