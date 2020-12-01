@@ -217,7 +217,6 @@ class wizAPI:
 
     def is_logo_bottom_left_or_right_loading(self):
         self.set_active()
-        print("Bottom left or right result: ", (self.pixel_matches_color((108, 551), (252, 127, 5), 20) or self.pixel_matches_color((108, 551), (252, 127, 5), 20)))
         return self.pixel_matches_color((108, 551), (252, 127, 5), 20) or self.pixel_matches_color((108, 551), (252, 127, 5), 20)
 
     def logout(self,isDungeon=False):
@@ -970,7 +969,7 @@ class wizAPI:
                 # Play
                 if self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen',threshold=.10):
                     self.cast_spell('Balance', 'enchanted_elemental_blade',threshold=.9).at_friendly(2) #Casts at third wizard
-                    
+
                 elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen_b',threshold=.10):
                     self.cast_spell('Balance', 'enchanted_elemental_blade',threshold=.9).at_friendly(2) #Casts at third wizard
 
