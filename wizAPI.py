@@ -216,7 +216,7 @@ class wizAPI:
         return self.pixel_matches_color((623, 490+36), (255, 130, 16), 20)
 
     def is_logo_bottom_left_or_right_loading(self):
-         self.set_active()
+        self.set_active()
         print("Bottom left or right result: ", (self.pixel_matches_color((108, 551), (252, 127, 5), 20) or self.pixel_matches_color((108, 551), (252, 127, 5), 20)))
         return self.pixel_matches_color((108, 551), (252, 127, 5), 20) or self.pixel_matches_color((108, 551), (252, 127, 5), 20)
 
