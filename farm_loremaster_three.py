@@ -137,14 +137,14 @@ while True:
     driver = driver_random[0][0]
 
     """ Wait should be between 0.2 - 1.0 based on individual load speeds """
-    driver.wait(2).face_arrow().hold_key('w', 3).wait(.2)
-
+    #driver.wait(2).face_arrow().hold_key('w', 3).wait(.2)
+    driver.logout()
     
 
     await_finished_loading([driver])
     print('Successfully exited the dungeon')
 
-    driver.hold_key('s', random.uniform(0.6, 0.9)).wait(random.uniform(0.8, 2))
+    #driver.hold_key('s', random.uniform(0.6, 0.9)).wait(random.uniform(0.8, 2))
 
     driver_random[1][0].teleport_to_friend(driver_random[0][1])
     driver_random[2][0].teleport_to_friend(driver_random[0][1]).wait(random.uniform(4, 6))
