@@ -993,6 +993,8 @@ class wizAPI:
             # Play
             if self.find_spell('Death', 'mass_feint'):
                 self.cast_spell('Death', 'mass_feint')
+            elif self.enchant('Death', 'feint', 'Sun', 'potent'):
+                self.cast_spell('Death', 'feint-potent').at_target(boss_pos)
             elif self.find_spell('Death', 'feint'):
                 self.cast_spell('Death', 'feint').at_target(boss_pos)
             else:
