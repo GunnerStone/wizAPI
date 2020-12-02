@@ -217,7 +217,7 @@ class wizAPI:
 
     def is_logo_bottom_left_or_right_loading(self):
         self.set_active()
-        return self.pixel_matches_color((108, 551), (252, 127, 5), 30) or self.pixel_matches_color((108, 551), (252, 127, 5), 30)
+        return self.pixel_matches_color((170, 532), (252, 127, 5), 30) or self.pixel_matches_color((108, 551), (252, 127, 5), 30)
 
     def logout(self,isDungeon=False):
         self.set_active()
@@ -936,6 +936,63 @@ class wizAPI:
             else:
                 self.pass_turn()
         
+    #One round strat for most mobs
+    def mass_feint_attack_lore(self, wizard_type, boss_pos):
+        wizard_type = wizard_type.split('.')[0]
+
+        print(wizard_type)
+
+        if(wizard_type == "feinter"):
+            """ Feinter plays """
+            # Check to see if deck is crowded with unusable spells
+            cn = len(self.find_unusable_spells())
+            if cn > 2:
+                self.discard_unusable_spells(cn)
+
+            # Play
+            if self.enchant('Death', 'feint', 'Sun', 'potent'):
+                self.cast_spell('Death', 'feint-potent').at_target(boss_pos)
+
+            elif self.find_spell('Death', 'feint'):
+                self.cast_spell('Death', 'feint').at_target(boss_pos)
+
+            else:
+                self.pass_turn()
+        
+        if(wizard_type == "hitter"):
+            """ Hitter plays """
+            # Check to see if deck is crowded with unusable spells
+            cn = len(self.find_unusable_spells())
+            # Discard the spells
+            if cn > 2:
+                self.discard_unusable_spells(cn)
+
+            # Play
+            if self.find_spell('Storm', 'tempest-enchanted', max_tries=2):
+                self.cast_spell('Storm', 'tempest-enchanted')
+
+            elif self.enchant('Storm', 'tempest', 'Sun', 'epic'):
+                self.find_spell('Storm', 'tempest-enchanted', max_tries=2)
+                self.cast_spell('Storm', 'tempest-enchanted')
+
+            else:
+                self.pass_turn()
+        
+        if(wizard_type == "blader"):
+            """ Blader plays """
+            # Check to see if deck is crowded with unusable spells
+            cn = len(self.find_unusable_spells())
+            if cn > 2:
+                self.discard_unusable_spells(cn)
+
+            # Play
+            if self.find_spell('Death', 'mass_feint'):
+                self.cast_spell('Death', 'mass_feint')
+            elif self.find_spell('Death', 'feint'):
+                self.cast_spell('Death', 'feint').at_target(boss_pos)
+            else:
+                self.pass_turn()
+
         #Catacombs Detritus Extract attack sequence
     def catacombs_detritus_attack(self, wizard_type, boss_pos, boss_battle=False):
         wizard_type = wizard_type.split('.')[0]
