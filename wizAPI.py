@@ -345,9 +345,11 @@ class wizAPI:
         if health_low:
             print('Health is low, using potion')
         if mana_low or health_low:
+            print('Clicking Potion')
             self.click(160, 590, delay=.2) 
             self.wait(1)
             if(self.is_mana_low() or self.is_health_low(health_percent) and refill): #IF Refill == true, all wiz must have HILDA marked in commons
+                print('Refilling')
                 self.recall_location()
                 #Waits for user to finish loading
                 while not self.is_logo_bottom_left_loading():
@@ -756,6 +758,9 @@ class wizAPI:
 
         """ Clicks sell on sell screen """
         self.click(400, 488, delay=.3)
+
+        """ Remove warning about gold overflow"""
+        self.click(410,432, delay=.6)
 
         """ Closes user's bag """
         self.press_key('b')

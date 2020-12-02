@@ -24,10 +24,15 @@ if(blader.get_window_rect()[0] > feinter.get_window_rect()[0]):
     blader, feinter = feinter, blader
 
 def await_finished_loading(windows):
+    
+    #prevent bugged loading screens (failsafe)
+    count = 0
     for w in windows:
-        while not w.is_logo_bottom_left_or_right_loading():
+        while (not w.is_logo_bottom_left_or_right_loading()) and (count <= 50):
             time.sleep(.2)
-
+            count += 1
+    if (count >= 50):
+        print("Loading failsafe triggered after 10 seconds")
     for w in windows:
         while not w.is_idle():
             time.sleep(.5)
@@ -81,6 +86,11 @@ while True:
 
     random.shuffle(user_order)
 
+    """ Check health and use potion if necessary """
+    user_order[0][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1], health_percent=33)
+    user_order[1][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[0][1], health_percent=33)
+    user_order[2][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1], health_percent=33)
+
     user_order[0][0].press_key('x').wait(random.uniform(0.5, 1.5))
     user_order[1][0].press_key('x').wait(random.uniform(0.2, 1.7))
     user_order[2][0].press_key('x').wait(random.uniform(0.3, 1.3))
@@ -89,10 +99,7 @@ while True:
 
     print('All players have entered the dungeon')
 
-    """ Check health and use potion if necessary """
-    user_order[0][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1], health_percent=33)
-    user_order[1][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[0][1], health_percent=33)
-    user_order[2][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1], health_percent=33)
+    
 
     """ Run into battle """
     feinter.hold_key('w', random.uniform(1.4, 1.55))
