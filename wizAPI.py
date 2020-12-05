@@ -352,7 +352,7 @@ class wizAPI:
                 print('Refilling')
                 self.recall_location()
                 #Waits for user to finish loading
-                while not self.is_logo_bottom_left_loading():
+                while not self.is_logo_bottom_left_or_right_loading():
                     time.sleep(.2)
 
                 while not self.is_idle():
@@ -382,7 +382,7 @@ class wizAPI:
                     self.teleport_to_friend(teleport_to_wizard)
 
                     #Waits for user to finish loading
-                    while not self.is_logo_bottom_left_loading():
+                    while not self.is_logo_bottom_left_or_right_loading():
                         time.sleep(.2)
 
                     while not self.is_idle():
