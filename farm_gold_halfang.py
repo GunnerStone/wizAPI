@@ -25,7 +25,7 @@ if(blader.get_window_rect()[0] > feinter.get_window_rect()[0]):
 
 def await_finished_loading(windows):
     for w in windows:
-        while not w.is_logo_bottom_left_loading():
+        while not w.is_logo_bottom_left_or_right_loading():
             time.sleep(.2)
 
     for w in windows:
@@ -56,13 +56,13 @@ while True:
     ROUND_COUNT += 1
     print_separator('ROUND', str(ROUND_COUNT))
 
-    """ Quick sell every 10 rounds"""
-    if(ROUND_COUNT % 10 == 0):
-        feinter.quick_sell(False, False)
-        hitter.quick_sell(False, False)
-        blader.quick_sell(False, False)
+    # """ Quick sell every 10 rounds"""
+    # if(ROUND_COUNT % 10 == 0):
+    #     feinter.quick_sell(False, False)
+    #     hitter.quick_sell(False, False)
+    #     blader.quick_sell(False, False)
 
-    """ Attempt to enter the dungeon """
+    # """ Attempt to enter the dungeon """
     time.sleep(1)
 
     while not feinter.enter_dungeon_dialog():
