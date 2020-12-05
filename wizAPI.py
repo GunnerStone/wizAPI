@@ -1015,27 +1015,31 @@ class wizAPI:
 
             if(boss_battle):
                 # Play
+                
+                #feint the boss on first round
                 if self.enchant('Death', 'feint', 'Sun', 'potent'):
                     self.cast_spell('Death', 'feint-potent').at_target(boss_pos)
+                                
+                #cast blue elemental blade
+                elif self.find_spell('Balance', 'b_elemental_blade', threshold=0.10):
+                    self.cast_spell('Balance', 'b_elemental_blade',threshold=.10).at_friendly(2) #Casts at third wizard
                 
+                #cast sharpened elemental blade
                 elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen',threshold=.10):
-                    self.cast_spell('Balance', 'enchanted_elemental_blade',threshold=.9).at_friendly(2) #Casts at third wizard
-                
-                elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen_b',threshold=.10):
-                    self.cast_spell('Balance', 'enchanted_elemental_blade',threshold=.9).at_friendly(2) #Casts at third wizard
-                
-                # elif self.find_spell('Storm', 'cleanse_charm_b'):
-                #     self.cast_spell('Storm', 'cleanse_charm_b').at_friendly(2) #Casts at third wizard
-                
+                    self.cast_spell('Balance', 'enchanted_elemental_blade',threshold=.10).at_friendly(2) #Casts at third wizard
+
                 else:
                     self.pass_turn()
             else:
                 # Play
-                if self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen',threshold=.10):
-                    self.cast_spell('Balance', 'enchanted_elemental_blade',threshold=.9).at_friendly(2) #Casts at third wizard
 
-                elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen_b',threshold=.10):
-                    self.cast_spell('Balance', 'enchanted_elemental_blade',threshold=.9).at_friendly(2) #Casts at third wizard
+                #cast sharpened elemental blade
+                if self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen',threshold=.10):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade',threshold=.10).at_friendly(2) #Casts at third wizard
+
+                #cast blue elemental blade
+                elif self.find_spell('Balance', 'b_elemental_blade', threshold=0.10):
+                    self.cast_spell('Balance', 'b_elemental_blade',threshold=.10).at_friendly(2) #Casts at third wizard
 
                 else:
                     self.pass_turn()
@@ -1082,12 +1086,15 @@ class wizAPI:
 
             # Play
             if(boss_battle):
+                #mass fient boss first round
                 if self.find_spell('Death', 'mass_feint', threshold=0.10):
                     self.cast_spell('Death', 'mass_feint')
+                #aegis blade
                 elif self.enchant('Balance', 'elemental_blade', 'Sun', 'aegis'):
                     self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
-                elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen_b'):
-                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
+                #blue storm blade
+                elif self.find_spell('Storm', 'b_storm_blade', threshold=0.10):
+                    self.cast_spell('Storm', 'b_storm_blade',threshold=.10).at_friendly(2) #Casts at third wizard
                 elif self.find_spell('Balance', 'enchanted_elemental_blade', threshold=0.10): #Checks if left over enchanted blade is not cast
                     self.cast_spell('Balance', 'enchanted_elemental_blade')
                 elif self.find_spell('Life', 'pigsie', threshold=0.10):
