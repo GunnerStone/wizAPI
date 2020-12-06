@@ -335,7 +335,7 @@ class wizAPI:
         THRESHOLD = 10
         return not self.pixel_matches_color(POSITION, COLOR, threshold=THRESHOLD)
 
-    def use_potion_if_needed(self, refill=False, teleport_to_wizard="", health_percent=33): #Health Position defaults to 1/3
+    def use_potion_if_needed(self, refill=False, teleport_to_wizard="", health_percent=33, teleport=False, teleport_friend_img=""): #Health Position defaults to 1/3
         self.set_active()
         mana_low = self.is_mana_low()
         health_low = self.is_health_low(health_percent)
@@ -350,7 +350,10 @@ class wizAPI:
             self.wait(1)
             if(self.is_mana_low() or self.is_health_low(health_percent) and refill): #IF Refill == true, all wiz must have HILDA marked in commons
                 print('Refilling')
-                self.recall_location()
+                if(teleport):
+                    self.teleport_to_friend(teleport_friend_img)
+                else:
+                    self.recall_location()
                 #Waits for user to finish loading
                 while not self.is_logo_bottom_left_or_right_loading():
                     time.sleep(.2)
@@ -377,7 +380,8 @@ class wizAPI:
                     self.wait(.5)
                     
                     # Get back to Dungeon
-                    self.mark_location()
+                    if(teleport == False):
+                        self.mark_location()
                     self.wait(.5)
                     self.teleport_to_friend(teleport_to_wizard)
 
@@ -388,7 +392,8 @@ class wizAPI:
                     while not self.is_idle():
                         time.sleep(.5)
                 else: # Marks location to waste mana before buying potions
-                    self.mark_location()
+                    if(teleport == False):
+                        self.mark_location()
                     self.wait(.5)
                     self.press_key('x')
                     self.wait(.5)
@@ -768,11 +773,14 @@ class wizAPI:
         (self.set_active()
             .move_mouse(669, 189, speed=0.5))
 
-    def bazaar_sell(self, friendly_img):
+    def bazaar_sell(self, friendly_img, teleport=False, teleport_friend_img=""):
         index = 0
         TypeIndex = 0
         
-        self.recall_location()
+        if(teleport):
+            self.teleport_to_friend(teleport_friend_img)
+        else:
+            self.recall_location()
 
         #Waits for user to finish loading
         while not self.is_logo_bottom_left_or_right_loading():
@@ -781,7 +789,8 @@ class wizAPI:
         while not self.is_idle():
             time.sleep(.5)
 
-        self.mark_location()
+        if(teleport == False):
+            self.mark_location()
 
         # Goes to Sell tab
         self.press_key('x')
