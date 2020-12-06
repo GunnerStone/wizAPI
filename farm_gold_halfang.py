@@ -125,9 +125,9 @@ while True:
         
         random.shuffle(user_order)
 
-        user_order[0][0].mass_feint_attack(wizard_type = user_order[0][1], boss_pos = boss_pos)
-        user_order[1][0].mass_feint_attack(wizard_type = user_order[1][1], boss_pos = boss_pos)
-        user_order[2][0].mass_feint_attack(wizard_type = user_order[2][1], boss_pos = boss_pos)
+        user_order[0][0].mass_feint_attack(wizard_type = user_order[0][1], boss_pos = boss_pos, hitter="fire")
+        user_order[1][0].mass_feint_attack(wizard_type = user_order[1][1], boss_pos = boss_pos, hitter="fire")
+        user_order[2][0].mass_feint_attack(wizard_type = user_order[2][1], boss_pos = boss_pos, hitter="fire")
 
         feinter.wait_for_end_of_round()
         if feinter.is_idle():

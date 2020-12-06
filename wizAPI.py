@@ -957,7 +957,7 @@ class wizAPI:
                 self.pass_turn()
 
     #One round strat for most mobs
-    def mass_feint_attack(self, wizard_type, boss_pos):
+    def mass_feint_attack(self, wizard_type, boss_pos, hitter="storm"):
         wizard_type = wizard_type.split('.')[0]
 
         print(wizard_type)
@@ -979,7 +979,7 @@ class wizAPI:
             else:
                 self.pass_turn()
         
-        if(wizard_type == "hitter"):
+        if(wizard_type == "hitter" and hitter=="storm"):
             """ Hitter plays """
             # Check to see if deck is crowded with unusable spells
             cn = len(self.find_unusable_spells())
@@ -987,7 +987,7 @@ class wizAPI:
             if cn > 2:
                 self.discard_unusable_spells(cn)
 
-            # Play
+            # Play - Storm
             if self.find_spell('Storm', 'tempest-enchanted', max_tries=2):
                 self.cast_spell('Storm', 'tempest-enchanted')
 
@@ -998,6 +998,24 @@ class wizAPI:
             else:
                 self.pass_turn()
         
+        if(wizard_type == "hitter" and hitter=="fire"):
+            """ Hitter plays """
+            # Check to see if deck is crowded with unusable spells
+            cn = len(self.find_unusable_spells())
+            # Discard the spells
+            if cn > 2:
+                self.discard_unusable_spells(cn)
+
+            # Play - Storm
+            if self.find_spell('Fire', 'meteor-strike-enchanted', max_tries=2):
+                self.cast_spell('Fire', 'meteor-strike-enchanted')
+
+            elif self.enchant('Fire', 'meteor-strike', 'Sun', 'epic'):
+                self.find_spell('Fire', 'meteor-strike-enchanted', max_tries=2)
+                self.cast_spell('Fire', 'meteor-strike-enchanted')
+
+            else:
+                self.pass_turn()
         if(wizard_type == "blader"):
             """ Blader plays """
             # Check to see if deck is crowded with unusable spells
