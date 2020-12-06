@@ -214,7 +214,7 @@ while True:
 
     while inFight:
         battle_round += 1
-        print('-------- Battle round', battle_round, '--------')
+        print('-------- Dungeon Round:',ROUND_COUNT,', Battle round:', battle_round, '--------')
         
         random.shuffle(user_order)
 
@@ -307,7 +307,7 @@ while True:
 
     while inFight:
         battle_round += 1
-        print('-------- Battle round', battle_round, '--------')
+        print('-------- Dungeon Round:',ROUND_COUNT,', Battle round:', battle_round, '--------')
         
         random.shuffle(user_order)
 
@@ -390,7 +390,8 @@ while True:
 
     while inFight:
         battle_round += 1
-        print('-------- Battle round', battle_round, '--------')
+        print('-------- Dungeon Round:',ROUND_COUNT,', Battle round:', battle_round, '--------')
+
         
         random.shuffle(user_order)
 
