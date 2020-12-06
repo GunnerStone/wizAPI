@@ -56,11 +56,29 @@ while True:
     ROUND_COUNT += 1
     print_separator('ROUND', str(ROUND_COUNT))
 
-    # """ Quick sell every 10 rounds"""
-    # if(ROUND_COUNT % 10 == 0):
-    #     feinter.quick_sell(False, False)
-    #     hitter.quick_sell(False, False)
-    #     blader.quick_sell(False, False)
+    # """ Quick sell at bazaar every 10 rounds"""
+    if(ROUND_COUNT % 10 == 0):
+        blader.recall_location()
+        await_finished_loading([blader])
+        # Teleports to blader in Bazaar to sell items then teleports back to feinter
+        hitter.bazaar_sell(friendly_img="feinter.png", teleport=True, teleport_friend_img="blader.png")
+        # Teleports to blader in Bazaar to sell items then teleports back to feinter
+        feinter.bazaar_sell(friendly_img="hitter.png", teleport=True, teleport_friend_img="blader.png")
+        # Begin Blader sell
+        blader.bazaar_sell("feinter.png")
+
+    """ Check health and use potion if necessary """
+    if(blader.is_mana_low() or blader.is_health_low(33)):
+        # Since blader's marked location is bazaar, they need to teleport to feinter
+        feinter.recall_location()
+        await_finished_loading([feinter])
+        feinter.mark_location()
+        blader.use_potion_if_needed(refill=True, teleport_to_wizard="feinter.png", health_percent=33, teleport=True, teleport_friend_img="feinter.png")
+        feinter.teleport_to_friend("hitter.png")
+        await_finished_loading([feinter])
+    else:
+        feinter.use_potion_if_needed(refill=True, teleport_to_wizard="hitter.png", health_percent=33)
+        hitter.use_potion_if_needed(refill=True, teleport_to_wizard="feinter.png", health_percent=33)
 
     # """ Attempt to enter the dungeon """
     time.sleep(1)
@@ -79,6 +97,7 @@ while True:
 
     random.shuffle(user_order)
 
+    # Enter Dungeon
     user_order[0][0].press_key('x').wait(random.uniform(0.5, 1.5))
     user_order[1][0].press_key('x').wait(random.uniform(0.2, 1.7))
     user_order[2][0].press_key('x').wait(random.uniform(0.3, 1.3))
@@ -86,11 +105,6 @@ while True:
     await_finished_loading([feinter, hitter, blader])
 
     print('All players have entered the dungeon')
-
-    """ Check health and use potion if necessary """
-    feinter.use_potion_if_needed()
-    hitter.use_potion_if_needed()
-    blader.use_potion_if_needed()
 
     """ Run into battle """
     feinter.hold_key('w', random.uniform(1.4, 1.55))

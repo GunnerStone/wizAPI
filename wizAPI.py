@@ -835,7 +835,12 @@ class wizAPI:
         # Goes back to friend
         self.teleport_to_friend(friendly_img)
 
+        #Waits for user to finish loading
+        while not self.is_logo_bottom_left_or_right_loading():
+            time.sleep(.2)
 
+        while not self.is_idle():
+            time.sleep(.5)
 
     def set_active_quest(self,quest_index=1):
         #Opens users quest log
