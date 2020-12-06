@@ -58,6 +58,9 @@ while True:
 
     # """ Quick sell at bazaar every 10 rounds"""
     if(ROUND_COUNT % 10 == 0):
+        # Get's user out of dungeon
+        feinter.teleport_to_friend("blader.png")
+        await_finished_loading([feinter])
         blader.recall_location()
         await_finished_loading([blader])
         # Teleports to blader in Bazaar to sell items then teleports back to feinter
