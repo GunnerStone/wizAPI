@@ -782,7 +782,7 @@ class wizAPI:
         else:
             self.recall_location()
 
-        if(await_loading)
+        if(await_loading):
             #Waits for user to finish loading
             while not self.is_logo_bottom_left_or_right_loading():
                 time.sleep(.2)
