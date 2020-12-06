@@ -768,6 +768,66 @@ class wizAPI:
         (self.set_active()
             .move_mouse(669, 189, speed=0.5))
 
+    def bazaar_sell(self, friendly_img):
+        index = 0
+        TypeIndex = 0
+        
+        self.recall_location()
+
+        #Waits for user to finish loading
+        while not self.is_logo_bottom_left_or_right_loading():
+            time.sleep(.2)
+
+        while not self.is_idle():
+            time.sleep(.5)
+
+        self.mark_location()
+
+        # Goes to Sell tab
+        self.press_key('x')
+        self.click(230, 105)
+
+        #Clicks first sellable item
+        self.click(470, 270)
+
+        while True:
+            if(index < 7):
+                if(self.match_image(self.screenshotRAM((175, 433, 150, 30)), 'buttons/sell.png', threshold=.1)):
+                    # Clicks sell button
+                    self.click(240, 457)
+                    # Clicks Yess
+                    self.click(405, 405).wait(.2)
+                else:
+                    index = index + 1
+                    self.click(470, 270 + (index * 35))
+            else:
+                if(self.match_image(self.screenshotRAM((665, 325, 40, 70)), 'buttons/right_arrow.png', threshold=.1)):
+                    # Click Arrow to next page
+                    self.click(685, 365)
+                    # Click first item on next page
+                    index = -1
+                    self.click(470, 270 + (index * 35))
+                    index = 0
+                    self.click(470, 270 + (index * 35))
+                else:
+                    #Moves to next "item" type
+                    if(TypeIndex < 7):
+                        TypeIndex = TypeIndex + 1
+                        self.click(125 + (TypeIndex * 60), 170)
+                        #Clicks first sellable item on new page
+                        self.click(470, 270)
+                        index = 0
+                    else:    
+                        break
+        
+        #Exits bazaar
+        self.click(685, 535).wait(.2)
+
+        # Goes back to friend
+        self.teleport_to_friend(friendly_img)
+
+
+
     def set_active_quest(self,quest_index=1):
         #Opens users quest log
         self.press_key('q')
