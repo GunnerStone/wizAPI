@@ -773,7 +773,7 @@ class wizAPI:
         (self.set_active()
             .move_mouse(669, 189, speed=0.5))
 
-    def bazaar_sell(self, friendly_img, teleport=False, teleport_friend_img=""):
+    def bazaar_sell(self, friendly_img, teleport=False, teleport_friend_img="", await_loading=True):
         index = 0
         TypeIndex = 0
         
@@ -782,15 +782,16 @@ class wizAPI:
         else:
             self.recall_location()
 
-        #Waits for user to finish loading
-        while not self.is_logo_bottom_left_or_right_loading():
-            time.sleep(.2)
+        if(await_loading)
+            #Waits for user to finish loading
+            while not self.is_logo_bottom_left_or_right_loading():
+                time.sleep(.2)
 
-        while not self.is_idle():
-            time.sleep(.5)
+            while not self.is_idle():
+                time.sleep(.5)
 
-        if(teleport == False):
-            self.mark_location()
+            if(teleport == False):
+                self.mark_location()
 
         # Goes to Sell tab
         self.press_key('x')

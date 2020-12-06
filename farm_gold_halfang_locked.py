@@ -68,7 +68,7 @@ while True:
         # Teleports to blader in Bazaar to sell items then teleports back to feinter
         feinter.bazaar_sell(friendly_img="hitter.png", teleport=True, teleport_friend_img="blader.png")
         # Begin Blader sell
-        blader.bazaar_sell("feinter.png")
+        blader.bazaar_sell("feinter.png", await_loading=False)
 
     """ Check health and use potion if necessary """
     if(blader.is_mana_low() or blader.is_health_low(33)):
