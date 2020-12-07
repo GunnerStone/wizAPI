@@ -400,6 +400,7 @@ while True:
 
         
         if(battle_round >= 5):
+            failed_runs = failed_runs+1
             user_order[0][0].logout(isDungeon=True)
             user_order[1][0].logout(isDungeon=True)
             user_order[2][0].logout(isDungeon=True)
