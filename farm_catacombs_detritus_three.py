@@ -45,6 +45,11 @@ def print_separator(*args):
     print(_str)
     print('='*l)
 
+def print_rount_count(dungeon, roundcount, failed=0):
+    if(failed == 0):
+        print('-------- Dungeon Round:',dungeon,'Battle round:', roundcount, '--------')
+    else:
+        print('-------- Dungeon Round:',dungeon,'Battle round:', roundcount, 'Failed Runs:',failed,'--------')
 
 def print_time(timer):
     minutes = math.floor(timer/60)
@@ -147,6 +152,7 @@ def walk_to_next_battle(wiz, battle):
         x.join()
 
 ROUND_COUNT = 0
+failed_runs = 0
 user_order = [[feinter, 'feinter.png'], [hitter, 'hitter.png'], [blader, 'blader.png']]
 boss_pos = feinter.get_enemy_pos('sun.png')
 
@@ -214,7 +220,7 @@ while True:
 
     while inFight:
         battle_round += 1
-        print('-------- Dungeon Round:',ROUND_COUNT,', Battle round:', battle_round, '--------')
+        print_rount_count(ROUND_COUNT, battle_round, failed_runs)
         
         random.shuffle(user_order)
 
@@ -307,7 +313,7 @@ while True:
 
     while inFight:
         battle_round += 1
-        print('-------- Dungeon Round:',ROUND_COUNT,', Battle round:', battle_round, '--------')
+        print_rount_count(ROUND_COUNT, battle_round, failed_runs)
         
         random.shuffle(user_order)
 
@@ -354,7 +360,7 @@ while True:
     time.sleep(.5)
 
     feinter.press_key('x').wait(.2)
-    clear_dialog([feinter],5)
+    clear_dialog([feinter], 5)
 
 
     feinter.hold_key('d',0.7)
@@ -368,7 +374,7 @@ while True:
     # Move forward just a tad
     feinter.hold_key('w', .7).wait(.2)
 
-    clear_dialog([feinter, hitter, blader], 6)
+    clear_dialog([feinter, hitter, blader], 7)
 
     hitter.teleport_to_friend('feinter.png')
     blader.teleport_to_friend('feinter.png').wait(.3)
@@ -390,9 +396,14 @@ while True:
 
     while inFight:
         battle_round += 1
-        print('-------- Dungeon Round:',ROUND_COUNT,', Battle round:', battle_round, '--------')
+        print_rount_count(ROUND_COUNT, battle_round, failed_runs)
 
         
+        if(battle_round >= 5):
+            user_order[0][0].logout(isDungeon=True)
+            user_order[1][0].logout(isDungeon=True)
+            user_order[2][0].logout(isDungeon=True)
+
         random.shuffle(user_order)
 
         user_order[0][0].catacombs_detritus_attack(wizard_type = user_order[0][1], boss_pos = boss_pos, boss_battle=True)
