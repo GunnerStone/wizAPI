@@ -153,6 +153,7 @@ def walk_to_next_battle(wiz, battle):
 
 ROUND_COUNT = 0
 failed_runs = 0
+Fail = False
 user_order = [[feinter, 'feinter.png'], [hitter, 'hitter.png'], [blader, 'blader.png']]
 boss_pos = feinter.get_enemy_pos('sun.png')
 
@@ -405,6 +406,7 @@ while True:
             user_order[1][0].logout(isDungeon=True)
             user_order[2][0].logout(isDungeon=True)
             inFight = False
+            Fail = True
             print("Boss Battle failed")
             break
 
@@ -422,13 +424,16 @@ while True:
         
     print("Exiting...")
 
-    # Random User logout
-    user_order[0][0].logout()
+    if(Fail):
+        Fail = False
+    else:
+        # Random User logout
+        user_order[0][0].logout()
 
-    await_finished_loading([user_order[0][0]])
-    print('Successfully exited the dungeon')
+        await_finished_loading([user_order[0][0]])
+        print('Successfully exited the dungeon')
 
-    user_order[1][0].teleport_to_friend(user_order[0][1])
-    user_order[2][0].teleport_to_friend(user_order[0][1]).wait(random.uniform(1, 3))
+        user_order[1][0].teleport_to_friend(user_order[0][1])
+        user_order[2][0].teleport_to_friend(user_order[0][1]).wait(random.uniform(1, 3))
 
     print_time(time.time() - START_TIME)
