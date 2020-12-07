@@ -404,6 +404,9 @@ while True:
             user_order[0][0].logout(isDungeon=True)
             user_order[1][0].logout(isDungeon=True)
             user_order[2][0].logout(isDungeon=True)
+            inFight = False
+            print("Boss Battle failed")
+            break
 
         random.shuffle(user_order)
 
@@ -416,8 +419,7 @@ while True:
             inFight = False
         if feinter.find_button('done'):
             inFight = False
-    print("Boss Battle")
-    
+        
     print("Exiting...")
 
     # Random User logout
