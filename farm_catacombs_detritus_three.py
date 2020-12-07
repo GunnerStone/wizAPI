@@ -421,9 +421,8 @@ while True:
             inFight = False
         if feinter.find_button('done'):
             inFight = False
-        
-    print("Exiting...")
 
+    print("Exiting...")    
     if(Fail):
         Fail = False
     else:
@@ -431,9 +430,9 @@ while True:
         user_order[0][0].logout()
 
         await_finished_loading([user_order[0][0]])
-        print('Successfully exited the dungeon')
 
         user_order[1][0].teleport_to_friend(user_order[0][1])
         user_order[2][0].teleport_to_friend(user_order[0][1]).wait(random.uniform(1, 3))
-
+    
+    print('Successfully exited the dungeon')
     print_time(time.time() - START_TIME)
