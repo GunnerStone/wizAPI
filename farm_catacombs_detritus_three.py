@@ -71,11 +71,11 @@ def print_separator(*args):
     print('='*l)
 
 def print_rount_count(dungeon, roundcount, failed=0):
-    print('-------- Dungeon Round:',dungeon,'Battle round:', roundcount, '')
+    print('-------- Dungeon Round:',dungeon,'Battle round:', roundcount, '', end = "")
     if(failed > 0):
-        print('Failed Runs:',failed,'')
+        print('Failed Runs:',failed,'', end = "")
     if(timeout_fails > 0):
-        print('Timeout Fails:',timeout_fails,'')
+        print('Timeout Fails:',timeout_fails,'', end = "")
     print('--------')
 
 def print_time(timer):
