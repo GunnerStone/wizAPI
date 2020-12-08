@@ -874,13 +874,14 @@ class wizAPI:
     def recall_location(self):
         self.press_key('pageup')
 
-    def clear_dialog(self, total_dialog):
-        for x in range(total_dialog):
+    def clear_dialog(self):
+        self.move_mouse(350, 350)
+        while(self.find_button('done') or self.find_button('more')):
             self.press_key('space').wait(.2)
 
     def find_button(self, button_img):
         """ 
-        Checks if player is in position - posisble use case includes checking if there are 3 or two wizards in battle
+        Checks if more or done are on screen
         """
 
         screenshot = self.screenshotRAM(region=(136, 536, 650, 87))

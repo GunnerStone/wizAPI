@@ -33,9 +33,9 @@ def await_finished_loading(windows):
         while not w.is_idle():
             time.sleep(.5)
 
-def clear_dialog(windows, total_dialog):
+def clear_dialog(windows):
     for w in windows:
-        w.clear_dialog(total_dialog)
+        w.clear_dialog()
 
 def print_separator(*args):
     sides = '+'*16
@@ -110,7 +110,7 @@ while True:
     """ Run into first battle """
     #walk_to_next_battle("all", 1)
     feinter.hold_key('w', random.uniform(2.2, 3)).wait(1.5)
-    clear_dialog([feinter, hitter, blader], 1)
+    clear_dialog([feinter, hitter, blader])
     blader.hold_key('w', random.uniform(2.3, 2.5))
     hitter.hold_key('w', random.uniform(2, 2.5))
 
@@ -143,7 +143,7 @@ while True:
     print("Battle 1 has ended")
     feinter.wait(.5)
 
-    clear_dialog([feinter, hitter, blader], 1)
+    clear_dialog([feinter, hitter, blader])
 
     feinter.hold_key('w', random.uniform(.1, .2))
     blader.hold_key('w', random.uniform(.1, .2))
@@ -173,7 +173,7 @@ while True:
     threads = []
 
     feinter.wait(.5)
-    clear_dialog([feinter, hitter, blader], 1)
+    clear_dialog([feinter, hitter, blader])
 
     #walk_to_next_battle("feinter", 2)
 
@@ -236,7 +236,7 @@ while True:
     print("Battle 2 has ended")
     feinter.wait(.5)
 
-    clear_dialog([feinter, hitter, blader], 1)
+    clear_dialog([feinter, hitter, blader])
 
     """
     # Move one user to next fight
@@ -267,7 +267,7 @@ while True:
     time.sleep(.5)
 
     feinter.press_key('x').wait(.2)
-    clear_dialog([feinter], 5)
+    clear_dialog([feinter])
 
 
     feinter.hold_key('d',0.7)
@@ -281,7 +281,7 @@ while True:
     # Move forward just a tad
     feinter.hold_key('w', .7).wait(.2)
 
-    clear_dialog([feinter, hitter, blader], 7)
+    clear_dialog([feinter, hitter, blader])
 
     hitter.teleport_to_friend('feinter.png')
     blader.teleport_to_friend('feinter.png').wait(.3)
