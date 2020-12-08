@@ -105,23 +105,6 @@ def spawn_program_and_die(program, exit_code=0):
     #Kills all active threads & main program
     os._exit(1)
 
-def restart_program():
-    """Restarts the current program, with file objects and descriptors
-       cleanup
-    """
-
-    try:
-        p = psutil.Process(os.getpid())
-        for handler in p.open_files() + p.connections():
-            os.close(handler.fd)
-    except Exception as e:
-        logging.error(e)
-
-    python = sys.executable
-    sys.argv = ["farm_catacombs_detritus_three.py", str(ROUND_COUNT), str(failed_runs), str(timeout_fails)]
-    os.execl(python, python, *sys.argv)
-
-
 def afk_timeout_failsafe():
     global timeout_fails
     global START_TIME
@@ -129,8 +112,6 @@ def afk_timeout_failsafe():
         if((time.time() - START_TIME) / 60 >= 15):
             timeout_fails += 1
             logout_failsafe([feinter, hitter, blader])
-            #time.sleep(1)
-            #restart_program()
             spawn_program_and_die(['python', 'farm_catacombs_detritus_three.py',str(ROUND_COUNT), str(failed_runs), str(timeout_fails)])
         time.sleep(5)
         # print("Current time:"+str((time.time() - START_TIME) / 60))
@@ -165,6 +146,9 @@ def main():
             feinter.quick_sell(False, False)
             hitter.quick_sell(False, False)
             blader.quick_sell(False, False)
+
+        blader.clear_quest_buttons()
+        feinter.clear_quest_buttons()
 
         """ Check health and use potion if necessary """
         user_order[0][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1], health_percent=80)
@@ -364,11 +348,11 @@ def main():
             
             if(battle_round >= 5):
                 print("Boss Battle failed")
-                print("Exiting...")    
+                print("Exiting...")   
                 failed_runs = failed_runs+1
-                logout_failsafe([user_order[0][0], user_order[1][0], user_order[2][0]])
-                inFight = False
-                Fail = True
+                # Restarts program on fail
+                logout_failsafe([feinter, hitter, blader])
+                spawn_program_and_die(['python', 'farm_catacombs_detritus_three.py',str(ROUND_COUNT), str(failed_runs), str(timeout_fails)]) 
                 break
 
             random.shuffle(user_order)
@@ -383,17 +367,14 @@ def main():
             if feinter.find_button('done'):
                 inFight = False
 
-        if(Fail):
-            Fail = False
-        else:
-            print("Exiting...")
-            # Random User logout
-            user_order[0][0].logout()
+        print("Exiting...")
+        # Random User logout
+        user_order[0][0].logout()
 
-            await_finished_loading([user_order[0][0]])
+        await_finished_loading([user_order[0][0]])
 
-            user_order[1][0].teleport_to_friend(user_order[0][1])
-            user_order[2][0].teleport_to_friend(user_order[0][1]).wait(random.uniform(1, 3))
+        user_order[1][0].teleport_to_friend(user_order[0][1])
+        user_order[2][0].teleport_to_friend(user_order[0][1]).wait(random.uniform(1, 3))
         
         print('Successfully exited the dungeon')
         print_time(time.time() - START_TIME)

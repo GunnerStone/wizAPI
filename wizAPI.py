@@ -879,6 +879,11 @@ class wizAPI:
         while(self.find_button('done') or self.find_button('more')):
             self.press_key('space').wait(.2)
 
+    def clear_quest_buttons(self):
+        while(self.match_image(self.screenshotRAM(region=(740, 390, 60, 60)), 'buttons/quest_dialog.png', threshold=.2)):
+            self.click(770, 430, button='right', delay=.2)
+            self.move_mouse(730, 430).wait(2)
+
     def find_button(self, button_img):
         """ 
         Checks if more or done are on screen
