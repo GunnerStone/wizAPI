@@ -56,19 +56,11 @@ while True:
 
     # Enter Dungeon
     hitter.hold_key('s', .2).wait(random.uniform(0.5, 1))
-    hitter.hold_key('w', .4).wait(random.uniform(1.1, 1.2))
+    hitter.hold_key('w', .2).wait(random.uniform(1.1, 1.2))
 
-    await_finished_loading([hitter])
-
-    print('All players have entered the dungeon')
-
-    """ Run into battle """
-    hitter.hold_key('w', random.uniform(2, 3))
+    print('Waiting for mob')
 
     hitter.wait_for_next_turn()
-
-    boss_pos = hitter.get_enemy_pos('storm.png')
-    print('Boss at pos', boss_pos)
 
     inFight = True
     battle_round = 0
@@ -85,10 +77,7 @@ while True:
             hitter.discard_unusable_spells(cn)
 
         # Play
-        if hitter.find_spell(sys.argv[1], 'extract_{}'.format(sys.argv[2]), max_tries=1):
-            hitter.cast_spell(sys.argv[1], 'extract_{}'.format(sys.argv[2]))
-
-        elif hitter.enchant(sys.argv[1], sys.argv[2], 'Myth', 'extract_undead'):
+        if hitter.enchant(sys.argv[1], sys.argv[2], 'Myth', 'extract_undead'):
             hitter.find_spell(sys.argv[1], 'extract_{}'.format(sys.argv[2]), max_tries=4)
             hitter.cast_spell(sys.argv[1], 'extract_{}'.format(sys.argv[2]))
 
