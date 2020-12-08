@@ -765,7 +765,12 @@ class wizAPI:
         self.click(400, 488, delay=.3)
 
         """ Remove warning about gold overflow"""
-        self.click(410,432, delay=.6)
+        if(self.match_image(self.screenshotRAM((350, 415, 100, 20)), 'buttons/yes.png', threshold=.1)):
+            self.click(410, 432, delay=.6)
+
+        """ Remove warning about pet sell"""
+        if(self.match_image(self.screenshotRAM((350, 385, 100, 20)), 'buttons/yes.png', threshold=.1)):
+            self.click(400, 405, delay=.6)
 
         """ Closes user's bag """
         self.press_key('b')
