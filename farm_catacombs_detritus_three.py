@@ -3,6 +3,10 @@ import time
 import math
 import random
 from threading import Thread
+import os
+import sys
+import psutil
+import logging
 
 """ Register windows """
 try:
@@ -56,6 +60,34 @@ def print_time(timer):
     seconds = math.floor(timer % 60)
     print('Round lasted {} minutes and {} seconds.'.format(minutes, seconds))
 
+def logout_failsafe(windows):
+    for w in windows:
+        w.logout(isDungeon=True)
+
+def restart_program():
+    """Restarts the current program, with file objects and descriptors
+       cleanup
+    """
+
+    try:
+        p = psutil.Process(os.getpid())
+        for handler in p.open_files() + p.connections():
+            os.close(handler.fd)
+    except Exception as e:
+        logging.error(e)
+
+    python = sys.executable
+    os.execl(python, python, *sys.argv)
+
+def afk_timeout_failsafe():
+    while True:
+        if((time.time() - START_TIME)/60 >= 15):
+            logout_failsafe([feinter, hitter, blader])
+            time.sleep(1)
+            restart_program()
+        time.sleep(5)
+
+
 ROUND_COUNT = 0
 failed_runs = 0
 Fail = False
@@ -65,15 +97,17 @@ boss_pos = feinter.get_enemy_pos('sun.png')
 # Thread Init - Used for movement sequences
 threads = []
 
+START_TIME = time.time()
+
+t = Thread(target=afk_timeout_failsafe, args=())
+t.start()
+
 while True:
     START_TIME = time.time()
     ROUND_COUNT += 1
     print_separator('ROUND', str(ROUND_COUNT))
 
-    # feinter.mark_location()
-
     
-
     """ Attempt to enter the dungeon """
     time.sleep(1)
 
@@ -310,9 +344,7 @@ while True:
             print("Boss Battle failed")
             print("Exiting...")    
             failed_runs = failed_runs+1
-            user_order[0][0].logout(isDungeon=True)
-            user_order[1][0].logout(isDungeon=True)
-            user_order[2][0].logout(isDungeon=True)
+            logout_failsafe([user_order[0][0], user_order[1][0], user_order[2][0]])
             inFight = False
             Fail = True
             break
