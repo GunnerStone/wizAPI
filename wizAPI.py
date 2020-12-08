@@ -1185,9 +1185,9 @@ class wizAPI:
                 #aegis blade
                 elif self.enchant('Balance', 'elemental_blade', 'Sun', 'aegis'):
                     self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
-                #blue storm blade
-                elif self.find_spell('Storm', 'b_storm_blade', threshold=0.10):
-                    self.cast_spell('Storm', 'b_storm_blade',threshold=.10).at_friendly(2) #Casts at third wizard
+                #Triple cleanse hitter
+                elif self.find_spell('Storm', 'triple_cleanse_charm', threshold=0.10):
+                    self.cast_spell('Storm', 'triple_cleanse_charm',threshold=.10).at_friendly(2) #Casts at third wizard
                 elif self.find_spell('Balance', 'enchanted_elemental_blade', threshold=0.10): #Checks if left over enchanted blade is not cast
                     self.cast_spell('Balance', 'enchanted_elemental_blade')
                 elif self.find_spell('Life', 'pigsie', threshold=0.10):
