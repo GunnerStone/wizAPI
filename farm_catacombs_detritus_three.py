@@ -148,7 +148,7 @@ def main():
             blader.quick_sell(False, False)
 
         blader.clear_quest_buttons()
-        feinter.clear_quest_buttons()
+        hitter.clear_quest_buttons()
 
         """ Check health and use potion if necessary """
         user_order[0][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1], health_percent=80)
