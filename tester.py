@@ -1,10 +1,6 @@
 from wizAPI import *
 import time
 from threading import Thread
-import os
-import sys
-import psutil
-import logging
 
 tester = wizAPI().register_window(nth=1)
 wx, wy = tester.get_window_rect()[:2]
@@ -16,5 +12,3 @@ wx, wy = tester.get_window_rect()[:2]
 tester.click(350, 350)
 tester.wait(2)
 tester.click(350, 405)
-
-restart_program()
