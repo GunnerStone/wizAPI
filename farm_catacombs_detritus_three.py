@@ -172,6 +172,7 @@ while True:
 
     threads = []
 
+    feinter.wait(.5)
     clear_dialog([feinter, hitter, blader], 1)
 
     #walk_to_next_battle("feinter", 2)
