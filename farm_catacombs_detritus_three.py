@@ -8,8 +8,12 @@ import sys
 import psutil
 import logging
 from sys import argv
+import subprocess
+import sys
+from sys import exit
 
 """ Register windows """
+time.sleep(1) #wait for previoius process to finish
 try:
     blader = wizAPI().register_window(nth=2) # Middle
     hitter = wizAPI().register_window(nth=1) # Furthest Left
@@ -87,6 +91,20 @@ def logout_failsafe(windows):
     for w in windows:
         w.logout(isDungeon=True)
 
+def spawn_program_and_die(program, exit_code=0):
+    """
+    Start an external program and exit the script 
+    with the specified return code.
+
+    Takes the parameter program, which is a list 
+    that corresponds to the argv of your command.
+    """
+    # Start the external program
+    subprocess.Popen(program)
+    # We have started the program, and can suspend this interpreter
+    #Kills all active threads & main program
+    os._exit(1)
+
 def restart_program():
     """Restarts the current program, with file objects and descriptors
        cleanup
@@ -103,20 +121,25 @@ def restart_program():
     sys.argv = ["farm_catacombs_detritus_three.py", str(ROUND_COUNT), str(failed_runs), str(timeout_fails)]
     os.execl(python, python, *sys.argv)
 
+
 def afk_timeout_failsafe():
     global timeout_fails
+    global START_TIME
     while True:
         if((time.time() - START_TIME) / 60 >= 15):
             timeout_fails += 1
             logout_failsafe([feinter, hitter, blader])
-            time.sleep(1)
-            restart_program()
+            #time.sleep(1)
+            #restart_program()
+            spawn_program_and_die(['python', 'farm_catacombs_detritus_three.py',str(ROUND_COUNT), str(failed_runs), str(timeout_fails)])
         time.sleep(5)
+        # print("Current time:"+str((time.time() - START_TIME) / 60))
 
 def main():
     global ROUND_COUNT
     global failed_runs
     global boss_pos
+    global START_TIME
 
     while True:
         START_TIME = time.time()
@@ -331,6 +354,7 @@ def main():
         print('Boss at pos', boss_pos)
         
         inFight = True
+        Fail = False
         battle_round = 0
 
         while inFight:
