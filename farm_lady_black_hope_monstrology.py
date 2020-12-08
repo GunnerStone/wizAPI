@@ -2,6 +2,8 @@ from wizAPI import *
 import time
 import math
 import random
+import sys
+from sys import argv
 
 """ Register windows """
 try:
@@ -83,12 +85,12 @@ while True:
             hitter.discard_unusable_spells(cn)
 
         # Play
-        if hitter.find_spell('Storm', 'extract_tempest', max_tries=1):
-            hitter.cast_spell('Storm', 'extract_tempest')
+        if hitter.find_spell(sys.argv[1], 'extract_{}'.format(sys.argv[2]), max_tries=1):
+            hitter.cast_spell(sys.argv[1], 'extract_{}'.format(sys.argv[2]))
 
-        elif hitter.enchant('Storm', 'tempest', 'Myth', 'extract_undead'):
-            hitter.find_spell('Storm', 'extract_tempest', max_tries=4)
-            hitter.cast_spell('Storm', 'extract_tempest')
+        elif hitter.enchant(sys.argv[1], sys.argv[2], 'Myth', 'extract_undead'):
+            hitter.find_spell(sys.argv[1], 'extract_{}'.format(sys.argv[2]), max_tries=4)
+            hitter.cast_spell(sys.argv[1], 'extract_{}'.format(sys.argv[2]))
 
 
         else:
