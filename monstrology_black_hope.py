@@ -55,8 +55,8 @@ while True:
     time.sleep(1)
 
     # Enter Dungeon
-    hitter.hold_key('s', .2).wait(random.uniform(0.5, 1))
-    hitter.hold_key('w', .4).wait(random.uniform(1.1, 1.2))
+    hitter.hold_key('s', .4)
+    hitter.hold_key('w', .5).wait(random.uniform(1.1, 1.2))
 
     await_finished_loading([hitter])
 
