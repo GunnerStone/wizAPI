@@ -382,5 +382,11 @@ def main():
 # Threading for afk timeout
 afk_thread = Thread(target=afk_timeout_failsafe, args=())
 afk_thread.start()
-
-main()
+try:
+    main()
+except KeyboardInterrupt:
+    print('Interrupted')
+    try:
+        sys.exit(0)
+    except SystemExit:
+        os._exit(0)
