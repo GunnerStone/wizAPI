@@ -777,6 +777,11 @@ class wizAPI:
         if(self.match_image(self.screenshotRAM((350, 385, 100, 20)), 'buttons/yes.png', threshold=.1)):
             self.click(400, 405, delay=.6)
 
+        """ Remove warning about max gold"""
+        #self.screenshot("gold_test.png",region=(355, 415, 100, 20))
+        if(self.match_image(self.screenshotRAM((355, 415, 100, 20)), 'buttons/yes.png', threshold=.1)):
+            self.click(400, 425, delay=.6)
+
         """ Closes user's bag """
         self.press_key('b')
     
@@ -1251,7 +1256,7 @@ class wizAPI:
                 #cast blue elemental blade
                 elif self.find_spell('Balance', 'b_elemental_blade', threshold=0.10):
                     self.cast_spell('Balance', 'b_elemental_blade',threshold=.10).at_friendly(2) #Casts at third wizard
-                    
+
                 else:
                     self.pass_turn()
         
