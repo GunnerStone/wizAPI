@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals, print_function
 from wizAPI import *
 import time
 import math
@@ -11,9 +13,23 @@ from sys import argv
 import subprocess
 import sys
 from sys import exit
+from yaspin import yaspin
+from yaspin.spinners import Spinners
+from prompt_toolkit import HTML, print_formatted_text
+from prompt_toolkit.styles import Style
 
 """ Register windows """
 time.sleep(1) #wait for previoius process to finish
+
+str_buffer = "Detritus 3p Bot Running"
+sp = yaspin(text = str_buffer,spinner=Spinners.circleHalves)
+print = print_formatted_text
+# build a basic prompt_toolkit style for styling the HTML wrapped text
+style = Style.from_dict({
+    'msg': '#71f076 bold',
+    'sub-msg': '#616161 italic'
+})
+
 try:
     blader = wizAPI().register_window(nth=2) # Middle
     hitter = wizAPI().register_window(nth=1) # Furthest Left
@@ -52,6 +68,7 @@ threads = []
 
 # Time Func
 START_TIME = time.time()
+PROGRAM_START_TIME = time.time() #treat this like a constant
 
 def await_finished_loading(windows):
     for w in windows:
@@ -116,7 +133,59 @@ def afk_timeout_failsafe():
         time.sleep(5)
         # print("Current time:"+str((time.time() - START_TIME) / 60))
 
+def display_metrics():
+    global START_TIME #time when lap started
+    global PROGRAM_START_TIME #time when python script was run
+    global ROUND_COUNT
+    global failed_runs
+    global sp
+    global style
+    while(True):
+        feinter.clear_console()
+        #Total Program Runtime
+        str_buffer = str('{:0>2}'.format(int((time.time()-PROGRAM_START_TIME)/60))) + ":" + str('{:0>2}'.format(int((time.time()-PROGRAM_START_TIME)%60)))
+        #sp.write(str_buffer)
+        with sp.hidden():
+            print(HTML(
+                u'<ansigreen><u>Total Runtime</u></ansigreen>'+"<b> : </b>"+'<i><ansigrey>'+str_buffer+'</ansigrey></i>'
+            ), style=style)
+
+        #Current Lap RunTime
+        str_buffer = str('{:0>2}'.format(int((time.time()-START_TIME)/60)))+ ":" + str('{:0>2}'.format(int((time.time()-START_TIME)%60)))
+        #formatting for laptime being longer
+        curr_minutes = int((time.time()-START_TIME)/60)
+        lap_color = "ansigreen"
+        if curr_minutes >= 14:
+            lap_color = "ansired"
+        elif curr_minutes >= 10:
+            lap_color = "ansiyellow"
+
+        #sp.write(str_buffer)
+        with sp.hidden():
+            print(HTML(
+                u'<'+lap_color+'><u>Current Lap Time</u></'+lap_color+'>'+"<b> : </b>"+'<i><ansigrey>'+str_buffer+'</ansigrey></i>'
+            ), style=style)
+
+        #Current dungeon run number
+        str_buffer = str(ROUND_COUNT)
+        #sp.write(str_buffer)
+        with sp.hidden():
+            print(HTML(
+                u'<b>></b> <ansicyan><u>Current Dungeon Run</u></ansicyan>'+"<b> : </b>"+'<i><ansigrey>'+str_buffer+'</ansigrey></i>'
+            ), style=style)
+        
+        #number of failed runs
+        str_buffer = str(failed_runs)
+        #sp.write(str_buffer)
+        with sp.hidden():
+            print(HTML(
+                u'<b>></b> <purple><u>Failed Runs</u></purple>'+"<b> : </b>"+'<i><ansigrey>'+str_buffer+'</ansigrey></i>'
+            ), style=style)
+
+        time.sleep(1)
+
 def main():
+    #clear python console
     global ROUND_COUNT
     global failed_runs
     global boss_pos
@@ -125,7 +194,7 @@ def main():
     while True:
         START_TIME = time.time()
         ROUND_COUNT += 1
-        print_separator('ROUND', str(ROUND_COUNT))
+        #print_separator('ROUND', str(ROUND_COUNT))
 
         """ Attempt to enter the dungeon """
         time.sleep(1)
@@ -161,7 +230,7 @@ def main():
 
         await_finished_loading([feinter, hitter, blader])
 
-        print('All players have entered the dungeon')
+        #print('All players have entered the dungeon')
 
         """ Run into first battle """
         #walk_to_next_battle("all", 1)
@@ -196,7 +265,7 @@ def main():
                 inFight = False
             if feinter.find_button('done'):
                 inFight = False
-        print("Battle 1 has ended")
+        #print("Battle 1 has ended")
         feinter.wait(.5)
 
         clear_dialog([feinter, hitter, blader])
@@ -280,7 +349,7 @@ def main():
                 inFight = False
             if feinter.find_button('done'):
                 inFight = False
-        print("Battle 2 has ended")
+        #print("Battle 2 has ended")
         feinter.wait(.5)
 
         clear_dialog([feinter, hitter, blader])
@@ -335,7 +404,7 @@ def main():
         feinter.wait_for_next_turn()
         
         boss_pos = feinter.get_enemy_pos('sun.png')
-        print('Boss at pos', boss_pos)
+        #print('Boss at pos', boss_pos)
         
         inFight = True
         Fail = False
@@ -347,8 +416,8 @@ def main():
 
             
             if(battle_round >= 5):
-                print("Boss Battle failed")
-                print("Exiting...")   
+                #print("Boss Battle failed")
+                #print("Exiting...")   
                 failed_runs = failed_runs+1
                 # Restarts program on fail
                 logout_failsafe([feinter, hitter, blader])
@@ -367,7 +436,7 @@ def main():
             if feinter.find_button('done'):
                 inFight = False
 
-        print("Exiting...")
+        #print("Exiting...")
         # Random User logout
         user_order[0][0].logout()
 
@@ -376,16 +445,25 @@ def main():
         user_order[1][0].teleport_to_friend(user_order[0][1])
         user_order[2][0].teleport_to_friend(user_order[0][1]).wait(random.uniform(1, 3))
         
-        print('Successfully exited the dungeon')
+        #print('Successfully exited the dungeon')
         print_time(time.time() - START_TIME)
+
+
 
 # Threading for afk timeout
 afk_thread = Thread(target=afk_timeout_failsafe, args=())
+metric_thread = Thread(target=display_metrics,args=())
 afk_thread.start()
+
+
 try:
+    sp.start()
+    metric_thread.start()
+    time.sleep(2)
     main()
 except KeyboardInterrupt:
-    print('Interrupted')
+    
+    sp.write('Interrupted')
     try:
         sys.exit(0)
     except SystemExit:

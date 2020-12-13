@@ -5,6 +5,9 @@ import time
 import numpy
 import ctypes
 
+# import only system from os 
+from os import system, name 
+
 
 class wizAPI:
     def __init__(self, handle=None):
@@ -20,6 +23,15 @@ class wizAPI:
         """ Alias for time.sleep() that return self for function chaining """
         time.sleep(s)
         return self
+    
+    # define our clear function 
+    def clear_console(self): 
+        # for windows 
+        if name == 'nt': 
+            _ = system('cls') 
+        # for mac and linux(here, os.name is 'posix') 
+        else: 
+            _ = system('clear') 
 
     def register_window(self, name="Wizard101", nth=0):
         """ Assigns the instance to a wizard101 window (Required before using any other API functions) """
@@ -198,7 +210,7 @@ class wizAPI:
              )
             return self
         else:
-            print('Friend cound not be found')
+            #print('Friend cound not be found')
             return False
 
     def enter_dungeon_dialog(self):
@@ -345,16 +357,16 @@ class wizAPI:
         mana_low = self.is_mana_low()
         health_low = self.is_health_low(health_percent)
 
-        if mana_low:
-            print('Mana is low, using potion')
-        if health_low:
-            print('Health is low, using potion')
+        # if mana_low:
+        #     print('Mana is low, using potion')
+        # if health_low:
+        #     print('Health is low, using potion')
         if mana_low or health_low:
-            print('Clicking Potion')
+            #print('Clicking Potion')
             self.click(160, 590, delay=.2) 
             self.wait(1)
             if(self.is_mana_low() or self.is_health_low(health_percent) and refill): #IF Refill == true, all wiz must have HILDA marked in commons
-                print('Refilling')
+                #print('Refilling')
                 if(teleport):
                     self.teleport_to_friend(teleport_friend_img)
                 else:
@@ -447,13 +459,13 @@ class wizAPI:
         while self.is_turn_to_play():
             self.wait(1)
 
-        print('Spell round begins')
+        #print('Spell round begins')
 
         """ Start detecting if it's our turn to play again """
         while not self.is_turn_to_play():
             self.wait(1)
 
-        print('Our turn to play')
+        #print('Our turn to play')
         return self
 
     def wait_for_turn_to_play(self):
@@ -578,7 +590,7 @@ class wizAPI:
         count = 0
         while True:
             count += 1
-            print(count)
+            #print(count)
             try:
                 # Try accessing from memory
                 card_pos = self._spell_memory["unusable"][0]
@@ -588,7 +600,7 @@ class wizAPI:
                     card_pos = result[0]
                 else:
                     break
-            print(card_pos)
+            #print(card_pos)
             # Right click the card position
             self.click(*card_pos, button='right', delay=.2)
             # Flush card memory
@@ -625,7 +637,7 @@ class wizAPI:
         if the spell requires a target, chain it with .at_target([enemy_pos])
         """
         if self.find_spell(spell_type, spell,threshold):
-            print('Casting', spell)
+            #print('Casting', spell)
             self.flush_spell_memory()
             return self.select_spell(spell_type, spell)
         else:
@@ -634,15 +646,14 @@ class wizAPI:
     def enchant(self, spell_type, spell_name, enchant_type, enchant_name, threshold=0.15, silent_fail=False):
         """ Attemps the enchant 'spell_name' with 'enchant_name' """
         if self.find_spell(spell_type, spell_name, threshold=threshold) and self.find_spell(enchant_type, enchant_name, recapture=False, threshold=threshold):
-            print('Enchanting', spell_name, 'with', enchant_name)
+            #print('Enchanting', spell_name, 'with', enchant_name)
             self.select_spell(enchant_type, enchant_name)
             self.select_spell(spell_type, spell_name)
             self.flush_spell_memory()
             return self
         else:
-            if not silent_fail:
-                print("One or more spells couldn't be found:",
-                      spell_name, enchant_name)
+            # if not silent_fail:
+            #     print("One or more spells couldn't be found:",spell_name, enchant_name)
             return False
 
     def get_enemy_pos(self, enemy_img):
@@ -732,10 +743,10 @@ class wizAPI:
             if self.pixel_matches_color((X, Y), COLOR, threshold=30):
                 num_enemies += 1
 
-        if num_enemies == 1:
-            print(num_enemies, 'enemy in battle')
-        else:
-            print(num_enemies, 'enemies in battle')
+        # if num_enemies == 1:
+        #     print(num_enemies, 'enemy in battle')
+        # else:
+        #     print(num_enemies, 'enemies in battle')
         return num_enemies
 
     def quick_sell(self, sell_crown_items, sell_jewels):
@@ -870,8 +881,8 @@ class wizAPI:
             self.click(267,430,delay=.2)
         elif(quest_index==4):
             self.click(267,430,delay=.2)
-        else:
-            print("Give a valid quest position")
+        # else:
+        #     print("Give a valid quest position")
         #close quest menu
         self.press_key('q')
         #get mouse out of the way of other things
@@ -912,7 +923,7 @@ class wizAPI:
     def lm_attack(self, wizard_type, boss_pos):
         wizard_type = wizard_type.split('.')[0]
 
-        print(wizard_type)
+        #print(wizard_type)
 
         if(wizard_type == "feinter"):
             """ Feinter plays """
@@ -982,7 +993,7 @@ class wizAPI:
     def mass_feint_attack(self, wizard_type, boss_pos, hitter="storm"):
         wizard_type = wizard_type.split('.')[0]
 
-        print(wizard_type)
+        #print(wizard_type)
 
         if(wizard_type == "feinter"):
             """ Feinter plays """
@@ -1059,7 +1070,7 @@ class wizAPI:
     def mass_feint_attack_lore(self, wizard_type, boss_pos):
         wizard_type = wizard_type.split('.')[0]
 
-        print(wizard_type)
+        #print(wizard_type)
 
         if(wizard_type == "feinter"):
             """ Feinter plays """
@@ -1118,7 +1129,7 @@ class wizAPI:
     def catacombs_detritus_attack(self, wizard_type, boss_pos, boss_battle=False):
         wizard_type = wizard_type.split('.')[0]
 
-        print(wizard_type)
+        #print(wizard_type)
 
         if(wizard_type == "feinter"):
             """ Feinter plays """
@@ -1231,7 +1242,7 @@ class wizAPI:
     def treemugger_attack(self, wizard_type, boss_pos):
             wizard_type = wizard_type.split('.')[0]
 
-            print(wizard_type)
+            #print(wizard_type)
 
             if(wizard_type == "feinter"):
                 """ Feinter plays """
