@@ -54,6 +54,7 @@ if len(sys.argv) > 1:
     ROUND_COUNT = int(sys.argv[1])
     failed_runs = int(sys.argv[2])
     timeout_fails = int(sys.argv[3])
+    PROGRAM_START_TIME = int(sys.argv[4])
 else:
     ROUND_COUNT = 0
     failed_runs = 0
@@ -129,7 +130,7 @@ def afk_timeout_failsafe():
         if((time.time() - START_TIME) / 60 >= 15):
             timeout_fails += 1
             logout_failsafe([feinter, hitter, blader])
-            spawn_program_and_die(['python', 'farm_catacombs_detritus_three.py',str(ROUND_COUNT), str(failed_runs), str(timeout_fails)])
+            spawn_program_and_die(['python', 'farm_catacombs_detritus_three.py',str(ROUND_COUNT), str(failed_runs), str(timeout_fails),str(PROGRAM_START_TIME)])
         time.sleep(5)
         # print("Current time:"+str((time.time() - START_TIME) / 60))
 
@@ -421,7 +422,7 @@ def main():
                 failed_runs = failed_runs+1
                 # Restarts program on fail
                 logout_failsafe([feinter, hitter, blader])
-                spawn_program_and_die(['python', 'farm_catacombs_detritus_three.py',str(ROUND_COUNT), str(failed_runs), str(timeout_fails)]) 
+                spawn_program_and_die(['python', 'farm_catacombs_detritus_three.py',str(ROUND_COUNT), str(failed_runs), str(timeout_fails),str(PROGRAM_START_TIME)]) 
                 break
 
             random.shuffle(user_order)
