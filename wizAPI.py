@@ -818,6 +818,10 @@ class wizAPI:
 
             if(teleport == False):
                 self.mark_location()
+        
+        else:
+            self.mark_location()
+            
 
         # Goes to Sell tab
         self.press_key('x')
