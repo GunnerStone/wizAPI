@@ -54,7 +54,7 @@ if len(sys.argv) > 1:
     ROUND_COUNT = int(sys.argv[1])
     failed_runs = int(sys.argv[2])
     timeout_fails = int(sys.argv[3])
-    PROGRAM_START_TIME = int(sys.argv[4])
+    PROGRAM_START_TIME = int(float(sys.argv[4]))
 else:
     ROUND_COUNT = 0
     failed_runs = 0

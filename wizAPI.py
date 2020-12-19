@@ -331,6 +331,9 @@ class wizAPI:
         if(health_percent==33):
             POSITION = (23, 563)
             COLOR = (126, 41, 3)
+        elif(health_percent==60):
+            POSITION = (26,541)            
+            COLOR = (220, 43, 60)
         elif(health_percent==80):
             POSITION = (26,531)
             COLOR = (242, 52, 81)
@@ -955,17 +958,13 @@ class wizAPI:
                 self.discard_unusable_spells(cn)
 
             # Play
-            if (self.find_spell('Storm', 'glowbug-squall', threshold=0.05, max_tries=3) and
-                    self.enchant('Storm', 'glowbug-squall', 'Sun', 'epic')):
-                self.find_spell('Storm', 'glowbug-squall-enchanted', max_tries=4)
-                self.cast_spell('Storm', 'glowbug-squall-enchanted')
-
-            elif self.find_spell('Storm', 'tempest-enchanted', max_tries=1):
+            
+            if self.enchant('Storm', 'tempest', 'Sun', 'epic'):
+                self.cast_spell('Storm', 'tempest-enchanted')
+            
+            elif self.find_spell('Storm', 'tempest-enchanted', max_tries=2):
                 self.cast_spell('Storm', 'tempest-enchanted')
 
-            elif self.enchant('Storm', 'tempest', 'Sun', 'epic'):
-                self.find_spell('Storm', 'tempest-enchanted', max_tries=4)
-                self.cast_spell('Storm', 'tempest-enchanted')
 
             elif self.find_spell('Storm', 'glowbug-squall-enchanted', threshold=.05):
                 self.cast_spell('Storm', 'glowbug-squall-enchanted')
@@ -1102,11 +1101,11 @@ class wizAPI:
                 self.discard_unusable_spells(cn)
 
             # Play
-            if self.find_spell('Storm', 'tempest-enchanted', max_tries=2):
-                self.cast_spell('Storm', 'tempest-enchanted')
+            
 
-            elif self.enchant('Storm', 'tempest', 'Sun', 'epic'):
-                self.find_spell('Storm', 'tempest-enchanted', max_tries=2)
+            if self.enchant('Storm', 'tempest', 'Sun', 'epic'):
+                self.cast_spell('Storm', 'tempest-enchanted')
+            elif self.find_spell('Storm', 'tempest-enchanted', max_tries=2):
                 self.cast_spell('Storm', 'tempest-enchanted')
 
             else:
@@ -1192,7 +1191,6 @@ class wizAPI:
                     self.cast_spell('Storm', 'tempest-enchanted')
                 
                 elif self.enchant('Storm', 'tempest', 'Sun', 'epic'):
-                    self.find_spell('Storm', 'tempest-enchanted', threshold=0.10)
                     self.cast_spell('Storm', 'tempest-enchanted')
                 else:
                     self.pass_turn()
@@ -1201,7 +1199,6 @@ class wizAPI:
                     self.cast_spell('Storm', 'tempest-enchanted')
 
                 elif self.enchant('Storm', 'tempest', 'Sun', 'epic'):
-                    self.find_spell('Storm', 'tempest-enchanted', threshold=0.10)
                     self.cast_spell('Storm', 'tempest-enchanted')
 
                 else:
@@ -1330,15 +1327,18 @@ class wizAPI:
                     self.discard_unusable_spells(cn)
 
                 # Play
-                if self.find_spell('Balance', 'enchanted_elemental_blade', threshold=0.10):
-                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
-                elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen_b'):
-                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
                 if self.find_spell('Balance', 'b_elemental_blade', threshold=0.10):
                     self.cast_spell('Balance', 'b_elemental_blade').at_friendly(2) #Casts at third wizard
+                elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen_b'):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
+                elif self.find_spell('Balance', 'enchanted_elemental_blade', threshold=0.10):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
+                
                 # Play
                 elif self.enchant('Death', 'feint', 'Sun', 'potent'):
                     self.cast_spell('Death', 'feint-potent').at_target(3)
+                elif self.find_spell('Death', 'feint-potent', threshold=0.10):
+                    self.cast_spell('Death', 'feint-potent').at_target(3) #Casts at third wizard
                 elif self.find_spell('Death', 'feint'):
                     self.cast_spell('Death', 'feint').at_target(3)
                 else:
@@ -1352,17 +1352,17 @@ class wizAPI:
                 if cn > 2:
                     self.discard_unusable_spells(cn)
                 # Play
-                if self.find_spell('Storm', 'mass_prism', threshold=0.10):
+                if self.find_spell('Storm', 'mass_prism', threshold=0.14):
                     self.cast_spell('Storm', 'mass_prism')
-                elif self.find_spell('Storm', 'enchanted_storm_blade', threshold=0.10):
-                    self.cast_spell('Storm', 'enchanted_storm_blade').at_friendly(2) #Casts at third wizard
                 elif self.enchant('Storm', 'storm_blade', 'Sun', 'sharpen'):
                     self.cast_spell('Storm', 'enchanted_storm_blade').at_friendly(2) #Casts at third wizard
-                elif self.find_spell('Storm', 'tempest-enchanted', threshold=0.10):
-                    self.cast_spell('Storm', 'tempest-enchanted')
+                elif self.find_spell('Storm', 'enchanted_storm_blade', threshold=0.10):
+                    self.cast_spell('Storm', 'enchanted_storm_blade').at_friendly(2) #Casts at third wizard
                 elif self.enchant('Storm', 'tempest', 'Sun', 'epic'):
                     self.find_spell('Storm', 'tempest-enchanted', threshold=0.10)
                     self.cast_spell('Storm', 'tempest-enchanted')
+                elif self.find_spell('Storm', 'tempest-enchanted', threshold=0.10):
+                    self.cast_spell('Storm', 'tempest-enchanted')             
                 else:
                     self.pass_turn()
 
@@ -1374,13 +1374,14 @@ class wizAPI:
                     self.discard_unusable_spells(cn)
 
                 # Play
-                if self.find_spell('Death', 'mass_feint', threshold=0.10):
-                    self.cast_spell('Death', 'mass_feint')
+                
+                if self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen'):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
                 elif self.find_spell('Balance', 'enchanted_elemental_blade', threshold=0.10):
                     self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
-                elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen'):
-                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
-                elif self.find_spell('Balance', 'elemental_blade', threshold=0.10):
-                    self.cast_spell('Balance', 'elemental_blade').at_friendly(2) #Casts at third wizard
+                elif self.find_spell('Death', 'mass_feint', threshold=0.10):
+                    self.cast_spell('Death', 'mass_feint')
+                elif self.find_spell('Storm', 'b_storm_blade', threshold=0.10):
+                    self.cast_spell('Storm', 'b_storm_blade').at_friendly(2) #Casts at third wizard
                 else:
                     self.pass_turn() 

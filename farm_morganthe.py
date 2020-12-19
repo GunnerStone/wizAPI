@@ -41,6 +41,11 @@ def await_pet_loading(windows):
         while not w.is_pet_icon_visible():
             time.sleep(.5)
 
+def await_pet_icon(windows):
+    for w in windows:
+        while not w.is_pet_icon_visible():
+            time.sleep(.5)
+
 
 def print_separator(*args):
     sides = '+'*16
@@ -71,9 +76,9 @@ while True:
     print_separator('ROUND', str(ROUND_COUNT))
 
     """ Check health and use potion if necessary """
-    user_order[0][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1], health_percent=33)
-    user_order[1][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[0][1], health_percent=33)
-    user_order[2][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1], health_percent=33)
+    user_order[0][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1], health_percent=60)
+    user_order[1][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[0][1], health_percent=60)
+    user_order[2][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1], health_percent=60)
 
 
     # """ Attempt to enter the dungeon """
@@ -140,7 +145,7 @@ while True:
             user_order[0][0].logout(isDungeon=True)
             user_order[1][0].logout(isDungeon=True)
             user_order[2][0].logout(isDungeon=True)
-            await_pet_loading([user_order[2][0]])
+            await_pet_icon([user_order[2][0]])
             Fail = True
             FailCount += 1
             inFight = False
