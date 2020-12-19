@@ -221,7 +221,7 @@ class wizAPI:
     def is_pet_icon_visible(self):
         self.set_active()
         roi = self.screenshotRAM(region=(126,512+23,26,17))
-        found = self.match_image(roi,'pet_icon.png')
+        found = self.match_image(roi,'pet_icon.png') or self.find_button('done') or self.find_button('more')
         return found
 
     def is_logo_bottom_left_loading(self):
@@ -1317,5 +1317,70 @@ class wizAPI:
                     self.cast_spell('Life', 'pigsie')
                 elif self.find_spell('Life', 'unicorn', threshold=0.10):
                     self.cast_spell('Life', 'unicorn')
+                else:
+                    self.pass_turn() 
+
+    def morganthe_attack(self, wizard_type, boss_pos):
+            wizard_type = wizard_type.split('.')[0]
+            if(wizard_type == "feinter"):
+                """ Feinter plays """
+                # Check to see if deck is crowded with unusable spells
+                cn = len(self.find_unusable_spells())
+                if cn > 2:
+                    self.discard_unusable_spells(cn)
+
+                # Play
+                if self.find_spell('Balance', 'enchanted_elemental_blade', threshold=0.10):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
+                elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen_b'):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
+                if self.find_spell('Balance', 'b_elemental_blade', threshold=0.10):
+                    self.cast_spell('Balance', 'b_elemental_blade').at_friendly(2) #Casts at third wizard
+                # Play
+                elif self.enchant('Death', 'feint', 'Sun', 'potent'):
+                    self.cast_spell('Death', 'feint-potent').at_target(3)
+                elif self.find_spell('Death', 'feint'):
+                    self.cast_spell('Death', 'feint').at_target(3)
+                else:
+                    self.pass_turn()
+        
+            if(wizard_type == "hitter"):
+                """ Hitter plays """
+                # Check to see if deck is crowded with unusable spells
+                cn = len(self.find_unusable_spells())
+                # Discard the spells
+                if cn > 2:
+                    self.discard_unusable_spells(cn)
+                # Play
+                if self.find_spell('Storm', 'mass_prism', threshold=0.10):
+                    self.cast_spell('Storm', 'mass_prism')
+                elif self.find_spell('Storm', 'enchanted_storm_blade', threshold=0.10):
+                    self.cast_spell('Storm', 'enchanted_storm_blade').at_friendly(2) #Casts at third wizard
+                elif self.enchant('Storm', 'storm_blade', 'Sun', 'sharpen'):
+                    self.cast_spell('Storm', 'enchanted_storm_blade').at_friendly(2) #Casts at third wizard
+                elif self.find_spell('Storm', 'tempest-enchanted', threshold=0.10):
+                    self.cast_spell('Storm', 'tempest-enchanted')
+                elif self.enchant('Storm', 'tempest', 'Sun', 'epic'):
+                    self.find_spell('Storm', 'tempest-enchanted', threshold=0.10)
+                    self.cast_spell('Storm', 'tempest-enchanted')
+                else:
+                    self.pass_turn()
+
+            if(wizard_type == "blader"):
+                """ Blader plays """
+                # Check to see if deck is crowded with unusable spells
+                cn = len(self.find_unusable_spells())
+                if cn > 2:
+                    self.discard_unusable_spells(cn)
+
+                # Play
+                if self.find_spell('Death', 'mass_feint', threshold=0.10):
+                    self.cast_spell('Death', 'mass_feint')
+                elif self.find_spell('Balance', 'enchanted_elemental_blade', threshold=0.10):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
+                elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen'):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
+                elif self.find_spell('Balance', 'elemental_blade', threshold=0.10):
+                    self.cast_spell('Balance', 'elemental_blade').at_friendly(2) #Casts at third wizard
                 else:
                     self.pass_turn() 
