@@ -355,7 +355,8 @@ class wizAPI:
         THRESHOLD = 10
         return not self.pixel_matches_color(POSITION, COLOR, threshold=THRESHOLD)
 
-    def use_potion_if_needed(self, refill=False, teleport_to_wizard="", health_percent=33, teleport=False, teleport_friend_img=""): #Health Position defaults to 1/3
+    def use_potion_if_needed(self, refill=False, teleport_to_wizard="", health_percent=33, teleport=False, teleport_friend_img="",greedy_tp=False): #Health Position defaults to 1/3
+        
         self.set_active()
         mana_low = self.is_mana_low()
         health_low = self.is_health_low(health_percent)
@@ -375,11 +376,14 @@ class wizAPI:
                 else:
                     self.recall_location()
                 #Waits for user to finish loading
-                while not self.is_logo_bottom_left_or_right_loading():
-                    time.sleep(.2)
+                if not greedy_tp:
+                    while not self.is_logo_bottom_left_or_right_loading():
+                        time.sleep(.2)
 
-                while not self.is_idle():
-                    time.sleep(.5)
+                    while not self.is_idle():
+                        time.sleep(.5)
+                else:
+                    self.wait_pet_loading()
 
                 #Waits for hilda confirmation to pop
                 time.sleep(1)
@@ -406,11 +410,14 @@ class wizAPI:
                     self.teleport_to_friend(teleport_to_wizard)
 
                     #Waits for user to finish loading
-                    while not self.is_logo_bottom_left_or_right_loading():
-                        time.sleep(.2)
+                    if not greedy_tp:
+                        while not self.is_logo_bottom_left_or_right_loading():
+                            time.sleep(.2)
 
-                    while not self.is_idle():
-                        time.sleep(.5)
+                        while not self.is_idle():
+                            time.sleep(.5)
+                    else:
+                        self.wait_pet_loading()
                 else: # Marks location to waste mana before buying potions
                     if(teleport == False):
                         self.mark_location()
@@ -432,16 +439,26 @@ class wizAPI:
                     self.teleport_to_friend(teleport_to_wizard)
 
                     #Waits for user to finish loading
-                    while not self.is_logo_bottom_left_loading():
-                        time.sleep(.2)
+                    if not greedy_tp:
+                        while not self.is_logo_bottom_left_loading():
+                            time.sleep(.2)
 
-                    while not self.is_idle():
-                        time.sleep(.5)
-
+                        while not self.is_idle():
+                            time.sleep(.5)
+                    else:
+                        self.wait_pet_loading()
 
     def pass_turn(self):
         self.click(254, 398, delay=.5).move_mouse(200, 400)
         return self
+    
+    def wait_pet_loading(self):
+        #wait for pet icon to disappear
+        while self.is_pet_icon_visible():
+                time.sleep(.5)
+        #wait for pept icon to reappear
+        while not self.is_pet_icon_visible():
+            time.sleep(.5)
 
     def is_turn_to_play(self):
         """ matches a yellow pixel in the 'pass' button """
@@ -483,7 +500,7 @@ class wizAPI:
 
         """ Start detecting if it's our turn to play again """
         """ Or if it's the end of the battle """
-        while not (self.is_turn_to_play_pass() or self.is_idle() or self.find_button('done')):
+        while not (self.is_turn_to_play_pass() or self.is_idle() or self.find_button('done') or self.find_button('more')):
             self.wait(1)
         return self
 
@@ -1237,6 +1254,88 @@ class wizAPI:
                 else:
                     self.pass_turn()      
 
+    def AMM_paradox_attack(self, wizard_type, boss_pos, boss_battle=False):
+        wizard_type = wizard_type.split('.')[0]
+
+        #print(wizard_type)
+
+        if(wizard_type == "feinter"):
+            """ Feinter plays """
+            # Check to see if deck is crowded with unusable spells
+            cn = len(self.find_unusable_spells())
+            if cn > 2:
+                self.discard_unusable_spells(cn)
+
+            if(boss_battle):
+                # Play
+                
+                #feint the boss on first round
+                if self.enchant('Death', 'feint', 'Sun', 'potent'):
+                    self.cast_spell('Death', 'feint-potent').at_target(boss_pos)
+                #cast sharpened elemental blade
+                elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen_b',threshold=.10):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade',threshold=.10).at_friendly(2) #Casts at third wizard
+
+                else:
+                    self.pass_turn()
+            else:
+                # Play
+
+                #cast sharpened elemental blade
+                if self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen_b',threshold=.10):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade',threshold=.10).at_friendly(2) #Casts at third wizard
+
+                else:
+                    self.pass_turn()
+        
+        if(wizard_type == "hitter"):
+            """ Hitter plays """
+            # Check to see if deck is crowded with unusable spells
+            cn = len(self.find_unusable_spells())
+            # Discard the spells
+            if cn > 2:
+                self.discard_unusable_spells(cn)
+            if(boss_battle):
+                # Play
+                if self.find_spell('Storm', 'storm_prism', threshold=0.10):
+                    self.cast_spell('Storm', 'storm_prism').at_target(boss_pos)
+
+                elif self.find_spell('Storm', 'tempest-enchanted', threshold=0.10):
+                    self.cast_spell('Storm', 'tempest-enchanted')
+                
+                elif self.enchant('Storm', 'tempest', 'Sun', 'epic'):
+                    self.cast_spell('Storm', 'tempest-enchanted')
+                else:
+                    self.pass_turn()
+            else:
+                if self.enchant('Storm', 'tempest', 'Sun', 'epic'):
+                    self.cast_spell('Storm', 'tempest-enchanted')
+
+                elif self.find_spell('Storm', 'tempest-enchanted', threshold=0.10):
+                    self.cast_spell('Storm', 'tempest-enchanted')
+                else:
+                    self.pass_turn()
+        if(wizard_type == "blader"):
+            """ Blader plays """
+            # Check to see if deck is crowded with unusable spells
+            cn = len(self.find_unusable_spells())
+            if cn > 2:
+                self.discard_unusable_spells(cn)
+
+            # Play
+            if(boss_battle):
+                #mass fient boss first round
+                if self.find_spell('Death', 'mass_feint', threshold=0.10):
+                    self.cast_spell('Death', 'mass_feint')
+                elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen',threshold=.10):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade',threshold=.10).at_friendly(2) #Casts at third wizard
+                else:
+                    self.pass_turn()
+            else:
+                if self.find_spell('Death', 'mass_feint', threshold=0.10):
+                    self.cast_spell('Death', 'mass_feint')
+                else:
+                    self.pass_turn()  
 
     def treemugger_attack(self, wizard_type, boss_pos):
             wizard_type = wizard_type.split('.')[0]
