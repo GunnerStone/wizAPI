@@ -2,6 +2,7 @@ from wizAPI import *
 import time
 import math
 import random
+import sys
 
 """ Register windows """
 try:
@@ -47,8 +48,22 @@ def print_time(timer):
     seconds = math.floor(timer % 60)
     print('Round lasted {} minutes and {} seconds.'.format(minutes, seconds))
 
+# Global vars
+if len(sys.argv) == 2:
+    HITTING_SCHOOL = str(sys.argv[1]).lower()
+    ROUND_COUNT = 0
+    failed_runs = 0
+    timeout_fails = 0
+    # ROUND_COUNT = int(sys.argv[1])
+    # failed_runs = int(sys.argv[2])
+    # timeout_fails = int(sys.argv[3])
+    # PROGRAM_START_TIME = int(float(sys.argv[4]))
+else:
+    HITTING_SCHOOL = "death"
+    ROUND_COUNT = 0
+    failed_runs = 0
+    timeout_fails = 0
 
-ROUND_COUNT = 0
 user_order = [[feinter, 'feinter.png'], [hitter, 'hitter.png'], [blader, 'blader.png']]
 
 while True:
@@ -125,9 +140,9 @@ while True:
         
         random.shuffle(user_order)
 
-        user_order[0][0].mass_feint_attack(wizard_type = user_order[0][1], boss_pos = boss_pos, hitter="fire")
-        user_order[1][0].mass_feint_attack(wizard_type = user_order[1][1], boss_pos = boss_pos, hitter="fire")
-        user_order[2][0].mass_feint_attack(wizard_type = user_order[2][1], boss_pos = boss_pos, hitter="fire")
+        user_order[0][0].mass_feint_attack(wizard_type = user_order[0][1], boss_pos = boss_pos, hitter=HITTING_SCHOOL)
+        user_order[1][0].mass_feint_attack(wizard_type = user_order[1][1], boss_pos = boss_pos, hitter=HITTING_SCHOOL)
+        user_order[2][0].mass_feint_attack(wizard_type = user_order[2][1], boss_pos = boss_pos, hitter=HITTING_SCHOOL)
 
         feinter.wait_for_end_of_round()
         if feinter.is_idle():

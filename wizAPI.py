@@ -993,7 +993,7 @@ class wizAPI:
                 self.pass_turn()
 
     #One round strat for most mobs
-    def mass_feint_attack(self, wizard_type, boss_pos, hitter="storm"):
+    def mass_feint_attack(self, wizard_type, boss_pos, hitter="Storm"):
         wizard_type = wizard_type.split('.')[0]
 
         #print(wizard_type)
@@ -1015,7 +1015,27 @@ class wizAPI:
             else:
                 self.pass_turn()
         
-        if(wizard_type == "hitter" and hitter=="storm"):
+        if(wizard_type == "hitter"):
+            hitter = hitter.capitalize()
+            print("Hitter is:"+str(hitter))
+            if (hitter=="Storm"):
+                attack_spell = "tempest"
+                attack_e_spell = "tempest-enchanted"
+            elif (hitter=="Fire"):
+                attack_spell = "meteor-strike"
+                attack_e_spell = "meteor-strike-enchanted"
+            elif (hitter=="Ice"):
+                attack_spell = "blizzard"
+                attack_e_spell = "blizzard_enchanted"
+            elif (hitter=="Myth"):
+                attack_spell = "humungofrog"
+                attack_e_spell = "humungofrog_enchanted"
+            elif (hitter=="Death"):
+                attack_spell = "deer_knight"
+                attack_e_spell = "deer_knight_enchanted"
+            elif (hitter=="Life"):
+                attack_spell = "ratatoskrs_spin"
+                attack_e_spell = "ratatoskrs_spin_enchanted"
             """ Hitter plays """
             # Check to see if deck is crowded with unusable spells
             cn = len(self.find_unusable_spells())
@@ -1024,34 +1044,14 @@ class wizAPI:
                 self.discard_unusable_spells(cn)
 
             # Play - Storm
-            if self.find_spell('Storm', 'tempest-enchanted', max_tries=2):
-                self.cast_spell('Storm', 'tempest-enchanted')
-
-            elif self.enchant('Storm', 'tempest', 'Sun', 'epic'):
-                self.find_spell('Storm', 'tempest-enchanted', max_tries=2)
-                self.cast_spell('Storm', 'tempest-enchanted')
-
+            if self.enchant(hitter, attack_spell, 'Sun', 'epic'):
+                self.cast_spell(hitter, attack_e_spell)
+            elif self.find_spell(hitter, attack_e_spell, max_tries=2):
+                self.cast_spell(hitter, attack_e_spell)
             else:
                 self.pass_turn()
         
-        if(wizard_type == "hitter" and hitter=="fire"):
-            """ Hitter plays """
-            # Check to see if deck is crowded with unusable spells
-            cn = len(self.find_unusable_spells())
-            # Discard the spells
-            if cn > 2:
-                self.discard_unusable_spells(cn)
-
-            # Play - Storm
-            if self.find_spell('Fire', 'meteor-strike-enchanted', max_tries=2):
-                self.cast_spell('Fire', 'meteor-strike-enchanted')
-
-            elif self.enchant('Fire', 'meteor-strike', 'Sun', 'epic'):
-                self.find_spell('Fire', 'meteor-strike-enchanted', max_tries=2)
-                self.cast_spell('Fire', 'meteor-strike-enchanted')
-
-            else:
-                self.pass_turn()
+        
         if(wizard_type == "blader"):
             """ Blader plays """
             # Check to see if deck is crowded with unusable spells
@@ -1064,8 +1064,6 @@ class wizAPI:
                 self.cast_spell('Death', 'mass_feint')
             elif self.find_spell('Life', 'pigsie'):
                 self.cast_spell('Life', 'pigsie')
-            elif self.find_spell('Life', 'unicorn'):
-                self.cast_spell('Life', 'unicorn')
             else:
                 self.pass_turn()
         
