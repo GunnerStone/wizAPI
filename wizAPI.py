@@ -60,6 +60,95 @@ class wizAPI:
             pyautogui.press('alt')
         return self
 
+    def is_teamup_at(self,pos=0):
+        """ Returns true if there is a teamup option available in window n (0-5)"""
+        self.set_active()
+        if (0 <= pos <=5):
+            #check if pixel value of line is a shade of red
+            #if yes, return true
+            #if no, return false
+            #32pixles * pos should give correct offset
+            return self.pixel_matches_color(coords=(500,262+32*pos),rgb=(135, 36, 64),threshold=10)
+        else:
+            return False
+    def is_teamup_long(self,pos=0):
+        """ Returns true if there is a timer icon on teamup (indicates long instance)"""
+        self.set_active()
+        if (0 <= pos <=5):
+            x, y = (560,244)
+            self.set_active()
+            large = self.screenshotRAM((x,y+32*pos,30,30))
+            result = self.match_image(largeImg=large, smallImg='icons/timer.png',threshold=.1)
+            if result is not False:
+                return True
+            else:
+                return False
+        else:
+            return False
+    
+    def select_world_teamup(self,pos=0,page=0):
+        self.set_active()
+        if(0<=pos<=5):
+            #scroll until at desired page
+            for i in range(page):
+                #x,y pos of the yellow page-arrow
+                x, y = (570,212)
+                self.click(x,y)
+
+            #click on desired world pos
+            x, y = (250,212)
+            x = x+55*pos
+            self.click(x,y)
+            return self
+        else:
+            return self
+    def teamup_refresh(self):
+        """ Refreshes availabel teamups """
+        self.set_active()
+        x, y = (535,492)
+        self.click(x,y)
+        return self
+    
+    def is_queued_teamup(self):
+        """ Returns true if wizard is queued on teamup"""
+        self.set_active()
+        x, y = (338,400)
+        large = self.screenshotRAM((x,y,130,26))
+        result = self.match_image(largeImg=large, smallImg='buttons/cancel_teamup.png',threshold=.1)
+        if result is not False:
+            return True
+        else:
+            return False
+
+    def cancel_queue_teamup(self):
+        #clicks through buttons to cancel teamup queue
+        #useful if queue is taking too long
+        tester.click(403,413)
+        tester.click(403,383)
+        return self
+
+    def teleport_home(self):
+        self.press_key('home')
+        return self
+
+    def is_on_kiosk(self):
+        """ Checks if there is 'x' to interract dialogue for teamup """
+        self.set_active()
+        x, y = (386,541)
+        large = self.screenshotRAM((x,y,26,24))
+        result = self.match_image(largeImg=large, smallImg='icons/x_btn.png',threshold=.1)
+        if result is not False:
+            return True
+        else:
+            return False
+
+    def remove_queue_error_teamup(self):
+        #if team is no longer avaiable, an error will display on screen
+        #if wizard tries to click kiosk while already in a queue, same error will popup
+        #clicks ok
+        tester.click(533,383)
+        return self
+
     def get_window_rect(self):
         """Get the bounding rectangle of the window """
         rect = win32gui.GetWindowRect(self._handle)
