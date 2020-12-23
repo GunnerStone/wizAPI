@@ -71,6 +71,109 @@ class wizAPI:
             return self.pixel_matches_color(coords=(500,262+32*pos),rgb=(135, 36, 64),threshold=10)
         else:
             return False
+    def select_teamup_at(self,pos=0):
+        self.set_active()
+        if (0 <= pos <=6):
+            #check if pixel value of line is a shade of red
+            #if yes, return true
+            #if no, return false
+            #32pixles * pos should give correct offset
+            return self.click(500,262+32*pos)
+        else:
+            #Do nothing
+            return self
+
+    """ DRIVER FOR TEAMUP BOT"""
+    def join_teamup(self,world=0,page=0,school="Fire"):
+        # Navigate and load up desired world for teamup
+        self.select_world_teamup(pos=world,page=0)
+        
+        teamup_availability = self.give_teamup_available()
+
+        #refresh page until team availability contains at least 1 true
+        while (not any(teamup_availability)):
+            self.wait(1)
+            self.teamup_refresh()
+            #print(teamup_availability)
+            teamup_availability = self.give_teamup_available()
+            
+
+        #try to join first available non-long team
+        # finding first True value 
+        # using next() and enumerate() 
+        teamup_index = next((i for i, j in enumerate(teamup_availability) if j), None) 
+        self.select_teamup_at(teamup_index)
+        #checks if teamup icon is showing (in queue) or pet icon is missing (already loading in)
+        if(self.is_teamup_icon_showing() or (self.is_pet_icon_visible() is not False)):
+            #Great we are in
+            print("Joined")
+            self.wait_for_teamup_queue()
+            print("Loading...")
+            if (self.is_teamup_canceled()):
+                print("Teamup was canceled, restarting")
+                self.remove_queue_error_teamup().wait(1)
+                self.join_teamup(world=world,page=0)
+            self.wait_pet_loading()
+            print("In Dungeon")
+            self.clear_dialog()
+            self.move_mouse(717,40)
+            #Walk forward until fight starts
+            while not self.is_turn_to_play():
+                self.hold_key('w', 1)
+            print("In Fight")
+
+            print("Next turn found")
+            inFight = True
+            battle_round = 0
+
+            while inFight:
+                
+
+                self.mass_feint_attack(wizard_type = "hitter",boss_pos=0,hitter=school)
+            
+                self.wait_for_end_of_round_dialog()
+                
+                if self.is_idle():
+                    inFight = False
+                if self.find_button('done'):
+                    inFight = False
+                if self.find_button('more'):
+                    inFight = False
+            #print("Battle 1 has ended")
+            self.wait(.5)
+            self.clear_dialog()
+            if( not self.use_potion_if_needed_tp_house()):
+                self.teleport_home()
+                self.wait_pet_loading()
+
+            self.wait(1)
+            self.press_key('x').wait(1)
+            self.join_teamup(world=world,page=0,school=school)
+        else:
+            #Teamup no longer available, remove error & try again
+            print("Team no longer joinable, restarting")
+            self.remove_queue_error_teamup().wait(1)
+            self.join_teamup(world=world,page=0)
+            return
+
+    def give_teamup_available(self):
+        """ Assumes Kiosk is already opened"""
+        #Click world we care about
+        #pages are saved in cache so no switching pages here, only selecting worlds
+        
+        #see how many active teamups are available on this world
+        teamup_availability = [False,False,False,False,False,False] #6 slots
+        for i in range(6):
+            if self.is_teamup_at(i) is not False:
+                #print("Found teamup at location "+str(i))
+                teamup_availability[i] = True 
+        #filter out long instances
+        for i in range(6):
+            if self.is_teamup_long(i) == True:
+                #print("Found LONG at location "+str(i))
+                teamup_availability[i] = False
+        return teamup_availability
+
     def is_teamup_long(self,pos=0):
         """ Returns true if there is a timer icon on teamup (indicates long instance)"""
         self.set_active()
@@ -83,6 +186,26 @@ class wizAPI:
                 return True
             else:
                 return False
+        else:
+            return False
+
+    def is_teamup_canceled(self):
+        x, y = (464,393)#563,394
+        self.set_active()
+        large = self.screenshotRAM((x,y,103,27))
+        result = self.match_image(largeImg=large, smallImg='buttons/ok.png',threshold=.1)
+        if result is not False:
+            return True
+        else:
+            return False
+    def is_teamup_icon_showing(self):
+        self.set_active()
+        x, y = (717,40)#563,394
+        # # self.move_mouse(x, y)
+        large = self.screenshotRAM((x,y,15,15))
+        result = self.match_image(largeImg=large, smallImg='icons/teamup_btn.png',threshold=.1)
+        if result is not False:
+            return True
         else:
             return False
     
@@ -120,6 +243,18 @@ class wizAPI:
         else:
             return False
 
+    def wait_for_teamup_queue(self):
+        #waits until the teamup queue goes away
+        self.set_active()
+        x, y = (717,40)#563,394
+        
+        result = True
+        while result is not False:
+            large = self.screenshotRAM((x,y,15,15))
+            result = self.match_image(largeImg=large, smallImg='icons/teamup_btn.png',threshold=.1)
+            self.wait(.5)
+        return self
+
     def cancel_queue_teamup(self):
         #clicks through buttons to cancel teamup queue
         #useful if queue is taking too long
@@ -146,7 +281,9 @@ class wizAPI:
         #if team is no longer avaiable, an error will display on screen
         #if wizard tries to click kiosk while already in a queue, same error will popup
         #clicks ok
-        tester.click(533,383)
+        self.click(533,383).wait(.1)
+        self.click(533,400).wait(.1)
+        self.click(563,395).wait(.1)
         return self
 
     def get_window_rect(self):
@@ -444,12 +581,69 @@ class wizAPI:
         THRESHOLD = 10
         return not self.pixel_matches_color(POSITION, COLOR, threshold=THRESHOLD)
 
+    def use_potion_if_needed_tp_house(self,health_percent=33):
+        self.set_active()
+        mana_low = self.is_mana_low()
+        health_low = self.is_health_low(health_percent)
+
+        if mana_low or health_low:
+            #print('Clicking Potion')
+            self.click(160, 590, delay=.2) 
+            self.wait(1)
+            if(self.is_mana_low() or self.is_health_low(health_percent)):
+                self.recall_location()
+                self.wait_pet_loading()
+                #Waits for hilda confirmation to pop
+                time.sleep(1)
+                #Begin Potion Buy
+                if(self.is_mana_low): # Buys potion before marking location
+                    # Opens Dialog
+                    self.press_key('x')
+                    self.wait(.5)
+
+                    #Potion Clicks
+                    self.click(555, 300)
+                    self.click(261, 491)
+                    self.click(515, 470)
+                    self.click(410, 390)
+                    self.click(555, 300)
+                    self.click(261, 491)
+                    self.click(685, 540)
+                    self.wait(.5)
+                    
+                    # Get back to Dungeon
+                    self.mark_location()
+                    self.wait(.5)
+                    self.teleport_home()
+                    self.wait_pet_loading()
+                else: # Marks location to waste mana before buying potions
+                    
+                    self.mark_location()
+                    self.wait(.5)
+                    self.press_key('x')
+                    self.wait(.5)
+
+                    #Potion Clicks
+                    self.click(555, 300)
+                    self.click(261, 491)
+                    self.click(515, 470)
+                    self.click(410, 390)
+                    self.click(555, 300)
+                    self.click(261, 491)
+                    self.click(685, 540)
+                    self.wait(.5)
+
+                    #Gets back to dungeon
+                    self.teleport_home()
+                    self.wait_pet_loading()
+                return True
+        return False
+
     def use_potion_if_needed(self, refill=False, teleport_to_wizard="", health_percent=33, teleport=False, teleport_friend_img="",greedy_tp=False): #Health Position defaults to 1/3
         
         self.set_active()
         mana_low = self.is_mana_low()
         health_low = self.is_health_low(health_percent)
-
         # if mana_low:
         #     print('Mana is low, using potion')
         # if health_low:
@@ -1151,7 +1345,7 @@ class wizAPI:
 
             # Play - Storm
             if self.enchant(hitter, attack_spell, 'Sun', 'epic'):
-                self.cast_spell(hitter, attack_e_spell)
+                self.cast_spell(hitter, attack_e_spell, threshold=.15)
             elif self.find_spell(hitter, attack_e_spell, max_tries=2):
                 self.cast_spell(hitter, attack_e_spell)
             else:
