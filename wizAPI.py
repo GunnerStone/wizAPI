@@ -84,8 +84,12 @@ class wizAPI:
             return self
 
     """ DRIVER FOR TEAMUP BOT"""
+    successful_teamups = 0
     def join_teamup(self,world=0,page=0,school="Fire"):
+        
         # Navigate and load up desired world for teamup
+        self.clear_console()
+        print("Successful teamups: "+str(self.successful_teamups))
         self.select_world_teamup(pos=world,page=0)
         
         teamup_availability = self.give_teamup_available()
@@ -107,6 +111,8 @@ class wizAPI:
         if(self.is_teamup_icon_showing() or (self.is_pet_icon_visible() is not False)):
             #Great we are in
             print("Joined")
+            #wait for a lag in displaying the icon
+            self.wait(.5)
             self.wait_for_teamup_queue()
             print("Loading...")
             if (self.is_teamup_canceled()):
@@ -117,6 +123,10 @@ class wizAPI:
             print("In Dungeon")
             self.clear_dialog()
             self.move_mouse(717,40)
+            #wait for slow computer noobs to get in fight/load
+            #otherwise no credit
+            self.wait(.75)
+
             #Walk forward until fight starts
             while not self.is_turn_to_play():
                 self.hold_key('w', 1)
@@ -129,7 +139,7 @@ class wizAPI:
             while inFight:
                 
 
-                self.mass_feint_attack(wizard_type = "hitter",boss_pos=0,hitter=school)
+                self.mass_feint_attack_teamup(wizard_type = "hitter",boss_pos=0,hitter=school)
             
                 self.wait_for_end_of_round_dialog()
                 
@@ -148,6 +158,7 @@ class wizAPI:
 
             self.wait(1)
             self.press_key('x').wait(1)
+            self.successful_teamups += 1
             self.join_teamup(world=world,page=0,school=school)
         else:
             #Teamup no longer available, remove error & try again
@@ -251,7 +262,7 @@ class wizAPI:
         result = True
         while result is not False:
             large = self.screenshotRAM((x,y,15,15))
-            result = self.match_image(largeImg=large, smallImg='icons/teamup_btn.png',threshold=.1)
+            result = self.match_image(largeImg=large, smallImg='icons/teamup_btn.png',threshold=.15)
             self.wait(.5)
         return self
 
@@ -1345,6 +1356,83 @@ class wizAPI:
 
             # Play - Storm
             if self.enchant(hitter, attack_spell, 'Sun', 'epic'):
+                self.cast_spell(hitter, attack_e_spell, threshold=.15)
+            elif self.find_spell(hitter, attack_e_spell, max_tries=2):
+                self.cast_spell(hitter, attack_e_spell)
+            else:
+                self.pass_turn()
+        
+        
+        if(wizard_type == "blader"):
+            """ Blader plays """
+            # Check to see if deck is crowded with unusable spells
+            cn = len(self.find_unusable_spells())
+            if cn > 2:
+                self.discard_unusable_spells(cn)
+
+            # Play
+            if self.find_spell('Death', 'mass_feint'):
+                self.cast_spell('Death', 'mass_feint')
+            elif self.find_spell('Life', 'pigsie'):
+                self.cast_spell('Life', 'pigsie')
+            else:
+                self.pass_turn()
+
+    #One round strat for most mobs
+    def mass_feint_attack_teamup(self, wizard_type, boss_pos, hitter="Storm"):
+        wizard_type = wizard_type.split('.')[0]
+
+        #print(wizard_type)
+
+        if(wizard_type == "feinter"):
+            """ Feinter plays """
+            # Check to see if deck is crowded with unusable spells
+            cn = len(self.find_unusable_spells())
+            if cn > 2:
+                self.discard_unusable_spells(cn)
+
+            # Play
+            if self.enchant('Death', 'feint', 'Sun', 'potent'):
+                self.cast_spell('Death', 'feint-potent').at_target(boss_pos)
+
+            elif self.find_spell('Death', 'feint'):
+                self.cast_spell('Death', 'feint').at_target(boss_pos)
+
+            else:
+                self.pass_turn()
+        
+        if(wizard_type == "hitter"):
+            hitter = hitter.capitalize()
+            print("Hitter is:"+str(hitter))
+            if (hitter=="Storm"):
+                attack_spell = "tempest"
+                attack_e_spell = "tempest-enchanted"
+            elif (hitter=="Fire"):
+                attack_spell = "meteor-strike"
+                attack_e_spell = "meteor-strike-enchanted"
+            elif (hitter=="Ice"):
+                attack_spell = "blizzard"
+                attack_e_spell = "blizzard_enchanted"
+            elif (hitter=="Myth"):
+                attack_spell = "humungofrog"
+                attack_e_spell = "humungofrog_enchanted"
+            elif (hitter=="Death"):
+                attack_spell = "deer_knight"
+                attack_e_spell = "deer_knight_enchanted"
+            elif (hitter=="Life"):
+                attack_spell = "ratatoskrs_spin"
+                attack_e_spell = "ratatoskrs_spin_enchanted"
+            """ Hitter plays """
+            # Check to see if deck is crowded with unusable spells
+            cn = len(self.find_unusable_spells())
+            # Discard the spells
+            if cn > 2:
+                self.discard_unusable_spells(cn)
+
+            # Play - Storm
+            if self.find_spell('Star','frenzy',max_tries=2):
+                self.cast_spell('Star','frenzy')
+            elif self.enchant(hitter, attack_spell, 'Sun', 'epic'):
                 self.cast_spell(hitter, attack_e_spell, threshold=.15)
             elif self.find_spell(hitter, attack_e_spell, max_tries=2):
                 self.cast_spell(hitter, attack_e_spell)
