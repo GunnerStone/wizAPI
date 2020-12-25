@@ -84,11 +84,12 @@ class wizAPI:
             return self
 
     """ DRIVER FOR TEAMUP BOT"""
-    successful_teamups = 1
+    successful_teamups = 0
     def join_teamup(self,world=0,page=0,school="Fire"):
         
         # Navigate and load up desired world for teamup
         #self.clear_console()
+        self.successful_teamups +=1
         if(self.successful_teamups % 10 == 0):
             self.quick_sell(False, False)
 
@@ -163,7 +164,6 @@ class wizAPI:
 
             self.wait(1)
             self.press_key('x').wait(1)
-            self.successful_teamups += 1
             #self.join_teamup(world=world,page=0,school=school)
             return
         else:
