@@ -49,6 +49,10 @@ if(hitter.get_window_rect()[0] > blader.get_window_rect()[0]):
 if(blader.get_window_rect()[0] > feinter.get_window_rect()[0]):
     blader, feinter = feinter, blader
 
+# Time Func
+START_TIME = time.time()
+PROGRAM_START_TIME = time.time() #treat this like a constant
+
 # Global vars
 if len(sys.argv) > 1:
     ROUND_COUNT = int(sys.argv[1])
@@ -67,9 +71,6 @@ boss_pos = feinter.get_enemy_pos('sun.png')
 # Thread Init - Used for movement sequences
 threads = []
 
-# Time Func
-START_TIME = time.time()
-PROGRAM_START_TIME = time.time() #treat this like a constant
 
 def await_finished_loading(windows):
     for w in windows:

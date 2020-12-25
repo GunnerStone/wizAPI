@@ -2,6 +2,7 @@ from wizAPI import *
 import time
 import math
 import random
+import sys
 
 """ Register windows """
 try:

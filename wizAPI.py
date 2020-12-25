@@ -84,14 +84,19 @@ class wizAPI:
             return self
 
     """ DRIVER FOR TEAMUP BOT"""
-    successful_teamups = 0
+    successful_teamups = 1
     def join_teamup(self,world=0,page=0,school="Fire"):
         
         # Navigate and load up desired world for teamup
-        self.clear_console()
-        print("Successful teamups: "+str(self.successful_teamups))
+        #self.clear_console()
+        if(self.successful_teamups % 10 == 0):
+            self.quick_sell(False, False)
+
+        self.press_key('x').wait(1)
+        #print("Teamup #: "+str(self.successful_teamups))
         self.select_world_teamup(pos=world,page=0)
-        
+        #move mouse out of the way of CV
+        self.move_mouse(535,492,speed=.1)
         teamup_availability = self.give_teamup_available()
 
         #refresh page until team availability contains at least 1 true
@@ -110,17 +115,17 @@ class wizAPI:
         #checks if teamup icon is showing (in queue) or pet icon is missing (already loading in)
         if(self.is_teamup_icon_showing() or (self.is_pet_icon_visible() is not False)):
             #Great we are in
-            print("Joined")
+            #print("Joined")
             #wait for a lag in displaying the icon
             self.wait(.5)
             self.wait_for_teamup_queue()
-            print("Loading...")
+            #print("Loading...")
             if (self.is_teamup_canceled()):
-                print("Teamup was canceled, restarting")
+                #print("Teamup was canceled, restarting")
                 self.remove_queue_error_teamup().wait(1)
-                self.join_teamup(world=world,page=0)
+                return
             self.wait_pet_loading()
-            print("In Dungeon")
+            #print("In Dungeon")
             self.clear_dialog()
             self.move_mouse(717,40)
             #wait for slow computer noobs to get in fight/load
@@ -130,9 +135,9 @@ class wizAPI:
             #Walk forward until fight starts
             while not self.is_turn_to_play():
                 self.hold_key('w', 1)
-            print("In Fight")
+            #print("In Fight")
 
-            print("Next turn found")
+            #print("Next turn found")
             inFight = True
             battle_round = 0
 
@@ -159,12 +164,13 @@ class wizAPI:
             self.wait(1)
             self.press_key('x').wait(1)
             self.successful_teamups += 1
-            self.join_teamup(world=world,page=0,school=school)
+            #self.join_teamup(world=world,page=0,school=school)
+            return
         else:
             #Teamup no longer available, remove error & try again
-            print("Team no longer joinable, restarting")
+            #print("Team no longer joinable, restarting")
             self.remove_queue_error_teamup().wait(1)
-            self.join_teamup(world=world,page=0)
+            #self.join_teamup(world=world,page=0)
             return
 
     def give_teamup_available(self):
@@ -262,7 +268,7 @@ class wizAPI:
         result = True
         while result is not False:
             large = self.screenshotRAM((x,y,15,15))
-            result = self.match_image(largeImg=large, smallImg='icons/teamup_btn.png',threshold=.15)
+            result = self.match_image(largeImg=large, smallImg='icons/teamup_btn.png',threshold=.17)
             self.wait(.5)
         return self
 

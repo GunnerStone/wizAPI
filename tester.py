@@ -17,4 +17,5 @@ wx, wy = tester.get_window_rect()[:2]
 # # # self.move_mouse(x, y)
 # tester.screenshot('test.png',(x,y,15,15))
 # large = tester.screenshotRAM((x,y,15,15))
-tester.join_teamup(world=2,school="Fire")
+#print(tester.give_teamup_available())
+tester.join_teamup(world=0  ,school="Fire")
