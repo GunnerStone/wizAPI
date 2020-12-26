@@ -92,7 +92,7 @@ class wizAPI:
         self.successful_teamups +=1
         if(self.successful_teamups % 10 == 0):
             self.quick_sell(False, False)
-
+            self.wait(1)
         self.press_key('x').wait(1)
         #print("Teamup #: "+str(self.successful_teamups))
         self.select_world_teamup(pos=world,page=0)
@@ -131,7 +131,7 @@ class wizAPI:
             self.move_mouse(717,40)
             #wait for slow computer noobs to get in fight/load
             #otherwise no credit
-            self.wait(.75)
+            self.wait(.25)
 
             #Walk forward until fight starts
             while not self.is_turn_to_play():
@@ -755,10 +755,10 @@ class wizAPI:
     def wait_pet_loading(self):
         #wait for pet icon to disappear
         while self.is_pet_icon_visible():
-                time.sleep(.5)
+                time.sleep(.3)
         #wait for pept icon to reappear
         while not self.is_pet_icon_visible():
-            time.sleep(.5)
+            time.sleep(.3)
 
     def is_turn_to_play(self):
         """ matches a yellow pixel in the 'pass' button """

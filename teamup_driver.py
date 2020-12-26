@@ -37,8 +37,10 @@ else:
 
 
 def main():
+    tester.teleport_home()
+    tester.wait_pet_loading()
     while True:
-        tester.join_teamup(world=0  ,school=SCHOOL)
+        tester.join_teamup(world=0,school=SCHOOL)
         global ROUND_COUNT
         global START_TIME
         START_TIME = time.time()
@@ -46,10 +48,12 @@ def main():
 
 def afk_timeout_failsafe():
     global START_TIME
+    global tester
     while True:
-        if((time.time() - START_TIME) / 60 >= 10):
-            timeout_fails += 1
+        if((time.time() - START_TIME) / 60 >= 8):
+            # timeout_fails += 1
             logout_failsafe([tester])
+            tester.wait(1)
             spawn_program_and_die(['python', 'teamup_driver.py',str(SCHOOL),str(PROGRAM_START_TIME),str(ROUND_COUNT)])
         time.sleep(5)
 
@@ -88,9 +92,9 @@ def display_metrics():
         #formatting for laptime being longer
         curr_minutes = int((time.time()-START_TIME)/60)
         lap_color = "ansigreen"
-        if curr_minutes >= 9:
+        if curr_minutes >= 7:
             lap_color = "ansired"
-        elif curr_minutes >= 8:
+        elif curr_minutes >= 6:
             lap_color = "ansiyellow"
 
         #sp.write(str_buffer)
