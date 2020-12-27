@@ -12,10 +12,10 @@ wx, wy = tester.get_window_rect()[:2]
 #     tester.click(770, 430, button='right', delay=.2)
 #     tester.move_mouse(730, 430).wait(2)
 
-# x, y = (717,40)#563,394
+# x, y = (523,474)#563,394
 # tester.set_active()
 # # # self.move_mouse(x, y)
-# tester.screenshot('test.png',(x,y,15,15))
-# large = tester.screenshotRAM((x,y,15,15))
-#print(tester.give_teamup_available())
-tester.join_teamup(world=0  ,school="Fire")
+# tester.screenshot('test.png',(x,y,19,24))
+# large = tester.screenshotRAM((x,y,19,24))
+print(tester.is_refresh_showing())
+# tester.join_teamup(world=0  ,school="Fire")

@@ -120,10 +120,14 @@ class wizAPI:
             #wait for a lag in displaying the icon
             self.wait(.5)
             self.wait_for_teamup_queue()
+            self.wait(.1)
             #print("Loading...")
             if (self.is_teamup_canceled()):
                 #print("Teamup was canceled, restarting")
                 self.remove_queue_error_teamup().wait(1)
+                return
+            if (self.is_refresh_showing()):
+                #refresh btn is showing so something errored out, restart program
                 return
             self.wait_pet_loading()
             #print("In Dungeon")
@@ -173,6 +177,15 @@ class wizAPI:
             #self.join_teamup(world=world,page=0)
             return
 
+    def is_refresh_showing(self):
+        x, y = (523,474)#563,394
+        self.set_active()
+        large = self.screenshotRAM((x,y,19,24))
+        result = self.match_image(largeImg=large, smallImg='buttons/refresh.png',threshold=.1)
+        if result is not False:
+            return True
+        else:
+            return False
     def give_teamup_available(self):
         """ Assumes Kiosk is already opened"""
         #Click world we care about
@@ -1334,7 +1347,7 @@ class wizAPI:
         
         if(wizard_type == "hitter"):
             hitter = hitter.capitalize()
-            print("Hitter is:"+str(hitter))
+            #print("Hitter is:"+str(hitter))
             if (hitter=="Storm"):
                 attack_spell = "tempest"
                 attack_e_spell = "tempest-enchanted"
@@ -1409,7 +1422,7 @@ class wizAPI:
         
         if(wizard_type == "hitter"):
             hitter = hitter.capitalize()
-            print("Hitter is:"+str(hitter))
+            #print("Hitter is:"+str(hitter))
             if (hitter=="Storm"):
                 attack_spell = "tempest"
                 attack_e_spell = "tempest-enchanted"
