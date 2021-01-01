@@ -17,5 +17,6 @@ wx, wy = tester.get_window_rect()[:2]
 # # # self.move_mouse(x, y)
 # tester.screenshot('test.png',(x,y,19,24))
 # large = tester.screenshotRAM((x,y,19,24))
-print(tester.is_refresh_showing())
+#print(tester.is_refresh_showing())
 # tester.join_teamup(world=0  ,school="Fire")
+tester.reset_teamup_kiosk()

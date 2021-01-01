@@ -86,25 +86,30 @@ class wizAPI:
     """ DRIVER FOR TEAMUP BOT"""
     successful_teamups = 0
     def join_teamup(self,world=0,page=0,school="Fire"):
-        
-        # Navigate and load up desired world for teamup
-        #self.clear_console()
         self.successful_teamups +=1
+        
+        #quicksell after N rounds
         if(self.successful_teamups % 10 == 0):
             self.quick_sell(False, False)
             self.wait(1)
+        #Wait for kiosk to prompt user to press x
+        self.reset_teamup_kiosk()
+        while not self.is_on_kiosk():
+            self.wait(.1)
+        #boot-up teamup kiosk
         self.press_key('x').wait(1)
-        #print("Teamup #: "+str(self.successful_teamups))
+
+        # Navigate and load up desired world for teamup
         self.select_world_teamup(pos=world,page=0)
         #move mouse out of the way of CV
         self.move_mouse(535,492,speed=.1)
+        #load the list of displayed dungeons
         teamup_availability = self.give_teamup_available()
 
         #refresh page until team availability contains at least 1 true
         while (not any(teamup_availability)):
             self.wait(1)
             self.teamup_refresh()
-            #print(teamup_availability)
             teamup_availability = self.give_teamup_available()
             
 
@@ -116,18 +121,21 @@ class wizAPI:
         #checks if teamup icon is showing (in queue) or pet icon is missing (already loading in)
         if(self.is_teamup_icon_showing() or (self.is_pet_icon_visible() is not False)):
             #Great we are in
-            #print("Joined")
             #wait for a lag in displaying the icon
             self.wait(.5)
+            #wait until icon disappears (indicating loading screen into dungeon)
             self.wait_for_teamup_queue()
             self.wait(.1)
             #print("Loading...")
             if (self.is_teamup_canceled()):
                 #print("Teamup was canceled, restarting")
                 self.remove_queue_error_teamup().wait(1)
+                self.reset_teamup_kiosk()
                 return
             if (self.is_refresh_showing()):
                 #refresh btn is showing so something errored out, restart program
+                #logout to reset kiosk 'x' prompt
+                self.reset_teamup_kiosk()
                 return
             self.wait_pet_loading()
             #print("In Dungeon")
@@ -161,19 +169,21 @@ class wizAPI:
                     inFight = False
             #print("Battle 1 has ended")
             self.wait(.5)
+            #remove any post-battle dialog (happens in few instances)
             self.clear_dialog()
+
+            #potion managemant & use before teleporting home
             if( not self.use_potion_if_needed_tp_house()):
+                #if no potion needed, just tp home
                 self.teleport_home()
                 self.wait_pet_loading()
 
-            self.wait(1)
-            self.press_key('x').wait(1)
-            #self.join_teamup(world=world,page=0,school=school)
             return
         else:
             #Teamup no longer available, remove error & try again
             #print("Team no longer joinable, restarting")
             self.remove_queue_error_teamup().wait(1)
+            self.reset_teamup_kiosk()
             #self.join_teamup(world=world,page=0)
             return
 
@@ -218,6 +228,21 @@ class wizAPI:
                 return False
         else:
             return False
+
+    def close_teamup_kiosk(self):
+        """ Refreshes availabel teamups """
+        self.set_active()
+        x, y = (565,492)
+        self.click(x,y)
+        return self
+
+    def reset_teamup_kiosk(self):
+        """Closes out of kiosk & resets 'x' prompt"""
+        self.close_teamup_kiosk()
+        #wiggle back & forth to reset 'x' prompt
+        self.hold_key('w',.5)
+        self.hold_key('s', .1)
+        self.hold_key('w', .5)
 
     def is_teamup_canceled(self):
         x, y = (464,393)#563,394

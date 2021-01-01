@@ -140,7 +140,8 @@ try:
 except Exception as e:
     logf = open("logfileErrors.log", "w")
     logging.exception("message")
-    logf.write(str(e))
+    str_buffer = str('{:0>2}'.format(int((time.time()-PROGRAM_START_TIME)/60))) + ":" + str('{:0>2}'.format(int((time.time()-PROGRAM_START_TIME)%60)))
+    logf.write(str_buffer+str(e))
     logf.close()
     logout_failsafe([tester])
     tester.wait(1)
