@@ -51,9 +51,13 @@ try:
 
     def afk_timeout_failsafe():
         global START_TIME
-        global tester
+        global SCHOOL
+        global PROGRAM_START_TIME
+        global ROUND_COUNT
         while True:
-            if((time.time() - START_TIME) / 60 >= 8):
+            curr_time = int((time.time() - START_TIME) / 60)
+            #print(str(curr_time))
+            if(curr_time >= 8):
                 # timeout_fails += 1
                 logout_failsafe([tester])
                 tester.wait(1)

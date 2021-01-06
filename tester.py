@@ -19,4 +19,5 @@ wx, wy = tester.get_window_rect()[:2]
 # large = tester.screenshotRAM((x,y,19,24))
 #print(tester.is_refresh_showing())
 # tester.join_teamup(world=0  ,school="Fire")
-tester.reset_teamup_kiosk()
+# print(tester.is_pet_icon_visible())
+tester.logout(isDungeon=True)

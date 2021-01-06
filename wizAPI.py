@@ -85,7 +85,9 @@ class wizAPI:
 
     """ DRIVER FOR TEAMUP BOT"""
     successful_teamups = 0
+    LOGOUT_FLAG = False
     def join_teamup(self,world=0,page=0,school="Fire"):
+        
         self.successful_teamups +=1
         
         #quicksell after N rounds
@@ -107,10 +109,14 @@ class wizAPI:
         teamup_availability = self.give_teamup_available()
 
         #refresh page until team availability contains at least 1 true
-        while (not any(teamup_availability)):
+        while ((not any(teamup_availability)) and (self.LOGOUT_FLAG==False)):
             self.wait(1)
             self.teamup_refresh()
             teamup_availability = self.give_teamup_available()
+
+        while (self.LOGOUT_FLAG==True):
+            #stall this program until the logout resets the program
+            self.wait(1)
             
 
         #try to join first available non-long team
@@ -313,8 +319,8 @@ class wizAPI:
     def cancel_queue_teamup(self):
         #clicks through buttons to cancel teamup queue
         #useful if queue is taking too long
-        tester.click(403,413)
-        tester.click(403,383)
+        self.click(403,413)
+        self.click(403,383)
         return self
 
     def teleport_home(self):
@@ -502,6 +508,7 @@ class wizAPI:
     def is_pet_icon_visible(self):
         self.set_active()
         roi = self.screenshotRAM(region=(126,512+23,26,17))
+        self.screenshot("test.png",region=(126,512+23,26,17))
         found = self.match_image(roi,'pet_icon.png') or self.find_button('done') or self.find_button('more')
         return found
 
@@ -516,10 +523,15 @@ class wizAPI:
     def is_logo_bottom_left_or_right_loading(self):
         self.set_active()
         return self.pixel_matches_color((170, 532), (252, 127, 5), 30) or self.pixel_matches_color((108, 551), (252, 127, 5), 30)
-
+    
     def logout(self,isDungeon=False):
         self.set_active()
+        self.LOGOUT_FLAG = True
         self.press_key('esc')
+        #wait for any existing mouse movements to finish 
+        #so they dont override the logout prompts
+        self.wait(1)
+        print("Trying to logout")
         #move mouse to quit button & click
         self.click(265,482+36,delay=.2)
         #if in dungeon, acknowledge the prompt
