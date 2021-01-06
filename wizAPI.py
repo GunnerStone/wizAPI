@@ -1909,3 +1909,60 @@ class wizAPI:
                     self.cast_spell('Storm', 'b_storm_blade').at_friendly(2) #Casts at third wizard
                 else:
                     self.pass_turn() 
+    
+    def gold_key_attack(self, wizard_type, boss_pos):
+            wizard_type = wizard_type.split('.')[0]
+            if(wizard_type == "feinter"):
+                """ Feinter plays """
+                # Check to see if deck is crowded with unusable spells
+                cn = len(self.find_unusable_spells())
+                if cn > 2:
+                    self.discard_unusable_spells(cn)
+
+                # Play
+                elif self.enchant('Death', 'feint', 'Sun', 'potent'):
+                    self.cast_spell('Death', 'feint-potent').at_target(boss_pos)
+                elif self.find_spell('Death', 'feint-potent', threshold=0.10):
+                    self.cast_spell('Death', 'feint-potent').at_target(boss_pos) #Casts at third wizard
+                elif self.find_spell('Death', 'feint'):
+                    self.cast_spell('Death', 'feint').at_target(boss_pos)
+                else:
+                    self.pass_turn()
+        
+            if(wizard_type == "hitter"):
+                """ Hitter plays """
+                # Check to see if deck is crowded with unusable spells
+                cn = len(self.find_unusable_spells())
+                # Discard the spells
+                if cn > 2:
+                    self.discard_unusable_spells(cn)
+                # Play
+                elif self.enchant('Storm', 'storm_blade', 'Sun', 'sharpen'):
+                    self.cast_spell('Storm', 'enchanted_storm_blade').at_friendly(2) #Casts at third wizard
+                elif self.find_spell('Storm', 'enchanted_storm_blade', threshold=0.10):
+                    self.cast_spell('Storm', 'enchanted_storm_blade').at_friendly(2) #Casts at third wizard
+                elif self.enchant('Storm', 'tempest', 'Sun', 'epic'):
+                    self.find_spell('Storm', 'tempest-enchanted', threshold=0.10)
+                    self.cast_spell('Storm', 'tempest-enchanted')
+                elif self.find_spell('Storm', 'tempest-enchanted', threshold=0.10):
+                    self.cast_spell('Storm', 'tempest-enchanted')             
+                else:
+                    self.pass_turn()
+
+            if(wizard_type == "blader"):
+                """ Blader plays """
+                # Check to see if deck is crowded with unusable spells
+                cn = len(self.find_unusable_spells())
+                if cn > 2:
+                    self.discard_unusable_spells(cn)
+
+                # Play
+                if self.find_spell('Death', 'mass_feint', threshold=0.10):
+                    self.cast_spell('Death', 'mass_feint')
+                elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen'):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
+                elif self.find_spell('Balance', 'enchanted_elemental_blade', threshold=0.10):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
+                
+                else:
+                    self.pass_turn()
