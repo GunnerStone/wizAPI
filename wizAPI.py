@@ -1119,7 +1119,7 @@ class wizAPI:
         #     print(num_enemies, 'enemies in battle')
         return num_enemies
 
-    def quick_sell(self, sell_crown_items, sell_jewels):
+    def quick_sell(self, sell_crown_items=False, sell_jewels=False, sell_housing_items=True):
         """ 
         Quick sells everything unlocked
         """
@@ -1138,8 +1138,18 @@ class wizAPI:
         else:    
             self.click(513, 399, delay=.3)
 
+        """ Clicks next twice to get to housing page """
+        if(sell_housing_items is False):
+            self.click(675, 173, delay=.3)
+            self.click(233, 184, delay=.3)
+            self.click(417, 223, delay=.3)
+
         """ Clicks next twice to get to jewels page """
-        if(sell_jewels is False):
+        if(sell_jewels is False and sell_housing_items is False):
+            self.click(675, 173, delay=.3)
+            self.click(417, 223, delay=.3)
+
+        if(sell_jewels is False and sell_housing_items is True):
             self.click(675, 173, delay=.3)
             self.click(675, 173, delay=.3)
             self.click(417, 223, delay=.3)

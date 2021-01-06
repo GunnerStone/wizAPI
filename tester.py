@@ -20,4 +20,4 @@ wx, wy = tester.get_window_rect()[:2]
 #print(tester.is_refresh_showing())
 # tester.join_teamup(world=0  ,school="Fire")
 # print(tester.is_pet_icon_visible())
-tester.logout(isDungeon=True)
+tester.quick_sell(sell_crown_items=False, sell_jewels=False, sell_housing_items=False)

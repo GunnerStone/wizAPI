@@ -214,9 +214,9 @@ def main():
 
         """ Quick sell every 10 rounds"""
         if(ROUND_COUNT % 10 == 0):
-            feinter.quick_sell(False, False)
-            hitter.quick_sell(False, False)
-            blader.quick_sell(False, False)
+            feinter.quick_sell(sell_crown_items=False, sell_jewels=False, sell_housing_items=False)
+            hitter.quick_sell(sell_crown_items=False, sell_jewels=False, sell_housing_items=False)
+            blader.quick_sell(sell_crown_items=False, sell_jewels=False, sell_housing_items=False)
 
         blader.clear_quest_buttons()
         hitter.clear_quest_buttons()
