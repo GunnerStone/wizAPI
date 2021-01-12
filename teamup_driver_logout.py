@@ -234,7 +234,7 @@ try:
     try:
         sp.start()
         START_TIME = time.time()
-        # metric_thread.start()
+        metric_thread.start()
         afk_thread.start()
         time.sleep(2)
         main()
