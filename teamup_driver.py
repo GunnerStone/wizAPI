@@ -13,9 +13,6 @@ from yaspin.spinners import Spinners
 from prompt_toolkit import HTML, print_formatted_text
 from prompt_toolkit.styles import Style
 
-
-
-
 try:
     tester = wizAPI().register_window(nth=0)
 
