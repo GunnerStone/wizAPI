@@ -111,10 +111,19 @@ while True:
         feinter.hold_key('w', random.uniform(1.1, 1.15))
         blader.hold_key('w', random.uniform(1.1, 1.15))
         hitter.hold_key('w', random.uniform(1.1, 1.15))
-   
+
+    #remove auto mouse off of cards
+    feinter.hold_key('s', random.uniform(0.1, 0.15))
+    blader.hold_key('s', random.uniform(0.1, 0.15))
+    hitter.hold_key('s', random.uniform(0.1, 0.15))
+    feinter.hold_key('s', random.uniform(0.1, 0.15))
+    blader.hold_key('s', random.uniform(0.1, 0.15))
+    hitter.hold_key('s', random.uniform(0.1, 0.15))
+
     # feinter.wait_for_next_turn()
 
-    boss_pos = feinter.get_enemy_pos('storm.png')
+    #boss_pos = feinter.get_enemy_pos('storm.png')
+    boss_pos = False
     #if no boss make it 1
     if (not boss_pos):
         boss_pos = 1
@@ -128,7 +137,6 @@ while True:
         print('-------- Battle round', battle_round, '--------')
         
         random.shuffle(user_order)
-
         user_order[0][0].mass_feint_attack(wizard_type = user_order[0][1], boss_pos = boss_pos, hitter=HITTING_SCHOOL)
         user_order[1][0].mass_feint_attack(wizard_type = user_order[1][1], boss_pos = boss_pos, hitter=HITTING_SCHOOL)
         user_order[2][0].mass_feint_attack(wizard_type = user_order[2][1], boss_pos = boss_pos, hitter=HITTING_SCHOOL)
