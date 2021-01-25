@@ -85,9 +85,7 @@ class wizAPI:
 
     """ DRIVER FOR TEAMUP BOT"""
     successful_teamups = 0
-    LOGOUT_FLAG = False
     def join_teamup(self,world=0,page=0,school="Fire"):
-        
         self.successful_teamups +=1
         
         #quicksell after N rounds
@@ -109,14 +107,10 @@ class wizAPI:
         teamup_availability = self.give_teamup_available()
 
         #refresh page until team availability contains at least 1 true
-        while ((not any(teamup_availability)) and (self.LOGOUT_FLAG==False)):
+        while (not any(teamup_availability)):
             self.wait(1)
             self.teamup_refresh()
             teamup_availability = self.give_teamup_available()
-
-        while (self.LOGOUT_FLAG==True):
-            #stall this program until the logout resets the program
-            self.wait(1)
             
 
         #try to join first available non-long team
@@ -508,7 +502,6 @@ class wizAPI:
     def is_pet_icon_visible(self):
         self.set_active()
         roi = self.screenshotRAM(region=(126,512+23,26,17))
-        self.screenshot("test.png",region=(126,512+23,26,17))
         found = self.match_image(roi,'pet_icon.png') or self.find_button('done') or self.find_button('more')
         return found
 
@@ -523,15 +516,10 @@ class wizAPI:
     def is_logo_bottom_left_or_right_loading(self):
         self.set_active()
         return self.pixel_matches_color((170, 532), (252, 127, 5), 30) or self.pixel_matches_color((108, 551), (252, 127, 5), 30)
-    
+
     def logout(self,isDungeon=False):
         self.set_active()
-        self.LOGOUT_FLAG = True
         self.press_key('esc')
-        #wait for any existing mouse movements to finish 
-        #so they dont override the logout prompts
-        self.wait(1)
-        print("Trying to logout")
         #move mouse to quit button & click
         self.click(265,482+36,delay=.2)
         #if in dungeon, acknowledge the prompt
@@ -644,20 +632,26 @@ class wizAPI:
         self.set_active()
         # Matches a pixel in the lower third of the mana globe
         POSITION = (79, 591)
-        COLOR = (66, 13, 83)
-        THRESHOLD = 10
+        COLOR = (66, 13, 82)
+        THRESHOLD = 12
         return not self.pixel_matches_color(POSITION, COLOR, threshold=THRESHOLD)
 
     def use_potion_if_needed_tp_house(self,health_percent=33):
         self.set_active()
         mana_low = self.is_mana_low()
         health_low = self.is_health_low(health_percent)
-
+        # print("Mana low? :"+str(mana_low))
+        # print("Health low? :" +str(health_low))
         if mana_low or health_low:
             #print('Clicking Potion')
             self.click(160, 590, delay=.2) 
             self.wait(1)
             if(self.is_mana_low() or self.is_health_low(health_percent)):
+                #kingsisle has a dumb bug where you cant tp mark location from instance
+                #so teleport home, THEN to potion lady
+                self.teleport_home()
+                self.wait_pet_loading()
+                self.wait(.1)
                 self.recall_location()
                 self.wait_pet_loading()
                 #Waits for hilda confirmation to pop
@@ -680,7 +674,7 @@ class wizAPI:
                     
                     # Get back to Dungeon
                     self.mark_location()
-                    self.wait(.5)
+                    self.wait(16)
                     self.teleport_home()
                     self.wait_pet_loading()
                 else: # Marks location to waste mana before buying potions
@@ -698,7 +692,7 @@ class wizAPI:
                     self.click(555, 300)
                     self.click(261, 491)
                     self.click(685, 540)
-                    self.wait(.5)
+                    self.wait(16)
 
                     #Gets back to dungeon
                     self.teleport_home()
@@ -1119,7 +1113,7 @@ class wizAPI:
         #     print(num_enemies, 'enemies in battle')
         return num_enemies
 
-    def quick_sell(self, sell_crown_items=False, sell_jewels=False, sell_housing_items=True):
+    def quick_sell(self, sell_crown_items, sell_jewels):
         """ 
         Quick sells everything unlocked
         """
@@ -1138,18 +1132,8 @@ class wizAPI:
         else:    
             self.click(513, 399, delay=.3)
 
-        """ Clicks next twice to get to housing page """
-        if(sell_housing_items is False):
-            self.click(675, 173, delay=.3)
-            self.click(233, 184, delay=.3)
-            self.click(417, 223, delay=.3)
-
         """ Clicks next twice to get to jewels page """
-        if(sell_jewels is False and sell_housing_items is False):
-            self.click(675, 173, delay=.3)
-            self.click(417, 223, delay=.3)
-
-        if(sell_jewels is False and sell_housing_items is True):
+        if(sell_jewels is False):
             self.click(675, 173, delay=.3)
             self.click(675, 173, delay=.3)
             self.click(417, 223, delay=.3)
@@ -1919,60 +1903,3 @@ class wizAPI:
                     self.cast_spell('Storm', 'b_storm_blade').at_friendly(2) #Casts at third wizard
                 else:
                     self.pass_turn() 
-    
-    def gold_key_attack(self, wizard_type, boss_pos):
-            wizard_type = wizard_type.split('.')[0]
-            if(wizard_type == "feinter"):
-                """ Feinter plays """
-                # Check to see if deck is crowded with unusable spells
-                cn = len(self.find_unusable_spells())
-                if cn > 2:
-                    self.discard_unusable_spells(cn)
-
-                # Play
-                elif self.enchant('Death', 'feint', 'Sun', 'potent'):
-                    self.cast_spell('Death', 'feint-potent').at_target(boss_pos)
-                elif self.find_spell('Death', 'feint-potent', threshold=0.10):
-                    self.cast_spell('Death', 'feint-potent').at_target(boss_pos) #Casts at third wizard
-                elif self.find_spell('Death', 'feint'):
-                    self.cast_spell('Death', 'feint').at_target(boss_pos)
-                else:
-                    self.pass_turn()
-        
-            if(wizard_type == "hitter"):
-                """ Hitter plays """
-                # Check to see if deck is crowded with unusable spells
-                cn = len(self.find_unusable_spells())
-                # Discard the spells
-                if cn > 2:
-                    self.discard_unusable_spells(cn)
-                # Play
-                elif self.enchant('Storm', 'storm_blade', 'Sun', 'sharpen'):
-                    self.cast_spell('Storm', 'enchanted_storm_blade').at_friendly(2) #Casts at third wizard
-                elif self.find_spell('Storm', 'enchanted_storm_blade', threshold=0.10):
-                    self.cast_spell('Storm', 'enchanted_storm_blade').at_friendly(2) #Casts at third wizard
-                elif self.enchant('Storm', 'tempest', 'Sun', 'epic'):
-                    self.find_spell('Storm', 'tempest-enchanted', threshold=0.10)
-                    self.cast_spell('Storm', 'tempest-enchanted')
-                elif self.find_spell('Storm', 'tempest-enchanted', threshold=0.10):
-                    self.cast_spell('Storm', 'tempest-enchanted')             
-                else:
-                    self.pass_turn()
-
-            if(wizard_type == "blader"):
-                """ Blader plays """
-                # Check to see if deck is crowded with unusable spells
-                cn = len(self.find_unusable_spells())
-                if cn > 2:
-                    self.discard_unusable_spells(cn)
-
-                # Play
-                if self.find_spell('Death', 'mass_feint', threshold=0.10):
-                    self.cast_spell('Death', 'mass_feint')
-                elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen'):
-                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
-                elif self.find_spell('Balance', 'enchanted_elemental_blade', threshold=0.10):
-                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(2) #Casts at third wizard
-                
-                else:
-                    self.pass_turn()
