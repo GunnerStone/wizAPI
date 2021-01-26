@@ -30,13 +30,13 @@ def await_finished_loading(windows):
             time.sleep(.2)
     
     for w in windows:
-        while not w.is_pet_icon_visible():
+        while ((not w.is_pet_icon_visible()) and (not w.find_button('more')) and (not w.find_button('done'))):
             time.sleep(.2)
 
-    for w in windows:
-        while not w.is_idle():
-            time.sleep(.5)
 
+def clear_dialog(windows):
+    for w in windows:
+        w.clear_dialog()
 
 def print_separator(*args):
     sides = '+'*16
@@ -106,6 +106,9 @@ while True:
 
     print('All players have entered the dungeon')
 
+    clear_dialog([feinter,hitter,blader])
+
+
     """ Run into battle """
     while (not feinter.is_turn_to_play()):
         feinter.hold_key('w', random.uniform(1.1, 1.15))
@@ -141,9 +144,15 @@ while True:
         user_order[1][0].mass_feint_attack(wizard_type = user_order[1][1], boss_pos = boss_pos, hitter=HITTING_SCHOOL)
         user_order[2][0].mass_feint_attack(wizard_type = user_order[2][1], boss_pos = boss_pos, hitter=HITTING_SCHOOL)
 
-        feinter.wait_for_end_of_round()
+        feinter.set_active()
+        feinter.wait_for_end_of_round_dialog()
         if feinter.is_idle():
             inFight = False
+        if feinter.find_button('more'):
+            inFight = False
+        if feinter.find_button('done'):
+            inFight = False
+    clear_dialog([feinter,blader,hitter])
     print("Battle has ended")
 
     print("Exiting...")
@@ -154,7 +163,7 @@ while True:
     driver = driver_random[0][0]
 
     """ Wait should be between 0.2 - 1.0 based on individual load speeds """
-    driver.logout()
+    driver.logout(isDungeon=True)
 
     await_finished_loading([driver])
     print('Successfully exited the dungeon')
