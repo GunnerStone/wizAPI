@@ -139,7 +139,7 @@ def afk_timeout_failsafe():
         if((time.time() - START_TIME) / 60 >= 10):
             timeout_fails += 1
             logout_failsafe([feinter, hitter, blader])
-            spawn_program_and_die(['python', 'farm_AMM_paradox.py',str(ROUND_COUNT), str(failed_runs), str(timeout_fails),str(PROGRAM_START_TIME)])
+            spawn_program_and_die(['python', 'farm_Chronus.py',str(ROUND_COUNT), str(failed_runs), str(timeout_fails),str(PROGRAM_START_TIME)])
         time.sleep(5)
         # print("Current time:"+str((time.time() - START_TIME) / 60))
 
@@ -246,13 +246,15 @@ def main():
 
         threads = []
 
-        t = Thread(target=hitter.hold_key, args=('w', 12.786))
+        t = Thread(target=hitter.hold_key, args=('w', 13.286))
         threads.append(t)
 
-        arr1 , arr2, arr3 = ['a','d','a'],[0.361,0.3,0.57],[2.575,4.501,12.129]
+        arr1 , arr2, arr3 = ['a','d','a'],[0.51,0.3,0.57],[2.575,10.501,12.129]
 
         t = Thread(target=hitter.navigate_keys, args=(arr1,arr2,arr3))
         threads.append(t)
+
+        
 
         # Start all threads
         for x in threads:
@@ -262,94 +264,72 @@ def main():
         for x in threads:
             x.join()
 
-
         threads = []
 
-        feinter.wait(.5)
-        clear_dialog([feinter, hitter, blader])
-
-        #walk_to_next_battle("feinter", 2)
-
-        threads = []
-
-        #TP Other users
-        feinter.teleport_to_friend('hitter.png')
-        blader.teleport_to_friend('hitter.png').wait(random.uniform(2, 3))
-
-        #Enter Next Fight
-        feinter.hold_key('w', random.uniform(.9, 1.1))
-        blader.hold_key('w', random.uniform(.9, 1.1))
-        hitter.hold_key('w', random.uniform(.9, 1.1))
-
-        feinter.wait(.5)
-
-        feinter.hold_key('w', random.uniform(.9, 1.1))
-        blader.hold_key('w', random.uniform(.9, 1.1))
-        hitter.hold_key('w', random.uniform(.9, 1.1))
-
-        feinter.wait_for_next_turn()
-
-        inFight = True
-        battle_round = 0
-
-        while inFight:
-            battle_round += 1
-            print_rount_count(ROUND_COUNT, battle_round, failed_runs)
-            
-            random.shuffle(user_order)
-
-            user_order[0][0].AMM_paradox_attack(wizard_type = user_order[0][1], boss_pos = boss_pos, boss_battle=False)
-            user_order[1][0].AMM_paradox_attack(wizard_type = user_order[1][1], boss_pos = boss_pos, boss_battle=False)
-            user_order[2][0].AMM_paradox_attack(wizard_type = user_order[2][1], boss_pos = boss_pos, boss_battle=False)
-
-            feinter.wait_for_end_of_round_dialog()
-            if feinter.is_idle():
-                inFight = False
-            if feinter.find_button('done'):
-                inFight = False
-            if feinter.find_button('more'):
-                inFight = False
-        #print("Battle 2 has ended")
-        feinter.wait(.5)
-
-        clear_dialog([feinter, hitter, blader])
-
-        threads = []
-
-        t = Thread(target=hitter.hold_key, args=('w', 11.387))
+        t = Thread(target=feinter.hold_key, args=('w', 13.286))
         threads.append(t)
 
-        arr1 , arr2, arr3 = ['a','d','a','a'],[0.276,0.26,0.306,0.291],[2.039,4.365,6.3,7.911]
+        arr1 , arr2, arr3 = ['a','d','a'],[0.51,0.3,0.57],[2.575,10.501,12.129]
 
-        t = Thread(target=hitter.navigate_keys, args=(arr1,arr2,arr3))
+        t = Thread(target=feinter.navigate_keys, args=(arr1,arr2,arr3))
         threads.append(t)
+
+        
 
         # Start all threads
         for x in threads:
             x.start()
 
-        # Wait for all of themadd to finish
+        # Wait for all of them to finish
         for x in threads:
             x.join()
-        
-        time.sleep(.5)
+
+        threads = []
+
+        t = Thread(target=blader.hold_key, args=('w', 13.286))
+        threads.append(t)
+
+        arr1 , arr2, arr3 = ['a','d','a'],[0.51,0.3,0.57],[2.575,10.501,12.129]
+
+        t = Thread(target=blader.navigate_keys, args=(arr1,arr2,arr3))
+        threads.append(t)
 
         
-        clear_dialog([feinter, hitter, blader])
 
-        feinter.teleport_to_friend('hitter.png')
-        blader.teleport_to_friend('hitter.png').wait(1.3)
+        # Start all threads
+        for x in threads:
+            x.start()
+
+        # Wait for all of them to finish
+        for x in threads:
+            x.join()
+
+        threads = []
+
+        feinter.wait(.5)
+
+        #walk_to_next_battle("feinter", 2)
+
+        threads = []
+
+
+        #Enter Next Fight
+        feinter.hold_key('w', random.uniform(2.7, 2.8))
+        blader.hold_key('w', random.uniform(2.7, 2.8))
+        hitter.hold_key('w', random.uniform(2.7, 2.8))
+
+        feinter.wait(.5)
+
+        feinter.hold_key('w', random.uniform(.9, 1.1))
+        blader.hold_key('w', random.uniform(.9, 1.1))
+        hitter.hold_key('w', random.uniform(.9, 1.1))
 
         
-
-        feinter.hold_key('w', random.uniform(1.45, 1.5))
-        blader.hold_key('w', random.uniform(1.2, 1.3))
-        hitter.hold_key('w', random.uniform(1.3, 3))
 
         # Begin Fight Section
         feinter.wait_for_next_turn()
         
-        boss_pos = feinter.get_enemy_pos('storm.png')
+        boss_pos = feinter.get_enemy_pos('sun.png')
         #print('Boss at pos', boss_pos)
         
         inFight = True
@@ -361,20 +341,20 @@ def main():
             print_rount_count(ROUND_COUNT, battle_round, failed_runs)
 
             
-            if(battle_round >= 5):
+            if(battle_round >= 4):
                 #print("Boss Battle failed")
                 #print("Exiting...")   
                 failed_runs = failed_runs+1
                 # Restarts program on fail
                 logout_failsafe([feinter, hitter, blader])
-                spawn_program_and_die(['python', 'farm_AMM_paradox.py',str(ROUND_COUNT), str(failed_runs), str(timeout_fails),str(PROGRAM_START_TIME)]) 
+                spawn_program_and_die(['python', 'farm_Chronus.py',str(ROUND_COUNT), str(failed_runs), str(timeout_fails),str(PROGRAM_START_TIME)]) 
                 break
 
             random.shuffle(user_order)
 
-            user_order[0][0].AMM_paradox_attack(wizard_type = user_order[0][1], boss_pos = boss_pos, boss_battle=True)
-            user_order[1][0].AMM_paradox_attack(wizard_type = user_order[1][1], boss_pos = boss_pos, boss_battle=True)
-            user_order[2][0].AMM_paradox_attack(wizard_type = user_order[2][1], boss_pos = boss_pos, boss_battle=True)
+            user_order[0][0].chronus_attack(wizard_type = user_order[0][1], boss_pos = boss_pos, round_num = battle_round)
+            user_order[1][0].chronus_attack(wizard_type = user_order[1][1], boss_pos = boss_pos, round_num = battle_round)
+            user_order[2][0].chronus_attack(wizard_type = user_order[2][1], boss_pos = boss_pos, round_num = battle_round)
 
             feinter.wait_for_end_of_round_dialog()
             if feinter.is_idle():
@@ -386,7 +366,7 @@ def main():
 
         #print("Exiting...")
         # Random User logout
-        user_order[0][0].logout()
+        user_order[0][0].logout(isDungeon=True)
 
         await_pet_loading([user_order[0][0]])
 

@@ -1903,3 +1903,50 @@ class wizAPI:
                     self.cast_spell('Storm', 'b_storm_blade').at_friendly(2) #Casts at third wizard
                 else:
                     self.pass_turn() 
+    def chronus_attack(self, wizard_type, boss_pos,round_num):
+            wizard_type = wizard_type.split('.')[0]
+
+            #If its first turn, cast stun block
+            if (round_num < 2):
+                if(wizard_type == "feinter"):
+                    """ Feinter plays """
+                    # Play
+                    self.cast_spell('Ice', 'stun_block').at_friendly(4) #Casts at first wizard
+                elif (wizard_type == "hitter"):
+                    """ Hitter plays """
+                    # Play
+                    self.cast_spell('Ice', 'stun_block').at_friendly(2) #Casts at first wizard
+                elif (wizard_type == "blader"):
+                    """ Blader plays """
+                    # Play
+                    self.cast_spell('Ice', 'stun_block').at_friendly(3) #Casts at first wizard
+            else:
+                if(wizard_type == "feinter"):
+                    """ Feinter plays """
+                    # Play
+                    if self.enchant('Death', 'feint', 'Sun', 'potent'):
+                        self.cast_spell('Death', 'feint-potent').at_target(boss_pos)  
+                    elif self.find_spell('Death', 'feint', threshold=0.14):
+                        self.cast_spell('Death', 'feint').at_target(boss_pos) 
+                    else:
+                        self.pass_turn()
+
+                if(wizard_type == "hitter"):
+                    """ Hitter plays """
+                    # Play
+                    if self.find_spell('Death', 'b_feint', threshold=0.14):
+                        self.cast_spell('Death', 'b_feint').at_target(boss_pos)
+                    elif self.find_spell('Fire', 'incindiate', threshold=0.10):
+                        self.cast_spell('Fire', 'incindiate')             
+                    else:
+                        self.pass_turn()
+
+                if(wizard_type == "blader"):
+                    """ Blader plays """
+                    # Play
+                    if self.find_spell('Star', 'furnace', threshold=0.14):
+                        self.cast_spell('Star', 'furnace')
+                    elif self.enchant('Fire', 'scald', 'Sun', 'epic'):
+                        self.cast_spell('Fire', 'scald-enchanted')           
+                    else:
+                        self.pass_turn()
