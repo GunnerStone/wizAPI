@@ -328,8 +328,8 @@ def main():
 
         #Enter Next Fight
         feinter.hold_key('w', random.uniform(.7, .9))
-        blader.hold_key('w', random.uniform(1.3, 1.4))
-        hitter.hold_key('w', random.uniform(1.4, 1.5))
+        blader.hold_key('w', random.uniform(1.5, 1.6))
+        hitter.hold_key('w', random.uniform(1.5, 1.6))
 
         feinter.wait_for_next_turn()
 

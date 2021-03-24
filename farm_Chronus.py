@@ -21,7 +21,7 @@ from prompt_toolkit.styles import Style
 """ Register windows """
 time.sleep(1) #wait for previoius process to finish
 
-str_buffer = "Arachna Magna Magus 3p Bot Running"
+str_buffer = "Chronus 3p Bot Running"
 sp = yaspin(text = str_buffer,spinner=Spinners.circleHalves)
 print = print_formatted_text
 # build a basic prompt_toolkit style for styling the HTML wrapped text
@@ -50,7 +50,8 @@ if(blader.get_window_rect()[0] > feinter.get_window_rect()[0]):
     blader, feinter = feinter, blader
 
 # Global vars
-if len(sys.argv) > 1:
+# if len(sys.argv) > 1:
+if False:
     ROUND_COUNT = int(sys.argv[1])
     failed_runs = int(sys.argv[2])
     timeout_fails = int(sys.argv[3])
@@ -135,6 +136,8 @@ def spawn_program_and_die(program, exit_code=0):
 def afk_timeout_failsafe():
     global timeout_fails
     global START_TIME
+    global PROGRAM_START_TIME
+    global failed_runs
     while True:
         if((time.time() - START_TIME) / 60 >= 10):
             timeout_fails += 1
@@ -206,6 +209,15 @@ def main():
         ROUND_COUNT += 1
         #print_separator('ROUND', str(ROUND_COUNT))
 
+        """ Quick sell every 10 rounds"""
+        if(ROUND_COUNT % 10 == 0):
+            feinter.quick_sell(False, False)
+            feinter.wait(2)
+            hitter.quick_sell(False, False)
+            hitter.wait(2)
+            blader.quick_sell(False, False)
+            blader.wait(2)
+
         """ Attempt to enter the dungeon """
         time.sleep(1)
 
@@ -230,9 +242,9 @@ def main():
         hitter.clear_quest_buttons()
 
         """ Check health and use potion if necessary """
-        user_order[0][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1], health_percent=80,greedy_tp=True)
-        user_order[1][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[0][1], health_percent=80,greedy_tp=True)
-        user_order[2][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1], health_percent=80,greedy_tp=True)
+        user_order[0][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1], health_percent=60,greedy_tp=True)
+        user_order[1][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[0][1], health_percent=60,greedy_tp=True)
+        user_order[2][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1], health_percent=60,greedy_tp=True)
 
         user_order[0][0].press_key('x').wait(random.uniform(0.5, 1.5))
         user_order[1][0].press_key('x').wait(random.uniform(0.2, 1.7))
@@ -264,6 +276,10 @@ def main():
         for x in threads:
             x.join()
 
+
+        await_pet_loading([hitter])
+
+
         threads = []
 
         t = Thread(target=feinter.hold_key, args=('w', 13.286))
@@ -283,6 +299,9 @@ def main():
         # Wait for all of them to finish
         for x in threads:
             x.join()
+
+
+        await_pet_loading([feinter])
 
         threads = []
 
@@ -306,12 +325,9 @@ def main():
 
         threads = []
 
+        await_pet_loading([blader])
+
         feinter.wait(.5)
-
-        #walk_to_next_battle("feinter", 2)
-
-        threads = []
-
 
         #Enter Next Fight
         feinter.hold_key('w', random.uniform(2.7, 2.8))
@@ -371,8 +387,13 @@ def main():
         await_pet_loading([user_order[0][0]])
 
         user_order[1][0].teleport_to_friend(user_order[0][1])
+
+        await_pet_loading([user_order[1][0]])
+        
         user_order[2][0].teleport_to_friend(user_order[0][1]).wait(random.uniform(1, 3))
         
+        await_pet_loading([user_order[2][0]])
+
         #print('Successfully exited the dungeon')
         print_time(time.time() - START_TIME)
 
@@ -386,7 +407,7 @@ afk_thread.start()
 
 try:
     sp.start()
-    #metric_thread.start()
+    metric_thread.start()
     time.sleep(2)
     main()
 except KeyboardInterrupt:

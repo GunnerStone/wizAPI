@@ -524,6 +524,7 @@ class wizAPI:
         self.click(265,482+36,delay=.2)
         #if in dungeon, acknowledge the prompt
         if(isDungeon==True):
+            self.wait(.5)
             self.click(411,386+36,delay=.2)
         #wait until loading is done
         play_btn = self.screenshotRAM(region=self._login_area)
