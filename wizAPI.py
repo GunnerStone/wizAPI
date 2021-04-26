@@ -100,7 +100,7 @@ class wizAPI:
         while not self.is_on_kiosk():
             self.wait(.1)
         #boot-up teamup kiosk
-        print("Pressing x on terminal")
+        #print("Pressing x on terminal")
         self.press_key('x').wait(1)
 
         # Navigate and load up desired world for teamup
@@ -405,8 +405,8 @@ class wizAPI:
         x, y = coords
         x+=self.region_offset[0]
         y+=self.region_offset[1]
-        print(pyautogui.pixel(x+wx,y+wy))
-        print(rgb)
+        #print(pyautogui.pixel(x+wx,y+wy))
+        #print(rgb)
         return pyautogui.pixelMatchesColor(x + wx, y + wy, rgb, tolerance=threshold)
 
     def move_mouse(self, x, y, speed=.5):
@@ -513,7 +513,6 @@ class wizAPI:
     def is_pet_icon_visible(self):
         self.set_active()
         x,y = (126,535)
-        self.screenshot(name="pet_test.png",region=(x,y,26,17))
         roi_image = self.screenshotRAM(region=(x,y,26,17))
         found = self.match_image(roi_image,'pet_icon.png') or self.find_button('done') or self.find_button('more')
         return found
@@ -813,11 +812,11 @@ class wizAPI:
     def wait_pet_loading(self):
         #wait for pet icon to disappear
         while self.is_pet_icon_visible():
-                print("pet icon is visible")
+                #print("pet icon is visible")
                 time.sleep(.3)
         #wait for pept icon to reappear
         while not self.is_pet_icon_visible():
-            print("pet icon is NOT visible")
+            #print("pet icon is NOT visible")
             time.sleep(.3)
 
     def is_turn_to_play(self):
