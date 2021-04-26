@@ -19,6 +19,9 @@ class wizAPI:
         self._friendly_area = (136, 536, 650, 70)
         self._login_area = (307,553+36,187,44)
 
+    
+    region_offset = (5,5,0,0)
+
     def wait(self, s):
         """ Alias for time.sleep() that return self for function chaining """
         time.sleep(s)
@@ -97,6 +100,7 @@ class wizAPI:
         while not self.is_on_kiosk():
             self.wait(.1)
         #boot-up teamup kiosk
+        print("Pressing x on terminal")
         self.press_key('x').wait(1)
 
         # Navigate and load up desired world for teamup
@@ -399,7 +403,10 @@ class wizAPI:
         """ Matches the color of a pixel relative to the window's position """
         wx, wy = self.get_window_rect()[:2]
         x, y = coords
-        # self.move_mouse(x, y)
+        x+=self.region_offset[0]
+        y+=self.region_offset[1]
+        print(pyautogui.pixel(x+wx,y+wy))
+        print(rgb)
         return pyautogui.pixelMatchesColor(x + wx, y + wy, rgb, tolerance=threshold)
 
     def move_mouse(self, x, y, speed=.5):
@@ -435,7 +442,9 @@ class wizAPI:
             wx, wy = window[:2]
             region = list(region)
             region[0] += wx
+            region[0] += self.region_offset[0]
             region[1] += wy
+            region[1] += self.region_offset[1]
 
         pyautogui.screenshot(name, region=region)
     
@@ -457,7 +466,9 @@ class wizAPI:
             wx, wy = window[:2]
             region = list(region)
             region[0] += wx
+            region[0] += self.region_offset[0]
             region[1] += wy
+            region[1] += self.region_offset[1]
 
         return pyautogui.screenshot(region=region)
 
@@ -501,8 +512,10 @@ class wizAPI:
                 self.pixel_matches_color((284, 550), (20, 218, 11), 5))
     def is_pet_icon_visible(self):
         self.set_active()
-        roi = self.screenshotRAM(region=(126,512+23,26,17))
-        found = self.match_image(roi,'pet_icon.png') or self.find_button('done') or self.find_button('more')
+        x,y = (126,535)
+        self.screenshot(name="pet_test.png",region=(x,y,26,17))
+        roi_image = self.screenshotRAM(region=(x,y,26,17))
+        found = self.match_image(roi_image,'pet_icon.png') or self.find_button('done') or self.find_button('more')
         return found
 
     def is_logo_bottom_left_loading(self):
@@ -800,17 +813,22 @@ class wizAPI:
     def wait_pet_loading(self):
         #wait for pet icon to disappear
         while self.is_pet_icon_visible():
+                print("pet icon is visible")
                 time.sleep(.3)
         #wait for pept icon to reappear
         while not self.is_pet_icon_visible():
+            print("pet icon is NOT visible")
             time.sleep(.3)
 
     def is_turn_to_play(self):
         """ matches a yellow pixel in the 'pass' button """
-        return self.pixel_matches_color((238, 398), (255, 255, 0), 20)
+        #return self.pixel_matches_color((238, 398), (255, 255, 0), 20)
+        return self.is_turn_to_play_pass()
     
     def is_turn_to_play_pass(self):
-        pic = self.screenshotRAM(region=(190, 385, 440, 40))
+        roi = (190, 385, 440, 40)
+        #roi = (roi[0]+self.region_offset[0],roi[1]+self.region_offset[1],roi[2]+self.region_offset[2],roi[3]+self.region_offset[3])
+        pic = self.screenshotRAM(region=roi)
 
         found = self.match_image(pic, 'buttons/pass.png', threshold=.1)
 
@@ -863,7 +881,8 @@ class wizAPI:
 
     def is_idle(self):
         """ Matches a pink pixel in the pet icon (only visible when not in battle) """
-        return self.pixel_matches_color((140, 554), (252, 146, 206), 2)
+        #return self.pixel_matches_color((140, 554), (252, 146, 206), 2)
+        return self.is_pet_icon_visible()
 
     def find_spell(self, spell_type, spell_name, threshold=0.10, max_tries=2, recapture=True):
         """ 

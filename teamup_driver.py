@@ -38,7 +38,9 @@ try:
 
     def main():
         tester.teleport_home()
+        print("Teleporting home")
         tester.wait_pet_loading()
+        print("FInished loading")
         while True:
             tester.join_teamup(world=0,school=SCHOOL)
             global ROUND_COUNT
@@ -125,9 +127,9 @@ try:
     afk_thread = Thread(target=afk_timeout_failsafe, args=())
     metric_thread = Thread(target=display_metrics,args=())
     try:
-        sp.start()
+        #sp.start()
         START_TIME = time.time()
-        metric_thread.start()
+        #metric_thread.start()
         afk_thread.start()
         time.sleep(2)
         main()

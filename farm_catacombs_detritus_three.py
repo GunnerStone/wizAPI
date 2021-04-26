@@ -258,8 +258,11 @@ def main():
             random.shuffle(user_order)
 
             user_order[0][0].catacombs_detritus_attack(wizard_type = user_order[0][1], boss_pos = boss_pos, boss_battle=False)
+            user_order[1][0].move_mouse(400,20,speped=.5)
             user_order[1][0].catacombs_detritus_attack(wizard_type = user_order[1][1], boss_pos = boss_pos, boss_battle=False)
+            user_order[2][0].move_mouse(400,20,speped=.5)
             user_order[2][0].catacombs_detritus_attack(wizard_type = user_order[2][1], boss_pos = boss_pos, boss_battle=False)
+            user_order[0][0].move_mouse(400,20,speped=.5)
 
             feinter.wait_for_end_of_round_dialog()
             
@@ -343,8 +346,11 @@ def main():
             random.shuffle(user_order)
 
             user_order[0][0].catacombs_detritus_attack(wizard_type = user_order[0][1], boss_pos = boss_pos, boss_battle=False)
+            user_order[1][0].move_mouse(400,20,speped=.5)
             user_order[1][0].catacombs_detritus_attack(wizard_type = user_order[1][1], boss_pos = boss_pos, boss_battle=False)
+            user_order[2][0].move_mouse(400,20,speped=.5)
             user_order[2][0].catacombs_detritus_attack(wizard_type = user_order[2][1], boss_pos = boss_pos, boss_battle=False)
+            user_order[0][0].move_mouse(400,20,speped=.5)
 
             feinter.wait_for_end_of_round_dialog()
             if feinter.is_idle():
@@ -429,8 +435,11 @@ def main():
             random.shuffle(user_order)
 
             user_order[0][0].catacombs_detritus_attack(wizard_type = user_order[0][1], boss_pos = boss_pos, boss_battle=True)
+            user_order[1][0].move_mouse(400,20,speped=.5)
             user_order[1][0].catacombs_detritus_attack(wizard_type = user_order[1][1], boss_pos = boss_pos, boss_battle=True)
+            user_order[2][0].move_mouse(400,20,speped=.5)
             user_order[2][0].catacombs_detritus_attack(wizard_type = user_order[2][1], boss_pos = boss_pos, boss_battle=True)
+            user_order[0][0].move_mouse(400,20,speped=.5)
 
             feinter.wait_for_end_of_round_dialog()
             if feinter.is_idle():
