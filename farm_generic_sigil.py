@@ -76,9 +76,9 @@ while True:
     print_separator('ROUND', str(ROUND_COUNT))
 
     """ Check health and use potion if necessary """
-    user_order[0][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1], health_percent=33)
-    user_order[1][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[0][1], health_percent=33)
-    user_order[2][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1], health_percent=33)
+    user_order[0][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1], health_percent=60)
+    user_order[1][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[0][1], health_percent=60)
+    user_order[2][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1], health_percent=60)
 
     # """ Attempt to enter the dungeon """
     time.sleep(1)
@@ -108,12 +108,14 @@ while True:
 
     clear_dialog([feinter,hitter,blader])
 
-
     """ Run into battle """
+    feinter.hold_key('w', random.uniform(0.5, 0.5))
+    blader.hold_key('w', random.uniform(0.5, 0.5))
+    hitter.hold_key('w', random.uniform(0.5, 0.5))
     while (not feinter.is_turn_to_play()):
-        feinter.hold_key('w', random.uniform(1.1, 1.15))
-        blader.hold_key('w', random.uniform(1.1, 1.15))
-        hitter.hold_key('w', random.uniform(1.1, 1.15))
+        feinter.hold_key('w', random.uniform(0.9, 0.88))
+        blader.hold_key('w', random.uniform(0.9, 0.88))
+        hitter.hold_key('w', random.uniform(0.9, 0.88))
 
     #remove auto mouse off of cards
     feinter.hold_key('s', random.uniform(0.1, 0.15))
@@ -126,10 +128,13 @@ while True:
     # feinter.wait_for_next_turn()
 
     #boss_pos = feinter.get_enemy_pos('storm.png')
-    boss_pos = False
+    boss_pos = True
     #if no boss make it 1
     if (not boss_pos):
         boss_pos = 1
+    else:
+        boss_pos = feinter.get_enemy_pos('death.png')
+
     print('Boss at pos', boss_pos)
 
     inFight = True

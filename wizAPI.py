@@ -1417,14 +1417,10 @@ class wizAPI:
                 attack_spell = "ratatoskrs_spin"
                 attack_e_spell = "ratatoskrs_spin_enchanted"
             """ Hitter plays """
-            # Check to see if deck is crowded with unusable spells
-            cn = len(self.find_unusable_spells())
-            # Discard the spells
-            if cn > 2:
-                self.discard_unusable_spells(cn)
-
-            # Play - Storm
-            if self.enchant(hitter, attack_spell, 'Sun', 'epic'):
+            # Play - 
+            if self.find_spell('Star','frenzy'):
+                self.cast_spell('Star','frenzy')
+            elif self.enchant(hitter, attack_spell, 'Sun', 'epic'):
                 self.cast_spell(hitter, attack_e_spell, threshold=.15)
             elif self.find_spell(hitter, attack_e_spell, max_tries=2):
                 self.cast_spell(hitter, attack_e_spell)
@@ -1442,6 +1438,8 @@ class wizAPI:
             # Play
             if self.find_spell('Death', 'mass_feint'):
                 self.cast_spell('Death', 'mass_feint')
+            elif self.enchant('Balance','elemental_blade','Sun','sharpen'):
+                self.cast_spell('Balance','enchanted_elemental_blade').at_friendly(2)
             elif self.find_spell('Life', 'pigsie'):
                 self.cast_spell('Life', 'pigsie')
             else:
