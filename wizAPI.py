@@ -734,11 +734,7 @@ class wizAPI:
                     self.recall_location()
                 #Waits for user to finish loading
                 if not greedy_tp:
-                    while not self.is_logo_bottom_left_or_right_loading():
-                        time.sleep(.2)
-
-                    while not self.is_idle():
-                        time.sleep(.5)
+                    self.wait_pet_loading()
                 else:
                     self.wait_pet_loading()
 
@@ -813,11 +809,10 @@ class wizAPI:
         #wait for pet icon to disappear
         while self.is_pet_icon_visible():
                 #print("pet icon is visible")
-                time.sleep(.3)
+                time.sleep(.2)
         #wait for pept icon to reappear
-        while not self.is_pet_icon_visible():
-            #print("pet icon is NOT visible")
-            time.sleep(.3)
+        while ((not self.is_pet_icon_visible()) and (not self.find_button('more')) and (not self.find_button('done'))):
+            time.sleep(.2)
 
     def is_turn_to_play(self):
         """ matches a yellow pixel in the 'pass' button """
@@ -1075,15 +1070,15 @@ class wizAPI:
             return False
     def at_target(self, target_pos):
         """ Clicks the target, based on position 1, 2, 3, or 4 """
-        x = (174 * (target_pos - 1)) + 130
-        y = 50
+        x = (174 * (target_pos - 1)) + 130 +self.region_offset[0]
+        y = 50+self.region_offset[1]
         self.click(x, y, delay=.2)
         return self
 
     def at_friendly(self, target_pos):
         """ Clicks the target, based on position 1, 2, 3, or 4 """
-        x = (174 * (target_pos - 1)) + 150
-        y = 600
+        x = (174 * (target_pos - 1)) + 150 +self.region_offset[0]
+        y = 600+self.region_offset[1]
         self.click(x, y, delay=.2)
         return self
 
@@ -1967,3 +1962,97 @@ class wizAPI:
                         self.cast_spell('Fire', 'scald-enchanted')           
                     else:
                         self.pass_turn()
+    def riddler_attack(self, wizard_type, boss_pos,round_num):
+            wizard_type = wizard_type.split('.')[0]
+
+            self.move_mouse(400,40)
+            if(wizard_type == "feinter"):
+                """ Feinter plays """
+                # Play
+                if self.find_spell('Death', 'mass_feint', threshold=0.14):
+                    self.cast_spell('Death', 'mass_feint')
+                elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen'):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade',threshold=0.8).at_friendly(3) 
+                elif self.find_spell('Balance','enchanted_elemental_blade',threshold=0.8):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(3) 
+                else:
+                    self.pass_turn()
+
+            if(wizard_type == "hitter"):
+                """ Hitter plays """
+                # Play
+                if self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen_b'):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(3) 
+                elif self.find_spell('Balance','enchanted_elemental_blade'):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(3) 
+                elif self.find_spell('Fire', 'incindiate', threshold=0.10):
+                    self.cast_spell('Fire', 'incindiate')             
+                else:
+                    self.pass_turn()
+
+            if(wizard_type == "blader"):
+                """ Blader plays """
+                # Play
+                if self.find_spell('Star', 'frenzy', threshold=0.14):
+                    self.cast_spell('Star', 'frenzy')
+                elif self.enchant('Fire', 'scald', 'Sun', 'epic'):
+                    self.cast_spell('Fire', 'scald-enchanted')    
+                elif self.find_spell('Fire','scald-enchanted'):
+                    self.cast_spell('Fire','scald-enchanted')       
+                else:
+                    self.pass_turn()
+            self.move_mouse(400,40)
+    def medulla_attack(self, wizard_type, boss_pos,round_num):
+            wizard_type = wizard_type.split('.')[0]
+
+            self.move_mouse(400,40)
+            if(wizard_type == "feinter"):
+                """ Feinter plays """
+                # Play
+                if self.find_spell('Death', 'mass_feint', threshold=0.14):
+                    self.cast_spell('Death', 'mass_feint')
+                elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen'):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade',threshold=0.8).at_friendly(3) 
+                elif self.enchant('Balance', 'elemental_trap', 'Sun', 'potent'):
+                    self.cast_spell('Balance', 'enchanted_elemental_trap',threshold=0.8).at_target(1)
+                elif self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen_b'):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(3) 
+                elif self.find_spell('Balance','enchanted_elemental_blade'):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(3) 
+                else:
+                    self.pass_turn()
+
+            if(wizard_type == "hitter"):
+                """ Hitter plays """
+                # Play
+                if self.enchant('Balance', 'elemental_blade', 'Sun', 'sharpen_b'):
+                    self.cast_spell('Balance', 'enchanted_elemental_blade').at_friendly(3) 
+                elif self.find_spell('Fire', 'incindiate', threshold=0.10):
+                    self.cast_spell('Fire', 'incindiate')
+                elif self.enchant('Fire', 'fuel', 'Sun', 'potent'):
+                    self.cast_spell('Fire', 'fuel-enchanted').at_target(1)
+                elif self.find_spell('Fire', 'fuel'):
+                    self.cast_spell('Fire','fuel').at_target(1)        
+                elif self.find_spell('Fire','firetrap'):
+                    self.cast_spell('Fire','firetrap').at_target(1)
+                else:
+                    self.pass_turn()
+
+            if(wizard_type == "blader"):
+                """ Blader plays """
+                # Play
+                if self.find_spell('Star', 'frenzy'):
+                    self.cast_spell('Star', 'frenzy')
+                elif self.enchant('Fire', 'scald', 'Sun', 'epic'):
+                    self.cast_spell('Fire', 'scald-enchanted')    
+                elif self.find_spell('Fire','scald-enchanted'):
+                    self.cast_spell('Fire','scald-enchanted')
+                elif self.find_spell('Fire','mass-fire-trap'):
+                    self.cast_spell('Fire','mass-fire-trap')
+                elif self.find_spell('Fire','fireblade'):
+                    self.cast_spell('Fire','fireblade').at_friendly(3)     
+                elif self.enchant('Fire', 'firedragon', 'Sun', 'epic'):
+                    self.cast_spell('Fire', 'firedragon-enchanted')      
+                else:
+                    self.pass_turn()
+            self.move_mouse(400,40)

@@ -24,6 +24,10 @@ if(hitter.get_window_rect()[0] > blader.get_window_rect()[0]):
 if(blader.get_window_rect()[0] > feinter.get_window_rect()[0]):
     blader, feinter = feinter, blader
 
+def clear_dialog(windows):
+    for w in windows:
+        w.clear_dialog()
+
 def await_finished_loading(windows):
     for w in windows:
         while w.is_pet_icon_visible():
@@ -112,10 +116,14 @@ while True:
     feinter.hold_key('w', random.uniform(0.5, 0.5))
     blader.hold_key('w', random.uniform(0.5, 0.5))
     hitter.hold_key('w', random.uniform(0.5, 0.5))
+
+    clear_dialog([feinter, hitter, blader])
+
+
     while (not feinter.is_turn_to_play()):
-        feinter.hold_key('w', random.uniform(0.9, 0.88))
-        blader.hold_key('w', random.uniform(0.9, 0.88))
-        hitter.hold_key('w', random.uniform(0.9, 0.88))
+        feinter.hold_key('w', random.uniform(1.9, 1.88))
+        blader.hold_key('w', random.uniform(1.9, 1.88))
+        hitter.hold_key('w', random.uniform(1.9, 1.88))
 
     #remove auto mouse off of cards
     feinter.hold_key('s', random.uniform(0.1, 0.15))
@@ -128,12 +136,12 @@ while True:
     # feinter.wait_for_next_turn()
 
     #boss_pos = feinter.get_enemy_pos('storm.png')
-    boss_pos = True
+    boss_pos = False
     #if no boss make it 1
     if (not boss_pos):
         boss_pos = 1
     else:
-        boss_pos = feinter.get_enemy_pos('death.png')
+        boss_pos = feinter.get_enemy_pos('fire.png')
 
     print('Boss at pos', boss_pos)
 
