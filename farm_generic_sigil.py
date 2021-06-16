@@ -79,6 +79,12 @@ while True:
     ROUND_COUNT += 1
     print_separator('ROUND', str(ROUND_COUNT))
 
+    """ Quick sell every 10 rounds"""
+    if(ROUND_COUNT % 10 == 0):
+        feinter.quick_sell(False, False)
+        hitter.quick_sell(False, False)
+        blader.quick_sell(False, False)
+
     """ Check health and use potion if necessary """
     user_order[0][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[1][1], health_percent=60)
     user_order[1][0].use_potion_if_needed(refill=True, teleport_to_wizard=user_order[0][1], health_percent=60)
@@ -121,9 +127,9 @@ while True:
 
 
     while (not feinter.is_turn_to_play()):
-        feinter.hold_key('w', random.uniform(1.9, 1.88))
-        blader.hold_key('w', random.uniform(1.9, 1.88))
-        hitter.hold_key('w', random.uniform(1.9, 1.88))
+        feinter.hold_key('w', random.uniform(1.2, 1.3))
+        blader.hold_key('w', random.uniform(1.2, 1.3))
+        hitter.hold_key('w', random.uniform(1.2, 1.3))
 
     #remove auto mouse off of cards
     feinter.hold_key('s', random.uniform(0.1, 0.15))
@@ -182,8 +188,6 @@ while True:
     print('Successfully exited the dungeon')
 
     driver_random[1][0].teleport_to_friend(driver_random[0][1])
-    driver_random[2][0].teleport_to_friend(driver_random[0][1]).wait(random.uniform(.5, 1))
-
-    await_finished_loading([driver_random[2][0]])
+    driver_random[2][0].teleport_to_friend(driver_random[0][1])
 
     print_time(time.time() - START_TIME)

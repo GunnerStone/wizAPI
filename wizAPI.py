@@ -500,6 +500,7 @@ class wizAPI:
              .click(450, 115)  # Select port
              .click(415, 395)  # Select yes
              )
+            self.wait_pet_loading()
             return self
         else:
             #print('Friend cound not be found')
@@ -732,11 +733,14 @@ class wizAPI:
                     self.teleport_to_friend(teleport_friend_img)
                 else:
                     self.recall_location()
+                    
                 #Waits for user to finish loading
                 if not greedy_tp:
                     self.wait_pet_loading()
+                    self.wait(.1)
                 else:
                     self.wait_pet_loading()
+                    self.wait(.1)
 
                 #Waits for hilda confirmation to pop
                 time.sleep(1)
@@ -762,15 +766,6 @@ class wizAPI:
                     self.wait(.5)
                     self.teleport_to_friend(teleport_to_wizard)
 
-                    #Waits for user to finish loading
-                    if not greedy_tp:
-                        while not self.is_logo_bottom_left_or_right_loading():
-                            time.sleep(.2)
-
-                        while not self.is_idle():
-                            time.sleep(.5)
-                    else:
-                        self.wait_pet_loading()
                 else: # Marks location to waste mana before buying potions
                     if(teleport == False):
                         self.mark_location()
@@ -790,16 +785,6 @@ class wizAPI:
 
                     #Gets back to dungeon
                     self.teleport_to_friend(teleport_to_wizard)
-
-                    #Waits for user to finish loading
-                    if not greedy_tp:
-                        while not self.is_logo_bottom_left_loading():
-                            time.sleep(.2)
-
-                        while not self.is_idle():
-                            time.sleep(.5)
-                    else:
-                        self.wait_pet_loading()
 
     def pass_turn(self):
         self.click(254, 398, delay=.5).move_mouse(200, 400)
