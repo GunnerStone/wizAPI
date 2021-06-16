@@ -67,7 +67,7 @@ if len(sys.argv) == 2:
     # timeout_fails = int(sys.argv[3])
     # PROGRAM_START_TIME = int(float(sys.argv[4]))
 else:
-    HITTING_SCHOOL = "fire"
+    HITTING_SCHOOL = "storm"
     ROUND_COUNT = 0
     failed_runs = 0
     timeout_fails = 0
