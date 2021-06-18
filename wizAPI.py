@@ -511,6 +511,7 @@ class wizAPI:
         self.set_active()
         return (self.pixel_matches_color((253, 550), (4, 195, 4), 5) and
                 self.pixel_matches_color((284, 550), (20, 218, 11), 5))
+    
     def is_pet_icon_visible(self):
         self.set_active()
         x,y = (126,535)
@@ -1356,8 +1357,6 @@ class wizAPI:
     def mass_feint_attack(self, wizard_type, boss_pos, hitter="Storm"):
         wizard_type = wizard_type.split('.')[0]
 
-        #print(wizard_type)
-
         if(wizard_type == "feinter"):
             """ Feinter plays """
             # Check to see if deck is crowded with unusable spells
@@ -1366,14 +1365,17 @@ class wizAPI:
                 self.discard_unusable_spells(cn)
 
             # Play
-            if self.enchant('Death', 'feint', 'Sun', 'potent'):
+            if self.enchant('Death', 'feint', 'Sun', 'potent') or self.find_spell('Death', 'feint-potent'):
                 self.cast_spell('Death', 'feint-potent').at_target(boss_pos)
+                return
 
             elif self.find_spell('Death', 'feint'):
                 self.cast_spell('Death', 'feint').at_target(boss_pos)
+                return
 
             else:
                 self.pass_turn()
+                return
         
         if(wizard_type == "hitter"):
             hitter = hitter.capitalize()
@@ -1400,12 +1402,16 @@ class wizAPI:
             # Play - 
             if self.find_spell('Star','frenzy'):
                 self.cast_spell('Star','frenzy')
+                return
             elif self.enchant(hitter, attack_spell, 'Sun', 'epic'):
                 self.cast_spell(hitter, attack_e_spell, threshold=.15)
+                return
             elif self.find_spell(hitter, attack_e_spell, max_tries=2):
                 self.cast_spell(hitter, attack_e_spell)
+                return
             else:
                 self.pass_turn()
+                return
         
         
         if(wizard_type == "blader"):
@@ -1418,12 +1424,16 @@ class wizAPI:
             # Play
             if self.find_spell('Death', 'mass_feint'):
                 self.cast_spell('Death', 'mass_feint')
+                return
             elif self.enchant('Balance','elemental_blade','Sun','sharpen'):
                 self.cast_spell('Balance','enchanted_elemental_blade').at_friendly(2)
+                return
             elif self.find_spell('Life', 'pigsie'):
                 self.cast_spell('Life', 'pigsie')
+                return
             else:
                 self.pass_turn()
+                return
 
     #One round strat for most mobs
     def mass_feint_attack_teamup(self, wizard_type, boss_pos, hitter="Storm"):
