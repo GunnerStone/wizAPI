@@ -83,6 +83,8 @@ while True:
         blader.bazaar_sell("feinter.png")
 
     """ Check health and use potion if necessary """
+    feinter.use_potion_if_needed(refill=True, teleport_to_wizard="hitter.png", health_percent=33)
+    hitter.use_potion_if_needed(refill=True, teleport_to_wizard="feinter.png", health_percent=33)
     if(blader.is_mana_low() or blader.is_health_low(33)):
         # Since blader's marked location is bazaar, they need to teleport to feinter
         feinter.recall_location()
@@ -91,9 +93,7 @@ while True:
         blader.use_potion_if_needed(refill=True, teleport_to_wizard="hitter.png", health_percent=33, teleport=True, teleport_friend_img="feinter.png")
         feinter.teleport_to_friend("hitter.png")
 
-    else:
-        feinter.use_potion_if_needed(refill=True, teleport_to_wizard="hitter.png", health_percent=33)
-        hitter.use_potion_if_needed(refill=True, teleport_to_wizard="feinter.png", health_percent=33)
+        
 
     # """ Attempt to enter the dungeon """
     time.sleep(1)
