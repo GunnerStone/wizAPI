@@ -59,7 +59,7 @@ if len(sys.argv) == 2:
     # timeout_fails = int(sys.argv[3])
     # PROGRAM_START_TIME = int(float(sys.argv[4]))
 else:
-    HITTING_SCHOOL = "death"
+    HITTING_SCHOOL = "storm"
     ROUND_COUNT = 0
     failed_runs = 0
     timeout_fails = 0
@@ -74,7 +74,7 @@ while True:
     # """ Quick sell at bazaar every 10 rounds"""
     if(ROUND_COUNT % 10 == 0):
         blader.recall_location()
-        await_finished_loading([blader])
+        blader.wait_pet_loading()
         # Teleports to blader in Bazaar to sell items then teleports back to feinter
         hitter.bazaar_sell(friendly_img="feinter.png", teleport=True, teleport_friend_img="blader.png")
         # Teleports to blader in Bazaar to sell items then teleports back to feinter
@@ -86,11 +86,11 @@ while True:
     if(blader.is_mana_low() or blader.is_health_low(33)):
         # Since blader's marked location is bazaar, they need to teleport to feinter
         feinter.recall_location()
-        await_finished_loading([feinter])
+        feinter.wait_pet_loading()
         feinter.mark_location()
-        blader.use_potion_if_needed(refill=True, teleport_to_wizard="feinter.png", health_percent=33, teleport=True, teleport_friend_img="feinter.png")
+        blader.use_potion_if_needed(refill=True, teleport_to_wizard="hitter.png", health_percent=33, teleport=True, teleport_friend_img="feinter.png")
         feinter.teleport_to_friend("hitter.png")
-        await_finished_loading([feinter])
+
     else:
         feinter.use_potion_if_needed(refill=True, teleport_to_wizard="hitter.png", health_percent=33)
         hitter.use_potion_if_needed(refill=True, teleport_to_wizard="feinter.png", health_percent=33)
@@ -164,7 +164,5 @@ while True:
 
     driver_random[1][0].teleport_to_friend(driver_random[0][1])
     driver_random[2][0].teleport_to_friend(driver_random[0][1]).wait(random.uniform(.5, 1))
-
-    await_finished_loading([driver_random[2][0]])
 
     print_time(time.time() - START_TIME)

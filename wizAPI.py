@@ -734,19 +734,13 @@ class wizAPI:
                     self.teleport_to_friend(teleport_friend_img)
                 else:
                     self.recall_location()
-                    
-                #Waits for user to finish loading
-                if not greedy_tp:
                     self.wait_pet_loading()
-                    self.wait(.1)
-                else:
-                    self.wait_pet_loading()
-                    self.wait(.1)
-
+                print("Loaded into fairgrounds")
                 #Waits for hilda confirmation to pop
                 time.sleep(1)
                 #Begin Potion Buy
                 if(self.is_mana_low): # Buys potion before marking location
+                    print("Mana is low; buying potion before marking location")
                     # Opens Dialog
                     self.press_key('x')
                     self.wait(.5)
@@ -768,6 +762,7 @@ class wizAPI:
                     self.teleport_to_friend(teleport_to_wizard)
 
                 else: # Marks location to waste mana before buying potions
+                    print("Only health is low; marking location and buying potions")
                     if(teleport == False):
                         self.mark_location()
                     self.wait(.5)
@@ -1170,20 +1165,6 @@ class wizAPI:
         if(teleport):
             self.teleport_to_friend(teleport_friend_img)
         else:
-            self.recall_location()
-
-        if(await_loading):
-            #Waits for user to finish loading
-            while not self.is_logo_bottom_left_or_right_loading():
-                time.sleep(.2)
-
-            while not self.is_idle():
-                time.sleep(.5)
-
-            if(teleport == False):
-                self.mark_location()
-        
-        else:
             self.mark_location()
             
 
@@ -1229,13 +1210,6 @@ class wizAPI:
 
         # Goes back to friend
         self.teleport_to_friend(friendly_img)
-
-        #Waits for user to finish loading
-        while not self.is_logo_bottom_left_or_right_loading():
-            time.sleep(.2)
-
-        while not self.is_idle():
-            time.sleep(.5)
 
     def set_active_quest(self,quest_index=1):
         #Opens users quest log
