@@ -526,11 +526,11 @@ class api:
         if("quick_sell" in self.config["config"] and "rounds" in self.config["config"]["quick_sell"]):
             if(self.config["config"]["quick_sell"]["rounds"] > 0): # Quick Selling is active, begin the math and such
                 if(self.round_count % self.config["config"]["quick_sell"]["rounds"] == 0):
-                    self.wizards[0].win.perform_quick_sell(False, False)
+                    self.wizards[0].win.perform_quick_sell()
                     if(self.total_wizards >= 2):
-                        self.wizards[1].win.perform_quick_sell(False, False)
+                        self.wizards[1].win.perform_quick_sell()
                     if(self.total_wizards >= 3):
-                        self.wizards[2].win.perform_quick_sell(False, False)
+                        self.wizards[2].win.perform_quick_sell()
 
     def perform_quick_sell(self):
         """ 
