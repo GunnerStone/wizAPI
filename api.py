@@ -1029,8 +1029,12 @@ class api:
                                 print("Error: Friendly targeting MUST contain a target_pos. (Positions are from left to right)")
                                 exit()
                         #Default Case: cast spell at boss pos
-                        win.cast_spell(cast['school'].capitalize(), cast['spell']).at_target(boss_pos)
+                        try:
+                            win.cast_spell(cast['school'].capitalize(), cast['spell']).at_target(boss_pos)
+                        except:
+                            win.pass_turn()
                         return
+                        
         # If no spell is cast from above, finally, pass.      
         win.pass_turn()
         return
