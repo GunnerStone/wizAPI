@@ -4,15 +4,13 @@ import time
 import math
 import random
 import sys
-import yaml
+import pathlib
+
 
 main = api()
 
 main.register_windows(count = 3)
-
-# Global vars
-if len(sys.argv) == 2:
-    main.hitting_school = str(sys.argv[1]).lower()
+main.load_config(pathlib.Path().absolute(), "farm_generic")
 
 while True:
     main.start_time = time.time()
@@ -48,26 +46,25 @@ while True:
     main.clear_dialog()
 
     """ Run into battle """
-    for wizard in main.true_wizards:
+    for wizard in main._wizards:
         wizard.win.hold_key('w', random.uniform(0.5, 0.5))
 
     main.clear_dialog()
 
     while (not main.wizards[0].win.is_turn_to_play()):
-        for wizard in main.true_wizards:
+        for wizard in main._wizards:
             wizard.win.hold_key('w', random.uniform(1.2, 1.3))
 
     #remove auto mouse off of cards
     for i in range(2):
-        for wizard in main.true_wizards:
+        for wizard in main._wizards:
             wizard.win.hold_key('s', random.uniform(0.1, 0.15))
 
-    boss_pos = False
     #if no boss make it 1
-    if (not boss_pos):
+    if ('boss' not in main.config["config"]):
         boss_pos = 1
     else:
-        boss_pos = main.wizards[0].win.get_enemy_pos('fire.png')
+        boss_pos = main.wizards[0].win.get_enemy_pos(main.wizards[0].win.config["config"]["boss"]["school"] + '.png')
 
     print('Boss at pos', boss_pos)
 
