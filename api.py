@@ -526,13 +526,13 @@ class api:
         if("quick_sell" in self.config["config"] and "rounds" in self.config["config"]["quick_sell"]):
             if(self.config["config"]["quick_sell"]["rounds"] > 0): # Quick Selling is active, begin the math and such
                 if(self.round_count % self.config["config"]["quick_sell"]["rounds"] == 0):
-                    self.wizards[0].win.perform_quick_sell()
+                    self.wizards[0].win.perform_quick_sell(self)
                     if(self.total_wizards >= 2):
-                        self.wizards[1].win.perform_quick_sell()
+                        self.wizards[1].win.perform_quick_sell(self)
                     if(self.total_wizards >= 3):
-                        self.wizards[2].win.perform_quick_sell()
+                        self.wizards[2].win.perform_quick_sell(self)
 
-    def perform_quick_sell(self):
+    def perform_quick_sell(self, API_callback):
         """ 
         Quick sells everything unlocked
         """
@@ -547,13 +547,13 @@ class api:
         self.click(417, 223, delay=.3)
 
         """ Clicks yes or no for selling crowns """
-        if(self.config["config"]["quick_sell"]["crowns"] is True):
+        if(API_callback.config["config"]["quick_sell"]["crowns"] is True):
             self.click(406, 399, delay=.3)
         else:    
             self.click(513, 399, delay=.3)
 
         """ Clicks next twice to get to jewels page """
-        if(self.config["config"]["quick_sell"]["jewels"] is False):
+        if(API_callback.config["config"]["quick_sell"]["jewels"] is False):
             self.click(675, 173, delay=.3)
             self.click(675, 173, delay=.3)
             self.click(417, 223, delay=.3)

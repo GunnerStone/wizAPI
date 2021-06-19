@@ -1,8 +1,8 @@
 config: 
   quick_sell:
     rounds: 10
-    crowns: false
-    jewels: false
+    crowns: False
+    jewels: False
   # boss:
   #   school: "fire"
 
