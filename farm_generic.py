@@ -78,7 +78,7 @@ while True:
         random.shuffle(main.wizards)
         
         for wizard in main.wizards:
-            wizard.win.attack(wizard, boss_pos)
+            main.attack(wizard, boss_pos)
 
         main.wizards[0].win.set_active()
         main.wizards[0].win.wait_for_end_of_round_dialog()

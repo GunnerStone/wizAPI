@@ -1,3 +1,4 @@
+from numpy.core import numeric
 from numpy.core.numeric import True_
 import win32gui
 import pyautogui
@@ -6,9 +7,10 @@ import time
 import numpy
 import ctypes
 import math
+import yaml
 
 # import only system from os 
-from os import system, name 
+from os import error, system, name 
 
 
 class api:
@@ -21,14 +23,15 @@ class api:
         self._friendly_area = (136, 536, 650, 70)
         self._login_area = (307,553+36,187,44)
 
-        self.true_wizards = []
-        self.wizards = []
-        self.hitting_school = "storm"
+        self._wizards = [] # Array of Wizards that does not get shuffled. Used when wizards have an order. i.e entering a fight
+        self.wizards = []  # Array of Wizards that gets shuffled. Used for randomness of sigil entry, spell casts, etc.  
+        self.config = None # Holds ALL config values from the passed yaml
+        
+        # Handy battle/round Information
         self.round_count    = 0
         self.failed_runs    = 0
         self.start_time     = 0
         self.round_start    = 0
-        self.quick_sell_def = [True, 10]
         self.total_wizards  = 1
 
     region_offset = (5,5,0,0)
@@ -36,9 +39,9 @@ class api:
     class Wizard(object):
         """Object for Defining Wizards"""
         def __init__(self, icon, name, wind):
-            self.icon = icon
-            self.name = name
-            self.win  = wind
+            self.icon  = icon
+            self.name  = name
+            self.win   = wind
         
     def wait(self, s):
         """ Alias for time.sleep() that return self for function chaining """
@@ -104,19 +107,19 @@ class api:
         "Create Array of Wizards"
         if(count == 1):
             self.wizards.append(self.Wizard("hitter.png", "hitter", hitter))
-            self.true_wizards.append(self.Wizard("hitter.png", "hitter", hitter))
-            
+            self._wizards.append(self.Wizard("hitter.png", "hitter", hitter))
+
         if(count >= 2): 
             self.wizards.append(self.Wizard("feinter.png", "feinter", feinter))
-            self.true_wizards.append(self.Wizard("feinter.png", "feinter", feinter))
+            self._wizards.append(self.Wizard("feinter.png", "feinter", feinter))
         if(count >= 3): 
             self.wizards.append(self.Wizard("blader.png", "blader", blader))
-            self.true_wizards.append(self.Wizard("blader.png", "blader", blader))
+            self._wizards.append(self.Wizard("blader.png", "blader", blader))
             
         """Hitter will ALWAYS enter fight last"""
         if(count >= 2):
             self.wizards.append(self.Wizard("hitter.png", "hitter", hitter))
-            self.true_wizards.append(self.Wizard("hitter.png", "hitter", hitter))
+            self._wizards.append(self.Wizard("hitter.png", "hitter", hitter))
     
 
     def is_active(self):
@@ -520,14 +523,16 @@ class api:
 
     def quick_sell(self):
         """ Quick sell every X rounds"""
-        if(self.round_count % self.quick_sell_def[1] == 0 and self.quick_sell_def[0]):
-            self.wizards[0].win.perform_quick_sell(False, False)
-            if(self.total_wizards >= 2):
-                self.wizards[1].win.perform_quick_sell(False, False)
-            if(self.total_wizards >= 3):
-                self.wizards[2].win.perform_quick_sell(False, False)
+        if("quick_sell" in self.config["config"] and "rounds" in self.config["config"]["quick_sell"]):
+            if(self.config["config"]["quick_sell"]["rounds"] > 0): # Quick Selling is active, begin the math and such
+                if(self.round_count % self.config["config"]["quick_sell"]["rounds"] == 0):
+                    self.wizards[0].win.perform_quick_sell(False, False)
+                    if(self.total_wizards >= 2):
+                        self.wizards[1].win.perform_quick_sell(False, False)
+                    if(self.total_wizards >= 3):
+                        self.wizards[2].win.perform_quick_sell(False, False)
 
-    def perform_quick_sell(self, sell_crown_items, sell_jewels):
+    def perform_quick_sell(self):
         """ 
         Quick sells everything unlocked
         """
@@ -540,14 +545,15 @@ class api:
         self.click(183, 178, delay=.3)
         """ Clicks the "All" Button within the all tab """
         self.click(417, 223, delay=.3)
+
         """ Clicks yes or no for selling crowns """
-        if(sell_crown_items is True):
+        if(self.config["config"]["quick_sell"]["crowns"] is True):
             self.click(406, 399, delay=.3)
         else:    
             self.click(513, 399, delay=.3)
 
         """ Clicks next twice to get to jewels page """
-        if(sell_jewels is False):
+        if(self.config["config"]["quick_sell"]["jewels"] is False):
             self.click(675, 173, delay=.3)
             self.click(675, 173, delay=.3)
             self.click(417, 223, delay=.3)
@@ -897,6 +903,9 @@ class api:
 
     def enchant(self, spell_type, spell_name, enchant_type, enchant_name, threshold=0.15, silent_fail=False):
         """ Attemps the enchant 'spell_name' with 'enchant_name' """
+
+        # self.enchant('Death', 'feint', 'Sun', 'potent') or self.find_spell('Death', 'feint-potent'):
+
         if self.find_spell(spell_type, spell_name, threshold=threshold) and self.find_spell(enchant_type, enchant_name, recapture=False, threshold=threshold):
             #print('Enchanting', spell_name, 'with', enchant_name)
             self.select_spell(enchant_type, enchant_name)
@@ -956,83 +965,72 @@ class api:
         self.click(x, y, delay=.2)
         return self
 
+    def load_config(self, path, file_name):
+        with open(r''+ str(path) +'/' + file_name + '.yaml') as file:
+            self.config = yaml.load(file, Loader=yaml.FullLoader)
+
     def attack(self, wizard, boss_pos):
-        wizard_type = wizard.name
+        win  = wizard.win
 
-        if(wizard_type == "feinter"):
-            """ Feinter plays """
-            # Check to see if deck is crowded with unusable spells
-            cn = len(self.find_unusable_spells())
-            if cn > 2:
-                self.discard_unusable_spells(cn)
+        # Check to see if deck is crowded with unusable spells
+        cn = len(win.find_unusable_spells())
+        if cn > 2:
+            win.discard_unusable_spells(cn)
 
-            # Play
-            if self.enchant('Death', 'feint', 'Sun', 'potent') or self.find_spell('Death', 'feint-potent'):
-                self.cast_spell('Death', 'feint-potent').at_target(boss_pos)
-                return
+        if wizard.name not in self.config["attacks"]:
+            print(wizard.name + " does not have an associated attack in config file. Passing.")
+            win.pass_turn()
+            return
 
-            elif self.find_spell('Death', 'feint'):
-                self.cast_spell('Death', 'feint').at_target(boss_pos)
-                return
-
-            else:
-                self.pass_turn()
-                return
-        
-        if(wizard_type == "hitter"):
-            hitter = self.hitting_school.capitalize()
-            if (hitter=="Storm"):
-                attack_spell = "tempest"
-                attack_e_spell = "tempest-enchanted"
-            elif (hitter=="Fire"):
-                attack_spell = "meteor-strike"
-                attack_e_spell = "meteor-strike-enchanted"
-            elif (hitter=="Ice"):
-                attack_spell = "blizzard"
-                attack_e_spell = "blizzard_enchanted"
-            elif (hitter=="Myth"):
-                attack_spell = "humungofrog"
-                attack_e_spell = "humungofrog_enchanted"
-            elif (hitter=="Death"):
-                attack_spell = "deer_knight"
-                attack_e_spell = "deer_knight_enchanted"
-            elif (hitter=="Life"):
-                attack_spell = "ratatoskrs_spin"
-                attack_e_spell = "ratatoskrs_spin_enchanted"
-            """ Hitter plays """
-            # Play - 
-            if self.find_spell('Star','frenzy'):
-                self.cast_spell('Star','frenzy')
-                return
-            elif self.enchant(hitter, attack_spell, 'Sun', 'epic'):
-                self.cast_spell(hitter, attack_e_spell, threshold=.15)
-                return
-            elif self.find_spell(hitter, attack_e_spell, max_tries=2):
-                self.cast_spell(hitter, attack_e_spell)
-                return
-            else:
-                self.pass_turn()
-                return
-        
-        
-        if(wizard_type == "blader"):
-            """ Blader plays """
-            # Check to see if deck is crowded with unusable spells
-            cn = len(self.find_unusable_spells())
-            if cn > 2:
-                self.discard_unusable_spells(cn)
-
-            # Play
-            if self.find_spell('Death', 'mass_feint'):
-                self.cast_spell('Death', 'mass_feint')
-                return
-            elif self.enchant('Balance','elemental_blade','Sun','sharpen'):
-                self.cast_spell('Balance','enchanted_elemental_blade').at_friendly(2)
-                return
-            elif self.find_spell('Life', 'pigsie'):
-                self.cast_spell('Life', 'pigsie')
-                return
-            else:
-                self.pass_turn()
-                return
-
+        for i, caster in enumerate(self.config["attacks"][""+ wizard.name +""]):
+            if('enchant' in caster[i] and 'cast' in caster[i]):
+                enchant = caster[i]['enchant']
+                cast    = caster[i]['cast']
+                if('enchantment' in enchant and 'enchanted' in enchant):
+                    enchantment = enchant['enchantment']
+                    enchanted   = enchant['enchanted']
+                    if('school' in enchantment and 'spell' in enchanted and 'school' in enchanted and 'spell'):
+                        if('school' in cast and 'spell' in cast and 'target' in cast):
+                            if win.enchant(enchanted['school'].capitalize(), enchanted['spell'], enchantment['school'].capitalize(), enchantment['spell']) or win.find_spell(cast['school'].capitalize(), cast['spell']):                                     
+                                if(cast['target'] == 'all' or cast['target'] == 'aura'  or cast['target'] == 'bubble'): 
+                                    win.cast_spell(cast['school'].capitalize(), cast['spell'])
+                                    return
+                                if(cast['target'] == 'friendly'): 
+                                    if('target_pos' in cast):
+                                        win.cast_spell(cast['school'].capitalize(), cast['spell']).at_friendly(cast['target_pos'])
+                                        return
+                                    else:
+                                        print("Error: Friendly targeting MUST contain a target_pos. (Positions are from left to right)")
+                                        exit()
+                                #Default Case: cast spell at boss pos
+                                win.cast_spell(cast['school'].capitalize(), cast['spell']).at_target(boss_pos)
+                                return
+                        else:
+                            print("Error: Cast must contain a school, class, and target")
+                            exit()
+                    else:
+                        print("Error with enchantment or enchanted inside enchant. MUST contain the school AND spell")
+                        exit()
+                else:
+                    print("Error with enchantments. MUST contain the enchantment AND enchanted.")
+                    exit()
+            if('cast' in caster[i]):
+                cast = caster[i]['cast']
+                if('school' in cast and 'spell' in cast and 'target' in cast):
+                    if(win.find_spell(cast['school'].capitalize(), cast['spell'], max_tries=2)):
+                        if(cast['target'] == 'all' or cast['target'] == 'aura'  or cast['target'] == 'bubble'): 
+                            win.cast_spell(cast['school'].capitalize(), cast['spell'])
+                            return
+                        if(cast['target'] == 'friendly'): 
+                            if('target_pos' in cast):
+                                win.cast_spell(cast['school'].capitalize(), cast['spell']).at_friendly(cast['target']['target_pos'])
+                                return
+                            else:
+                                print("Error: Friendly targeting MUST contain a target_pos. (Positions are from left to right)")
+                                exit()
+                        #Default Case: cast spell at boss pos
+                        win.cast_spell(cast['school'].capitalize(), cast['spell']).at_target(boss_pos)
+                        return
+        # If no spell is cast from above, finally, pass.      
+        win.pass_turn()
+        return

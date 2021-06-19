@@ -1,0 +1,70 @@
+config: 
+  quick_sell:
+    rounds: 10
+    crowns: false
+    jewels: false
+  # boss:
+  #   school: "fire"
+
+attacks:
+  feinter:
+    - 0:
+        enchant: 
+          enchantment:
+            school: sun
+            spell: potent
+          enchanted:
+            school: death
+            spell: feint
+        cast:
+          school: death
+          spell: feint-potent
+          target: boss
+    - 1:
+        cast:
+          school: death
+          spell: feint
+          target: boss
+  blader:
+    - 0:
+        cast:
+          school: death
+          spell: mass_feint
+          target: all
+    - 1: 
+        enchant: 
+          enchantment:
+            school: sun
+            spell: sharpen
+          enchanted:
+            school: balance
+            spell: elemental_blade
+        cast:
+          school: balance
+          spell: enchanted_elemental_blade
+          target: friendly
+          target_pos: 2
+    - 2:
+        cast:
+          school: life
+          spell: pigsie
+          target: all
+  hitter:
+    - 0:
+        cast:
+          school: star
+          spell: frenzy
+          target: aura
+    - 1:
+        enchant: 
+          enchantment:
+            school: sun
+            spell: epic
+          enchanted:
+            school: storm
+            spell: tempest
+        cast:
+          school: storm
+          spell: tempest-enchanted
+          target: all
+          
