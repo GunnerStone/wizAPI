@@ -124,6 +124,14 @@ while True:
     driver.win.wait_pet_loading()
     print('Successfully exited the dungeon')
 
+    time.sleep(1.0)
+    driver.win.press_key('x')
+    driver.win.wait_pet_loading()
+    time.sleep(2.0)
+    wizard.win.hold_key('w', 3.8)
+
+    print("Navigated back to darkmoor sigil successfully")
+
     driver_random[1].win.teleport_to_friend(driver_random[0].icon)
     driver_random[2].win.teleport_to_friend(driver_random[0].icon)
 

@@ -4,7 +4,7 @@ config:
     crowns: False
     jewels: False
   # boss:
-  #   school: "fire"
+  #   school: "ice"
 
 attacks:
   feinter:
@@ -29,8 +29,8 @@ attacks:
     - 0:
         cast:
           school: death
-          spell: mass_feint
-          target: all
+          spell: b_feint
+          target: boss
     - 1: 
         enchant: 
           enchantment:
@@ -61,9 +61,9 @@ attacks:
             school: sun
             spell: epic
           enchanted:
-            school: storm
-            spell: tempest
+            school: fire
+            spell: firedragon
         cast:
-          school: storm
-          spell: tempest-enchanted
+          school: fire
+          spell: firedragon-enchanted
           target: all

@@ -972,11 +972,6 @@ class api:
     def attack(self, wizard, boss_pos):
         win  = wizard.win
 
-        # Check to see if deck is crowded with unusable spells
-        cn = len(win.find_unusable_spells())
-        if cn > 2:
-            win.discard_unusable_spells(cn)
-
         if wizard.name not in self.config["attacks"]:
             print(wizard.name + " does not have an associated attack in config file. Passing.")
             win.pass_turn()
@@ -984,6 +979,7 @@ class api:
 
         for i, caster in enumerate(self.config["attacks"][""+ wizard.name +""]):
             if('enchant' in caster[i] and 'cast' in caster[i]):
+                print("Enchanting a spell")
                 enchant = caster[i]['enchant']
                 cast    = caster[i]['cast']
                 if('enchantment' in enchant and 'enchanted' in enchant):
@@ -1015,9 +1011,12 @@ class api:
                     print("Error with enchantments. MUST contain the enchantment AND enchanted.")
                     exit()
             if('cast' in caster[i]):
+                print("Casting a spell")
                 cast = caster[i]['cast']
                 if('school' in cast and 'spell' in cast and 'target' in cast):
+                    print("Looking for spell in hand")
                     if(win.find_spell(cast['school'].capitalize(), cast['spell'], max_tries=2)):
+                        print("Found spell in hand")
                         if(cast['target'] == 'all' or cast['target'] == 'aura'  or cast['target'] == 'bubble'): 
                             win.cast_spell(cast['school'].capitalize(), cast['spell'])
                             return
@@ -1030,11 +1029,13 @@ class api:
                                 exit()
                         #Default Case: cast spell at boss pos
                         try:
+                            print("Casting spell on boss")
                             win.cast_spell(cast['school'].capitalize(), cast['spell']).at_target(boss_pos)
                         except:
+                            print("SYNTAX ERROR: PASSING")
                             win.pass_turn()
                         return
-                        
+                    print("Did not find spell in hanc")
         # If no spell is cast from above, finally, pass.      
         win.pass_turn()
         return
